@@ -7,13 +7,14 @@ databases:
     databaseName: virava
     user: virava
     plan: free
+    region: oregon
 
 services:
   - type: web
     name: virava-chemicals
     runtime: node
     plan: free
-    region: singapore
+    region: oregon
     buildCommand: "cd client && npm install --include=dev && npm run build && cd ../server && npm install --omit=dev"
     startCommand: "cd server && npm run start:prod"
     healthCheckPath: /api/health
