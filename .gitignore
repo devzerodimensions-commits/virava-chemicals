@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build output
+client/dist/
+dist/
+
+# env / secrets
+.env
+server/.env
+*.local
+
+# local portable PostgreSQL (Render provides its own DB) — very large
+database/
+
+# local tunnel binary
+cloudflared.exe
+pg.zip
+
+# uploads (runtime, user-generated)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# misc
+*.log
+home.html
+.DS_Store
+Thumbs.db

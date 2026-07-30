@@ -1,0 +1,26 @@
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(14,23,64,.55); backdrop-filter: blur(3px);
+  z-index: 100; display: grid; place-items: center; padding: 20px; animation: fade .2s ease;
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: #fff; border-radius: 16px; padding: 34px; width: min(480px, 100%);
+  box-shadow: var(--shadow-lg); position: relative; animation: pop .25s ease;
+  max-height: 92vh; overflow-y: auto;
+}
+@keyframes pop { from { transform: translateY(20px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-close { position: absolute; top: 14px; right: 16px; border: 0; background: none; font-size: 1.8rem; line-height: 1; color: var(--muted); cursor: pointer; }
+.modal-close:hover { color: var(--red); }
+.modal h3 { color: var(--navy); font-size: 1.3rem; margin-bottom: 6px; padding-right: 20px; }
+.modal-sub { font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
+.modal-form { display: grid; gap: 12px; }
+.modal-form input, .modal-form textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+  font-family: var(--sans); font-size: .94rem; color: var(--ink); resize: vertical;
+}
+.modal-form input:focus, .modal-form textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(22,34,93,.1); }
+.modal-form .btn { justify-content: center; margin-top: 4px; }
+.modal-err { color: var(--red); font-size: .85rem; margin: 0; }
+.modal-done { text-align: center; padding: 20px 0; }
+.modal-check { width: 60px; height: 60px; border-radius: 50%; background: #e7f7ee; color: #1ba85f; font-size: 1.8rem; display: grid; place-items: center; margin: 0 auto 16px; }
+.modal-done h3 { padding: 0; }

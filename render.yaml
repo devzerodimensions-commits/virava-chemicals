@@ -1,0 +1,39 @@
+# Render Blueprint — provisions a PostgreSQL database + a Node web service
+# that builds the React client and serves it together with the API.
+# In Render: New + → "Blueprint" → connect this repo → Apply.
+
+databases:
+  - name: virava-db
+    databaseName: virava
+    user: virava
+    plan: free
+
+services:
+  - type: web
+    name: virava-chemicals
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: "cd client && npm install && npm run build && cd ../server && npm install"
+    startCommand: "cd server && npm run start:prod"
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: virava-db
+          property: connectionString
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES
+        value: "7d"
+      - key: ADMIN_NAME
+        value: "Virava Admin"
+      - key: ADMIN_EMAIL
+        value: "admin@viravachemicals.com"
+      - key: ADMIN_PASSWORD
+        value: "Virava@2026"
+      # Client build flag: "false" = full website live, "true" = home page only
+      - key: VITE_HOME_ONLY
+        value: "false"

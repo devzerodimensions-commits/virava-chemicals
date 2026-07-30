@@ -1,0 +1,24 @@
+{
+  "name": "virava-server",
+  "version": "1.0.0",
+  "description": "Virava Chemicals API server",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "start:prod": "node db/ensure.js && node src/app.js",
+    "dev": "node --watch src/app.js",
+    "ensure": "node db/ensure.js",
+    "seed": "node db/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.2.0",
+    "pg": "^8.12.0"
+  }
+}

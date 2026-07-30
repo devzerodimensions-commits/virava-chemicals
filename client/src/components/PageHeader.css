@@ -1,0 +1,16 @@
+.page-header {
+  position: relative; background-size: cover; background-position: center;
+  padding: 100px 0 70px; color: #fff; overflow: hidden;
+}
+.page-header-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, rgba(14,23,64,.93) 0%, rgba(22,34,93,.82) 55%, rgba(216,31,38,.55) 100%);
+}
+.page-header-inner { position: relative; z-index: 2; }
+.page-header h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 10px; }
+.page-header p { max-width: 620px; color: #d8ddf0; font-size: 1.05rem; margin: 0; }
+.crumbs { font-size: .86rem; margin-bottom: 18px; font-family: var(--head); font-weight: 500; }
+.crumbs a { color: #c3cbe6; transition: .2s; }
+.crumbs a:hover { color: #fff; }
+.crumb-sep { margin: 0 9px; color: #7f89b3; }
+.crumb-current { color: var(--gold); }
