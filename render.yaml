@@ -14,7 +14,7 @@ services:
     runtime: node
     plan: free
     region: singapore
-    buildCommand: "cd client && npm install && npm run build && cd ../server && npm install"
+    buildCommand: "cd client && npm install --include=dev && npm run build && cd ../server && npm install --omit=dev"
     startCommand: "cd server && npm run start:prod"
     healthCheckPath: /api/health
     envVars:
