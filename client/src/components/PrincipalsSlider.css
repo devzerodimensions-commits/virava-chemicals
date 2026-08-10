@@ -1,0 +1,78 @@
+.psl-sec { background: linear-gradient(160deg, #0a0a0a, #1a1a1a); padding: 80px 0 90px; }
+.psl-head { text-align: center; margin-bottom: 40px; }
+
+.psl {
+  position: relative; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  height: 420px;
+}
+.psl-slide {
+  position: absolute; inset: 0 24px; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(120deg, #101010 0%, #1c1c1c 60%, #232323 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  opacity: 0; visibility: hidden; transform: scale(.98);
+  transition: opacity .6s ease, transform .6s ease, visibility .6s;
+}
+.psl-slide.on { opacity: 1; visibility: visible; transform: scale(1); }
+
+/* self-created faint hex/grid pattern */
+.psl-grid {
+  position: absolute; inset: 0; opacity: .5;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+/* red glow accent */
+.psl-slide::after {
+  content: ''; position: absolute; top: -120px; right: -80px; width: 380px; height: 380px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(216,31,38,.22), transparent 68%);
+}
+
+/* molecule artwork (right side) */
+.psl-molecule {
+  position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+  width: 460px; height: 460px; opacity: .9;
+}
+.psl-bond { stroke: rgba(255,255,255,.28); stroke-width: 2.5; }
+.psl-atom { fill: #1c1c1c; stroke: rgba(255,255,255,.55); stroke-width: 2.5; }
+.psl-atom-accent { fill: var(--red); stroke: none; }
+
+.psl-inner {
+  position: relative; z-index: 3; height: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.psl-text { max-width: 560px; animation: pslIn .6s ease; }
+@keyframes pslIn { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+.psl-count { font-family: var(--head); font-weight: 600; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+.psl-text h3 { color: #fff; font-size: clamp(1.6rem, 3.2vw, 2.5rem); margin: 12px 0 14px; line-height: 1.15; }
+.psl-text p { color: #c9c9c9; font-size: 1rem; line-height: 1.7; margin-bottom: 26px; }
+
+.psl-watermark {
+  font-family: var(--head); font-weight: 800; font-size: 7rem; color: rgba(255,255,255,.05);
+  letter-spacing: -.03em; user-select: none; margin-right: 20px;
+}
+
+/* controls */
+.psl-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.06); color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer;
+  display: grid; place-items: center; transition: .2s;
+}
+.psl-nav:hover { background: var(--red); border-color: var(--red); }
+.psl-prev { left: 6px; }
+.psl-next { right: 6px; }
+
+.psl-dots { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; gap: 9px; }
+.psl-dots button { width: 30px; height: 4px; border: 0; border-radius: 3px; background: rgba(255,255,255,.3); cursor: pointer; transition: .3s; }
+.psl-dots button.on { background: var(--red); width: 44px; }
+
+@media (max-width: 800px) {
+  .psl { height: auto; }
+  .psl-slide { position: relative; inset: auto; margin-bottom: 16px; opacity: 1; visibility: visible; transform: none; }
+  .psl-slide:not(.on) { display: none; }
+  .psl-slide.on { display: block; }
+  .psl-inner { flex-direction: column; align-items: flex-start; gap: 20px; padding: 40px 26px 54px; }
+  .psl-molecule { width: 300px; height: 300px; right: -80px; opacity: .5; }
+  .psl-watermark { display: none; }
+  .psl-nav { display: none; }
+}

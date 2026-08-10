@@ -4,6 +4,7 @@ import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
+import PrincipalsSlider from '../components/PrincipalsSlider.jsx';
 import './Home.css';
 
 export default function Home() {
@@ -113,24 +114,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- PRINCIPALS ---------------- */}
-      <section className="section principals-sec">
-        <div className="container">
-          <div className="center reveal">
-            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
-            <h2 className="section-title" style={{ color: '#fff' }}>We are the exclusive <span className="serif">distributors</span> of</h2>
-          </div>
-          <div className="principals-grid">
-            {principals.map((p) => (
-              <div className="principal-card reveal" key={p.id}>
-                <div className="principal-logo"><img src={p.logo_url} alt={p.name} /></div>
-                <h3>{p.name}</h3>
-                <p>{p.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ---------------- PRINCIPALS SLIDER ---------------- */}
+      <PrincipalsSlider items={principals} />
 
       {/* ---------------- INDUSTRIES ---------------- */}
       <section className="section">
