@@ -18,7 +18,7 @@
   width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
   font-family: var(--sans); font-size: .94rem; color: var(--ink); resize: vertical;
 }
-.modal-form input:focus, .modal-form textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(28,107,51,.14); }
+.modal-form input:focus, .modal-form textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(0,0,0,.15); }
 .modal-form .btn { justify-content: center; margin-top: 4px; }
 .modal-err { color: var(--red); font-size: .85rem; margin: 0; }
 .modal-done { text-align: center; padding: 20px 0; }

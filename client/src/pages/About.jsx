@@ -98,7 +98,7 @@ export default function About() {
       <section className="section principals-sec">
         <div className="container">
           <div className="center reveal">
-            <span className="eyebrow" style={{ color: '#a7e08a' }}>Our Principals</span>
+            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
             <h2 className="section-title" style={{ color: '#fff' }}>Manufacturers we <span className="serif">represent</span></h2>
           </div>
           <div className="principals-grid">

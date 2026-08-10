@@ -35,7 +35,7 @@ export default function Home() {
         <div className="hero-overlay" />
         <div className="container hero-content">
           <div className="hero-text">
-            <span className="eyebrow" style={{ color: '#a7e08a' }}>Virava Chemicals · Since {settings.established || '1997'}</span>
+            <span className="eyebrow" style={{ color: '#cccccc' }}>Virava Chemicals · Since {settings.established || '1997'}</span>
             <h1>Your Trusted Partner in <span className="hero-accent">Industrial Chemicals</span></h1>
             <p>Exclusive distributors of Godrej oleo chemicals — fatty alcohols, fatty acids, surfactants, glycerine &amp; specialty chemicals for 20+ industries across India.</p>
             <div className="hero-btns">
@@ -117,7 +117,7 @@ export default function Home() {
       <section className="section principals-sec">
         <div className="container">
           <div className="center reveal">
-            <span className="eyebrow" style={{ color: '#a7e08a' }}>Our Principals</span>
+            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
             <h2 className="section-title" style={{ color: '#fff' }}>We are the exclusive <span className="serif">distributors</span> of</h2>
           </div>
           <div className="principals-grid">
@@ -158,7 +158,7 @@ export default function Home() {
       <section className="stats-sec">
         <div className="container stats-grid">
           <div className="stats-head reveal">
-            <span className="eyebrow" style={{ color: '#a7e08a' }}>Our Track Record</span>
+            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Track Record</span>
             <h2>We are proud of<br /><span className="serif">our achievements</span></h2>
           </div>
           <div className="stats-nums">

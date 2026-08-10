@@ -4,12 +4,12 @@ import api from '../api.js';
 import './admin.css';
 
 const cards = [
-  ['products', '🧪', 'Products', '/admin/products', '#1c6b33'],
-  ['categories', '📁', 'Categories', '/admin/categories', '#24833f'],
-  ['industries', '🏭', 'Industries', '/admin/industries', '#3a9b2f'],
-  ['principals', '🤝', 'Principals', '/admin/principals', '#0f766e'],
-  ['enquiries', '✉', 'Total Enquiries', '/admin/enquiries', '#5cb130'],
-  ['new_enquiries', '🔔', 'New Enquiries', '/admin/enquiries', '#4a9127'],
+  ['products', '🧪', 'Products', '/admin/products', '#161616'],
+  ['categories', '📁', 'Categories', '/admin/categories', '#333333'],
+  ['industries', '🏭', 'Industries', '/admin/industries', '#4d4d4d'],
+  ['principals', '🤝', 'Principals', '/admin/principals', '#666666'],
+  ['enquiries', '✉', 'Total Enquiries', '/admin/enquiries', '#000000'],
+  ['new_enquiries', '🔔', 'New Enquiries', '/admin/enquiries', '#808080'],
 ];
 
 export default function Dashboard() {
