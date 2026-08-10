@@ -1,5 +1,5 @@
 /* Topbar */
-.topbar { background: var(--navy-dark); color: #cdd4ec; font-size: .82rem; }
+.topbar { background: var(--navy-dark); color: #cfe3d0; font-size: .82rem; }
 .topbar-inner { display: flex; align-items: center; gap: 12px; height: 40px; }
 .topbar .ic { color: var(--gold); margin-right: 6px; }
 .topbar .sep { opacity: .4; }

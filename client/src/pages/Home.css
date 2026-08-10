@@ -9,8 +9,8 @@
 .hero-overlay {
   position: absolute; inset: 0; z-index: 1;
   background:
-    linear-gradient(105deg, rgba(14,23,64,.95) 0%, rgba(22,34,93,.86) 42%, rgba(14,23,64,.62) 100%),
-    linear-gradient(0deg, rgba(14,23,64,.55) 0%, transparent 45%);
+    linear-gradient(105deg, rgba(15,59,29,.95) 0%, rgba(23,90,45,.85) 42%, rgba(15,59,29,.6) 100%),
+    linear-gradient(0deg, rgba(15,59,29,.55) 0%, transparent 45%);
 }
 .hero-content { position: relative; z-index: 3; }
 .hero-text { max-width: 660px; animation: heroIn .8s ease; }
@@ -111,16 +111,16 @@
 .ind-card:hover img { transform: scale(1.12); }
 .ind-overlay {
   position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 14px;
-  background: linear-gradient(to top, rgba(14,23,64,.9) 0%, rgba(14,23,64,.15) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(15,59,29,.9) 0%, rgba(15,59,29,.15) 60%, transparent 100%);
 }
 .ind-overlay h4 { color: #fff; font-size: .82rem; margin: 0; line-height: 1.25; }
 @media (max-width: 1000px) { .ind-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 620px) { .ind-grid { grid-template-columns: repeat(2, 1fr); } }
 
 /* ---------------- STATS ---------------- */
-.stats-sec { background: linear-gradient(120deg, #0e1740 0%, #16225d 55%, #1d2e78 100%); padding: 82px 0; position: relative; overflow: hidden; }
-.stats-sec::before { content: ''; position: absolute; top: -80px; right: -60px; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, rgba(216,31,38,.18), transparent 70%); }
-.stats-sec::after { content: ''; position: absolute; bottom: -100px; left: -80px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(226,177,60,.12), transparent 70%); }
+.stats-sec { background: linear-gradient(120deg, #0f3b1d 0%, #1c6b33 55%, #24833f 100%); padding: 82px 0; position: relative; overflow: hidden; }
+.stats-sec::before { content: ''; position: absolute; top: -80px; right: -60px; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, rgba(92,177,48,.25), transparent 70%); }
+.stats-sec::after { content: ''; position: absolute; bottom: -100px; left: -80px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(240,169,46,.14), transparent 70%); }
 .stats-grid { position: relative; z-index: 2; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1.7fr; gap: 48px; align-items: center; }
 .stats-head h2 { color: #fff; font-size: clamp(2rem, 3vw, 2.7rem); }

@@ -87,7 +87,7 @@
   width: 100%; padding: 13px 15px; border: 1px solid var(--line); border-radius: 10px;
   font-family: var(--sans); font-size: .94rem; color: var(--ink); resize: vertical;
 }
-.contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(22,34,93,.1); }
+.contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(28,107,51,.14); }
 .contact-form .btn { justify-content: center; }
 .map-wrap { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
 @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; gap: 40px; } .cf-row { grid-template-columns: 1fr; } }

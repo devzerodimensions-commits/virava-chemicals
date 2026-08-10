@@ -4,7 +4,7 @@
 }
 .page-header-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(120deg, rgba(14,23,64,.93) 0%, rgba(22,34,93,.82) 55%, rgba(216,31,38,.55) 100%);
+  background: linear-gradient(120deg, rgba(15,59,29,.93) 0%, rgba(23,90,45,.82) 55%, rgba(92,177,48,.55) 100%);
 }
 .page-header-inner { position: relative; z-index: 2; }
 .page-header h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 10px; }

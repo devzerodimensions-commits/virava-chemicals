@@ -1,4 +1,4 @@
-.footer { background: var(--navy-dark); color: #b9c1de; }
+.footer { background: var(--navy-dark); color: #bcd0be; }
 .footer-grid {
   display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.4fr; gap: 40px;
   padding: 70px 24px 50px;
@@ -20,7 +20,7 @@
 .footer-col h4 { color: #fff; font-size: 1.05rem; margin-bottom: 20px; position: relative; padding-bottom: 12px; }
 .footer-col h4::after { content: ''; position: absolute; left: 0; bottom: 0; width: 34px; height: 2px; background: var(--red); }
 .footer-col ul li { margin-bottom: 11px; }
-.footer-col a, .footer-contact { font-size: .92rem; color: #b9c1de; transition: .2s; }
+.footer-col a, .footer-contact { font-size: .92rem; color: #bcd0be; transition: .2s; }
 .footer-col a:hover { color: #fff; padding-left: 4px; }
 .footer-contact li { display: flex; gap: 10px; margin-bottom: 14px; line-height: 1.55; }
 .fc-ic { color: var(--gold); flex-shrink: 0; }
