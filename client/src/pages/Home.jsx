@@ -4,6 +4,7 @@ import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
+import HeroSlider from '../components/HeroSlider.jsx';
 import './Home.css';
 
 export default function Home() {
@@ -26,25 +27,8 @@ export default function Home() {
 
   return (
     <>
-      {/* ---------------- HERO ---------------- */}
-      <section className="hero">
-        <video className="hero-video" autoPlay muted loop playsInline preload="auto"
-          poster="/img/banner3.jpg">
-          <source src="/video/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-overlay" />
-        <div className="container hero-content">
-          <div className="hero-text">
-            <span className="eyebrow" style={{ color: '#cccccc' }}>Virava Chemicals · Since {settings.established || '1997'}</span>
-            <h1>Your Trusted Partner in <span className="hero-accent">Industrial Chemicals</span></h1>
-            <p>Exclusive distributors of Godrej oleo chemicals — fatty alcohols, fatty acids, surfactants, glycerine &amp; specialty chemicals for 20+ industries across India.</p>
-            <div className="hero-btns">
-              <Link to="/products" className="btn btn-primary">Explore Products <span>→</span></Link>
-              <Link to="/contact" className="btn btn-ghost-light">Contact Us</Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ---------------- HERO SLIDER (one slide per principal) ---------------- */}
+      <HeroSlider items={principals} />
 
       <div className="home-content">
       {/* ---------------- QUICK HIGHLIGHTS ---------------- */}
