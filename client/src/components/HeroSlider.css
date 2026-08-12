@@ -1,5 +1,28 @@
-/* Hero slider — reuses .hero / .hero-video / .hero-overlay / .hero-content /
-   .hero-text / .hero-btns from Home.css; adds molecule art + controls. */
+/* Hero slider — designed dark background (no video), molecule art + controls.
+   Reuses .hero / .hero-content / .hero-text / .hero-btns from Home.css. */
+.hero-slider .hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(120deg, #0a0a0a 0%, #161616 55%, #232323 100%);
+}
+.hero-slider .hero-bg::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+  background-size: 30px 30px; opacity: .7;
+}
+.hero-slider .hero-bg::after {
+  content: ''; position: absolute; top: -140px; right: -80px; width: 460px; height: 460px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(216,31,38,.22), transparent 66%);
+}
+/* large faint manufacturer name behind (relates each slide) */
+.hero-watermark {
+  position: absolute; right: 4%; bottom: 4%; z-index: 1;
+  font-family: var(--head); font-weight: 800; font-size: clamp(4rem, 13vw, 12rem);
+  line-height: 1; letter-spacing: -.03em; color: rgba(255,255,255,.045);
+  user-select: none; pointer-events: none; white-space: nowrap;
+  animation: heroIn .8s ease;
+}
+@media (max-width: 860px) { .hero-watermark { font-size: 5rem; right: -10px; bottom: 30%; } }
+
 .hero-molecule {
   position: absolute; right: -50px; top: 50%; transform: translateY(-50%);
   width: 520px; height: 520px; z-index: 2; opacity: .55; pointer-events: none;

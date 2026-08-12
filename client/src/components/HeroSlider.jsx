@@ -44,11 +44,9 @@ export default function HeroSlider({ items = [] }) {
   const cur = items[active];
 
   return (
-    <section className="hero">
-      <video className="hero-video" autoPlay muted loop playsInline preload="auto" poster="/img/banner3.jpg">
-        <source src="/video/hero.mp4" type="video/mp4" />
-      </video>
-      <div className="hero-overlay" />
+    <section className="hero hero-slider">
+      <div className="hero-bg" />
+      {cur && <div className="hero-watermark" key={`w${active}`}>{(cur.name.split(' ')[0] || '').toUpperCase()}</div>}
 
       {cur && <Molecule i={active} />}
 
