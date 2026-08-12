@@ -2,33 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './HeroSlider.css';
 
-/* Self-created molecule artwork (no external images), varied per slide */
-function Molecule({ i }) {
-  const cx = 250, cy = 250, R = 120;
-  const rot = (i * 26) * Math.PI / 180;
-  const ring = Array.from({ length: 6 }, (_, k) => {
-    const a = rot + k * Math.PI / 3;
-    return { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) };
-  });
-  const branchNodes = [0, 2, 4].slice(0, 2 + (i % 2));
-  const branches = branchNodes.map((k) => {
-    const a = rot + k * Math.PI / 3;
-    return { from: k, x: cx + (R + 80) * Math.cos(a), y: cy + (R + 80) * Math.sin(a) };
-  });
-  return (
-    <svg className="hero-molecule" viewBox="0 0 500 500" aria-hidden="true">
-      {ring.map((n, k) => {
-        const m = ring[(k + 1) % 6];
-        return <line key={`r${k}`} x1={n.x} y1={n.y} x2={m.x} y2={m.y} className="hero-bond" />;
-      })}
-      {branches.map((b, k) => (
-        <line key={`b${k}`} x1={ring[b.from].x} y1={ring[b.from].y} x2={b.x} y2={b.y} className="hero-bond" />
-      ))}
-      {branches.map((b, k) => <circle key={`ba${k}`} cx={b.x} cy={b.y} r="11" className="hero-atom" />)}
-      {ring.map((n, k) => <circle key={`a${k}`} cx={n.x} cy={n.y} r="15" className="hero-atom" />)}
-      <circle cx={ring[0].x} cy={ring[0].y} r="17" className="hero-atom-accent" />
-    </svg>
-  );
+// Map each principal to its created banner image (robust to reordering).
+function bannerFor(name = '') {
+  const n = name.toLowerCase();
+  if (n.includes('godrej')) return '/img/slides/godrej.jpg';
+  if (n.includes('hpl')) return '/img/slides/hpl.jpg';
+  if (n.includes('oriental') || n.includes('occl')) return '/img/slides/occl.jpg';
+  if (n.includes('standard')) return '/img/slides/standard.jpg';
+  return '/img/slides/godrej.jpg';
 }
 
 export default function HeroSlider({ items = [] }) {
@@ -45,10 +26,14 @@ export default function HeroSlider({ items = [] }) {
 
   return (
     <section className="hero hero-slider">
-      <div className="hero-bg" />
-      {cur && <div className="hero-watermark" key={`w${active}`}>{(cur.name.split(' ')[0] || '').toUpperCase()}</div>}
-
-      {cur && <Molecule i={active} />}
+      {items.map((p, i) => (
+        <div
+          key={p.id}
+          className={`hero-bg ${i === active ? 'on' : ''}`}
+          style={{ backgroundImage: `url(${bannerFor(p.name)})` }}
+        />
+      ))}
+      <div className="hero-overlay" />
 
       <div className="container hero-content">
         <div className="hero-text" key={active}>
