@@ -20,9 +20,10 @@ CREATE TABLE admins (
 );
 
 CREATE TABLE categories (
-  id          SERIAL PRIMARY KEY,
-  slug        TEXT UNIQUE NOT NULL,
-  name        TEXT NOT NULL,
+  id           SERIAL PRIMARY KEY,
+  slug         TEXT UNIQUE NOT NULL,
+  name         TEXT NOT NULL,
+  principal_id INT DEFAULT NULL,
   tagline     TEXT DEFAULT '',
   description TEXT DEFAULT '',
   image_url   TEXT DEFAULT '',

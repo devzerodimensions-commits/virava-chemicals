@@ -60,6 +60,18 @@
 @media (max-width: 1000px) { .ind-full-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 620px) { .ind-full-grid { grid-template-columns: repeat(2, 1fr); } }
 
+/* ---- Principal detail ---- */
+.pd-top { display: flex; gap: 40px; align-items: center; margin-bottom: 50px; flex-wrap: wrap; }
+.pd-logo { flex-shrink: 0; width: 240px; height: 160px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); display: grid; place-items: center; padding: 26px; box-shadow: var(--shadow-sm); }
+.pd-logo img { max-width: 100%; max-height: 100px; object-fit: contain; }
+.pd-intro { flex: 1; min-width: 280px; }
+.pd-intro .section-title { margin-bottom: 14px; }
+.pd-intro p { color: var(--body); font-size: 1.02rem; margin-bottom: 20px; }
+.pd-cat { margin-bottom: 40px; }
+.pd-cat-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; border-bottom: 2px solid var(--line); padding-bottom: 12px; }
+.pd-cat-head h3 { color: var(--navy); font-size: 1.3rem; margin: 0; }
+.pd-cat-head span { color: var(--muted); font-size: .9rem; }
+
 /* ---- Blog detail ---- */
 .blog-detail { max-width: 820px; margin: 0 auto; }
 .blog-detail-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; font-size: .88rem; color: var(--muted); margin-bottom: 26px; }

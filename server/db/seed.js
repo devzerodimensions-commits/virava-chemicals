@@ -165,14 +165,38 @@ export async function run(closePool = true) {
   console.log('Seeding Virava Chemicals database...');
   await query(`TRUNCATE enquiries, products, categories, principals, industries, hero_slides, blogs, site_settings, admins RESTART IDENTITY CASCADE`);
 
+  // principals (first, so categories can reference them)
+  const pKeyId = {}; // godrej/hpl/occl/std -> id
+  for (let i = 0; i < principals.length; i++) {
+    const p = principals[i];
+    const { rows } = await query(
+      `INSERT INTO principals (slug, name, description, logo_url, website, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
+      [slug(p.name), p.name, p.desc, p.logo, p.website, i]
+    );
+    const n = p.name.toLowerCase();
+    const key = n.includes('godrej') ? 'godrej' : n.includes('hpl') ? 'hpl'
+      : n.includes('oriental') ? 'occl' : 'std';
+    pKeyId[key] = rows[0].id;
+  }
+
+  // which principal each category belongs to
+  const catPrincipal = (name) => {
+    const n = name.toLowerCase();
+    if (n.includes('hpl')) return pKeyId.hpl;
+    if (n.includes('occl')) return pKeyId.occl;
+    if (n.includes('std')) return pKeyId.std;
+    return pKeyId.godrej; // fatty alcohols/acids, surfactants, glycerine, oleo derivatives
+  };
+
   // categories
   const catId = {};
   for (let i = 0; i < categories.length; i++) {
     const c = categories[i];
     const { rows } = await query(
-      `INSERT INTO categories (slug, name, tagline, description, image_url, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-      [slug(c.name), c.name, c.tagline, c.description, c.image, i]
+      `INSERT INTO categories (slug, name, principal_id, tagline, description, image_url, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+      [slug(c.name), c.name, catPrincipal(c.name), c.tagline, c.description, c.image, i]
     );
     catId[c.name] = { id: rows[0].id, image: c.image };
   }
@@ -186,16 +210,6 @@ export async function run(closePool = true) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
       [cat.id, slug(p.n) + '-' + (++pi), p.n, p.desc, p.cas || '', p.grade || '',
        p.pack || '', cat.image, pi]
-    );
-  }
-
-  // principals
-  for (let i = 0; i < principals.length; i++) {
-    const p = principals[i];
-    await query(
-      `INSERT INTO principals (slug, name, description, logo_url, website, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6)`,
-      [slug(p.name), p.name, p.desc, p.logo, p.website, i]
     );
   }
 

@@ -14,10 +14,10 @@ const productLinks = [
 ];
 
 const principalLinks = [
-  ['Godrej Industries Limited', '/about'],
-  ['HPL Additives Limited', '/about'],
-  ['Oriental Carbon & Chemicals', '/about'],
-  ['The Standard Chemicals Co.', '/about'],
+  ['Godrej Industries Limited', '/principals/godrej-industries-limited'],
+  ['HPL Additives Limited', '/principals/hpl-additives-limited'],
+  ['Oriental Carbon & Chemicals', '/principals/oriental-carbon-and-chemicals-limited'],
+  ['The Standard Chemicals Co.', '/principals/the-standard-chemicals-co-pvt-ltd'],
 ];
 
 export default function Navbar({ settings }) {

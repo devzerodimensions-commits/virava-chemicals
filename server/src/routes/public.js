@@ -56,6 +56,25 @@ router.get('/principals', async (_req, res) => {
   res.json(rows);
 });
 
+router.get('/principals/:slug', async (req, res) => {
+  const pr = await query('SELECT * FROM principals WHERE slug = $1', [req.params.slug]);
+  if (!pr.rows[0]) return res.status(404).json({ error: 'Principal not found' });
+  const principal = pr.rows[0];
+  const cats = await query(
+    'SELECT * FROM categories WHERE principal_id = $1 AND is_active = true ORDER BY sort_order, name',
+    [principal.id]
+  );
+  const categories = [];
+  for (const c of cats.rows) {
+    const prods = await query(
+      'SELECT * FROM products WHERE category_id = $1 AND is_active = true ORDER BY sort_order, name',
+      [c.id]
+    );
+    categories.push({ ...c, products: prods.rows });
+  }
+  res.json({ ...principal, categories });
+});
+
 router.get('/industries', async (_req, res) => {
   const { rows } = await query(
     'SELECT * FROM industries WHERE is_active = true ORDER BY sort_order, name'
