@@ -53,6 +53,10 @@
   font-family: var(--head); font-weight: 500; transition: all .18s;
 }
 .drop a:hover { background: var(--bg-navy-soft); color: var(--navy); padding-left: 18px; }
+.drop-wide { min-width: 310px; }
+.drop-item { display: flex; align-items: center; gap: 11px; }
+.drop-item:hover { padding-left: 14px; }
+.drop-logo { width: 34px; height: 24px; object-fit: contain; flex-shrink: 0; background: #fff; border-radius: 4px; }
 
 /* Burger */
 .burger { display: none; margin-left: auto; background: none; border: 0; cursor: pointer; width: 30px; height: 24px; position: relative; }

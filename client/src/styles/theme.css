@@ -89,9 +89,11 @@ ul { margin: 0; padding: 0; list-style: none; }
 .btn-ghost-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.4); }
 .btn-ghost-light:hover { background: #fff; color: var(--navy); }
 
-/* --- reveal on scroll --- */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.in { opacity: 1; transform: none; }
+/* --- entrance animation (pure CSS; NO fill-mode so base opacity stays 1 —
+   content is ALWAYS visible even if the animation never runs) --- */
+.reveal { animation: revealIn .7s ease; }
+@keyframes revealIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .reveal { animation: none; } }
 
 /* --- generic card --- */
 .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
