@@ -25,9 +25,10 @@ export default function PrincipalDetail() {
   const [data, setData] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
+  const [tab, setTab] = useState(0);
 
   useEffect(() => {
-    setData(null); setNotFound(false);
+    setData(null); setNotFound(false); setTab(0);
     api.get(`/principals/${slug}`).then((r) => setData(r.data)).catch(() => setNotFound(true));
   }, [slug]);
 
@@ -75,35 +76,42 @@ export default function PrincipalDetail() {
             <div className="center reveal">
               <span className="eyebrow">{portfolioLabel(data.name)}</span>
               <h2 className="section-title">Complete <span className="serif">product</span> portfolio</h2>
-              <p className="section-intro">The full range of products we supply from {data.name} — with grades and specifications.</p>
+              <p className="section-intro">Select a category to view its products, grades and specifications.</p>
             </div>
 
-            {cats.map((cat) => (
-              <div className="portfolio-cat reveal" key={cat.id}>
-                <div className="portfolio-cat-head">
-                  <h3>{cat.name}</h3>
-                  {cat.tagline && <span>{cat.tagline}</span>}
-                </div>
-                {cat.products?.length ? (
-                  <div className="portfolio-grid">
-                    {cat.products.map((p) => (
-                      <div className="portfolio-product" key={p.id}>
-                        <h4>{p.name}</h4>
-                        <p>{p.description}</p>
-                        <div className="pp-meta">
-                          {p.cas_no && <span>CAS: {p.cas_no}</span>}
-                          {p.grade && <span>{p.grade}</span>}
-                          {p.packaging && <span>{p.packaging}</span>}
+            {/* horizontal tabs */}
+            <div className="pf-tabs reveal">
+              {cats.map((c, i) => (
+                <button key={c.id} className={`pf-tab ${i === tab ? 'on' : ''}`} onClick={() => setTab(i)}>
+                  {c.name}
+                </button>
+              ))}
+            </div>
+
+            {/* active category panel: image + products */}
+            {cats[tab] && (
+              <div className="pf-panel reveal" key={cats[tab].id}>
+                <div className="pf-img"><img src={cats[tab].image_url} alt={cats[tab].name} /></div>
+                <div className="pf-body">
+                  <h3>{cats[tab].name}</h3>
+                  {cats[tab].tagline && <span className="pf-tag">{cats[tab].tagline}</span>}
+                  <p>{cats[tab].description}</p>
+                  <div className="pf-products">
+                    {cats[tab].products?.map((p) => (
+                      <div className="pf-product" key={p.id}>
+                        <div className="pf-product-info">
+                          <strong>{p.name}</strong>
+                          <span className="pf-meta">
+                            {[p.cas_no && `CAS: ${p.cas_no}`, p.grade, p.packaging].filter(Boolean).join(' · ')}
+                          </span>
                         </div>
                         <button className="btn-enquire" onClick={() => setEnquiry(p)}>Enquire</button>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <p><Link to={`/products/${cat.slug}`} className="cat-link">View {cat.name} →</Link></p>
-                )}
+                </div>
               </div>
-            ))}
+            )}
           </div>
         </section>
       )}
