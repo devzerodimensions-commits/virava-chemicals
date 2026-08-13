@@ -37,4 +37,4 @@ services:
         value: "Virava@2026"
       # Client build flag: "false" = full website live, "true" = home page only
       - key: VITE_HOME_ONLY
-        value: "true"
+        value: "false"
