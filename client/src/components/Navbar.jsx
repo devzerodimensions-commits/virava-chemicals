@@ -13,6 +13,13 @@ const productLinks = [
   ['STD Products', '/products/std-products'],
 ];
 
+const principalLinks = [
+  ['Godrej Industries Limited', '/about'],
+  ['HPL Additives Limited', '/about'],
+  ['Oriental Carbon & Chemicals', '/about'],
+  ['The Standard Chemicals Co.', '/about'],
+];
+
 export default function Navbar({ settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -60,6 +67,14 @@ export default function Navbar({ settings }) {
               <div className="drop">
                 {productLinks.map(([label, to]) => (
                   <Link key={to} to={to}>{label}</Link>
+                ))}
+              </div>
+            </div>
+            <div className="has-drop">
+              <NavLink to="/about">Principals <span className="caret">▾</span></NavLink>
+              <div className="drop">
+                {principalLinks.map(([label, to]) => (
+                  <Link key={label} to={to}>{label}</Link>
                 ))}
               </div>
             </div>
