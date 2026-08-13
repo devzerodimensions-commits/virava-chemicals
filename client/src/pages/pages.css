@@ -111,6 +111,26 @@
 .pf-product strong { display: block; color: var(--navy); font-family: var(--head); font-size: .98rem; }
 .pf-meta { display: block; color: var(--muted); font-size: .78rem; margin-top: 3px; }
 @media (max-width: 820px) { .pf-panel { grid-template-columns: 1fr; } .pf-img { min-height: 200px; } }
+.pf-product { cursor: pointer; }
+.pf-arrow { color: var(--muted); font-size: 1.5rem; line-height: 1; flex-shrink: 0; transition: .2s; }
+.pf-product:hover .pf-arrow { color: var(--red); transform: translateX(3px); }
+
+/* product detail modal */
+.product-modal { background: #fff; border-radius: 16px; width: min(680px, 100%); max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); position: relative; animation: pop .25s ease; }
+.pm-img { height: 220px; overflow: hidden; border-radius: 16px 16px 0 0; }
+.pm-img img { width: 100%; height: 100%; object-fit: cover; }
+.pm-body { padding: 26px 30px 30px; }
+.pm-cat { font-family: var(--head); font-weight: 700; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.product-modal h2 { color: var(--navy); font-size: 1.5rem; margin: 6px 0 12px; padding-right: 24px; }
+.pm-desc { color: var(--body); line-height: 1.7; margin-bottom: 22px; }
+.pm-section { margin-bottom: 22px; }
+.pm-section h3 { color: var(--navy); font-size: 1.05rem; margin-bottom: 10px; }
+.pm-specs { width: 100%; border-collapse: collapse; }
+.pm-specs th { text-align: left; width: 42%; padding: 10px 12px; background: var(--bg-soft); color: var(--body); font-family: var(--head); font-weight: 600; font-size: .85rem; border: 1px solid var(--line); }
+.pm-specs td { padding: 10px 12px; color: var(--ink); font-size: .9rem; border: 1px solid var(--line); }
+.pm-apps { display: flex; flex-wrap: wrap; gap: 8px; }
+.pm-apps span { background: var(--bg-navy-soft); color: var(--navy); font-family: var(--head); font-weight: 600; font-size: .8rem; padding: 6px 14px; border-radius: 999px; }
+.product-modal .btn-primary { justify-content: center; width: 100%; margin-top: 6px; }
 
 /* ---- Blog detail ---- */
 .blog-detail { max-width: 820px; margin: 0 auto; }
