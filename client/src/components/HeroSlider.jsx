@@ -40,7 +40,7 @@ export default function HeroSlider({ items = [] }) {
           <span className="eyebrow" style={{ color: '#cccccc' }}>
             Exclusive Distributor · 0{active + 1} / 0{items.length || 4}
           </span>
-          <h1>{cur ? cur.name : 'Your Trusted Partner in Industrial Chemicals'}</h1>
+          <h2 className="hero-title">{cur ? cur.name : 'Your Trusted Partner in Industrial Chemicals'}</h2>
           <p>{cur ? cur.description : 'Exclusive distributors of quality oleo & specialty chemicals for 20+ industries across India.'}</p>
           <div className="hero-btns">
             <Link to="/products" className="btn btn-primary">View Products <span>→</span></Link>

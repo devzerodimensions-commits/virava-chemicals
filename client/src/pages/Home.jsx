@@ -27,6 +27,22 @@ export default function Home() {
 
   return (
     <>
+      {/* ---------------- INTRO (before the slider) ---------------- */}
+      <section className="intro-band">
+        <div className="container">
+          <span className="eyebrow">Virava Chemicals · Since {settings.established || '1997'}</span>
+          <h1 className="intro-title">Your trusted partner in <span className="serif">industrial chemicals</span></h1>
+          <p className="intro-text">
+            {settings.about_full ||
+              'Virava Chemicals is a closely held partnership firm and an agency house serving the industrial world of India with quality oleo and specialty chemicals for more than five decades. As the exclusive distributors of Godrej Industries Ltd and other reputed manufacturers, we supply fatty alcohols, fatty acids, surfactants, glycerine and specialty chemicals to 20+ industries.'}
+          </p>
+          <div className="intro-cta">
+            <Link to="/about" className="btn btn-navy">Learn More <span>→</span></Link>
+            <Link to="/contact" className="btn btn-outline">Enquire Now</Link>
+          </div>
+        </div>
+      </section>
+
       {/* ---------------- HERO SLIDER (one slide per principal) ---------------- */}
       <HeroSlider items={principals} />
 
