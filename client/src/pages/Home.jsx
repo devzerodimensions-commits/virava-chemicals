@@ -98,18 +98,19 @@ export default function Home() {
       </section>
 
       {/* ---------------- PRINCIPALS ---------------- */}
-      <section className="section principals-sec">
+      <section className="section section-soft principals-sec">
         <div className="container">
           <div className="center reveal">
-            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
-            <h2 className="section-title" style={{ color: '#fff' }}>We are the exclusive <span className="serif">distributors</span> of</h2>
+            <span className="eyebrow">Our Principals</span>
+            <h2 className="section-title">We are the exclusive <span className="serif">distributors</span> of</h2>
+            <p className="section-intro">The country's most reputed manufacturers whom we proudly represent across India.</p>
           </div>
-          <div className="principals-grid">
+          <div className="principals-list">
             {principals.map((p, i) => (
-              <div className="principal-card reveal" key={p.id}>
-                <div className="principal-logo"><img src={p.logo_url} alt={p.name} /></div>
-                <div className="principal-body">
-                  <span className="principal-num">Principal 0{i + 1}</span>
+              <div className="principal-row reveal" key={p.id}>
+                <div className="pr-logo"><img src={p.logo_url} alt={p.name} /></div>
+                <div className="pr-info">
+                  <span className="pr-num">Principal 0{i + 1}</span>
                   <h3>{p.name}</h3>
                   <p>{p.description}</p>
                 </div>
