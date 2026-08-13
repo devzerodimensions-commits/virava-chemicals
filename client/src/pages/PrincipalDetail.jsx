@@ -11,11 +11,20 @@ const APPLICATIONS = [
   'Paints & Coatings', 'Lubricants', 'Textiles', 'Food Products', 'Agrochemicals',
 ];
 
+function portfolioLabel(name = '') {
+  const n = name.toLowerCase();
+  if (n.includes('godrej')) return 'Oleochemicals Portfolio';
+  if (n.includes('hpl')) return 'Additives Portfolio';
+  if (n.includes('oriental') || n.includes('occl')) return 'Insoluble Sulphur Portfolio';
+  if (n.includes('standard')) return 'Specialty Chemicals Portfolio';
+  return 'Product Portfolio';
+}
+
 export default function PrincipalDetail() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const [enquiry, setEnquiry] = useState(false);
+  const [enquiry, setEnquiry] = useState(null);
 
   useEffect(() => {
     setData(null); setNotFound(false);
@@ -35,7 +44,6 @@ export default function PrincipalDetail() {
   const cats = data.categories || [];
   const totalProducts = cats.reduce((s, c) => s + (c.products?.length || 0), 0);
   const headerImg = cats[0]?.image_url || '/img/banner3.jpg';
-  const shortName = data.name.split(' ')[0];
 
   return (
     <>
@@ -56,37 +64,46 @@ export default function PrincipalDetail() {
               <div><b>{totalProducts}+</b><span>Products</span></div>
               <div><b>20+</b><span>Industries Served</span></div>
             </div>
-            {data.website && (
-              <a href={data.website} target="_blank" rel="noreferrer" className="btn btn-outline">Visit Website →</a>
-            )}
           </div>
         </div>
       </section>
 
-      {/* Product solutions */}
+      {/* Portfolio (categories + products) */}
       {cats.length > 0 && (
         <section className="section section-soft">
           <div className="container">
             <div className="center reveal">
-              <span className="eyebrow">Products & Solutions</span>
-              <h2 className="section-title">The <span className="serif">{shortName}</span> product range</h2>
-              <p className="section-intro">Explore the product categories we supply from {data.name}. Click any category for grades, specifications and enquiry.</p>
+              <span className="eyebrow">{portfolioLabel(data.name)}</span>
+              <h2 className="section-title">Complete <span className="serif">product</span> portfolio</h2>
+              <p className="section-intro">The full range of products we supply from {data.name} — with grades and specifications.</p>
             </div>
-            <div className="prod-cat-grid">
-              {cats.map((cat) => (
-                <Link to={`/products/${cat.slug}`} className="prod-cat-card reveal" key={cat.id}>
-                  <div className="pcc-img">
-                    <img src={cat.image_url} alt={cat.name} />
-                    {cat.tagline && <span className="pcc-tag">{cat.tagline}</span>}
+
+            {cats.map((cat) => (
+              <div className="portfolio-cat reveal" key={cat.id}>
+                <div className="portfolio-cat-head">
+                  <h3>{cat.name}</h3>
+                  {cat.tagline && <span>{cat.tagline}</span>}
+                </div>
+                {cat.products?.length ? (
+                  <div className="portfolio-grid">
+                    {cat.products.map((p) => (
+                      <div className="portfolio-product" key={p.id}>
+                        <h4>{p.name}</h4>
+                        <p>{p.description}</p>
+                        <div className="pp-meta">
+                          {p.cas_no && <span>CAS: {p.cas_no}</span>}
+                          {p.grade && <span>{p.grade}</span>}
+                          {p.packaging && <span>{p.packaging}</span>}
+                        </div>
+                        <button className="btn-enquire" onClick={() => setEnquiry(p)}>Enquire</button>
+                      </div>
+                    ))}
                   </div>
-                  <div className="pcc-body">
-                    <h3>{cat.name}</h3>
-                    <p>{cat.description}</p>
-                    <span className="cat-link">{cat.products?.length || 0} products →</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                ) : (
+                  <p><Link to={`/products/${cat.slug}`} className="cat-link">View {cat.name} →</Link></p>
+                )}
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -111,12 +128,14 @@ export default function PrincipalDetail() {
               <h3>Interested in {data.name} products?</h3>
               <p>Get specifications, samples and pricing from our team.</p>
             </div>
-            <button className="btn btn-primary" onClick={() => setEnquiry(true)}>Request a Quote <span>→</span></button>
+            <button className="btn btn-primary" onClick={() => setEnquiry({ name: '' })}>Request a Quote <span>→</span></button>
           </div>
         </div>
       </section>
 
-      {enquiry && <EnquiryModal category={data.name} onClose={() => setEnquiry(false)} />}
+      {enquiry && (
+        <EnquiryModal product={enquiry.id ? enquiry : null} category={data.name} onClose={() => setEnquiry(null)} />
+      )}
     </>
   );
 }
