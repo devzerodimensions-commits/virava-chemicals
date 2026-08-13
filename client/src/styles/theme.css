@@ -31,9 +31,10 @@
   --shadow: 0 12px 34px rgba(0, 0, 0, 0.10);
   --shadow-lg: 0 22px 60px rgba(0, 0, 0, 0.16);
 
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --head: 'Poppins', 'Inter', sans-serif;
-  --serif: 'Playfair Display', Georgia, serif;
+  /* Godrej-style humanist sans (GI Sans / Godrej Sans is proprietary; Source Sans is the closest free match) */
+  --sans: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+  --head: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+  --serif: 'Source Sans 3', system-ui, sans-serif;
 
   --container: 1200px;
 }
