@@ -107,15 +107,14 @@ export default function Home() {
           </div>
           <div className="principals-list">
             {principals.map((p, i) => (
-              <Link to={`/principals/${p.slug}`} className="principal-row reveal" key={p.id}>
+              <div className="principal-row reveal" key={p.id}>
                 <div className="pr-logo"><img src={p.logo_url} alt={p.name} /></div>
                 <div className="pr-info">
                   <span className="pr-num">Principal 0{i + 1}</span>
                   <h3>{p.name}</h3>
                   <p>{p.description}</p>
-                  <span className="cat-link">View details →</span>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

@@ -10,7 +10,6 @@ import CategoryDetail from './pages/CategoryDetail.jsx';
 import Industries from './pages/Industries.jsx';
 import Contact from './pages/Contact.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
-import PrincipalDetail from './pages/PrincipalDetail.jsx';
 
 import AdminLogin from './admin/Login.jsx';
 import AdminLayout from './admin/AdminLayout.jsx';
@@ -60,7 +59,6 @@ export default function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:slug" element={<CategoryDetail />} />
         <Route path="/industries" element={<Industries />} />
-        <Route path="/principals/:slug" element={<PrincipalDetail />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />
       </Route>

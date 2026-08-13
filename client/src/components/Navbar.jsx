@@ -14,10 +14,10 @@ const productLinks = [
 ];
 
 const principalLinks = [
-  ['Godrej Industries Limited', '/principals/godrej-industries-limited'],
-  ['HPL Additives Limited', '/principals/hpl-additives-limited'],
-  ['Oriental Carbon & Chemicals', '/principals/oriental-carbon-and-chemicals-limited'],
-  ['The Standard Chemicals Co.', '/principals/the-standard-chemicals-co-pvt-ltd'],
+  ['Godrej Industries Limited', '/about'],
+  ['HPL Additives Limited', '/about'],
+  ['Oriental Carbon & Chemicals', '/about'],
+  ['The Standard Chemicals Co.', '/about'],
 ];
 
 export default function Navbar({ settings }) {
@@ -62,14 +62,6 @@ export default function Navbar({ settings }) {
           <nav className={`menu ${open ? 'menu-open' : ''}`}>
             <NavLink to="/" end>Home</NavLink>
             <NavLink to="/about">About Us</NavLink>
-            <div className="has-drop">
-              <NavLink to="/products">Products <span className="caret">▾</span></NavLink>
-              <div className="drop">
-                {productLinks.map(([label, to]) => (
-                  <Link key={to} to={to}>{label}</Link>
-                ))}
-              </div>
-            </div>
             <div className="has-drop">
               <NavLink to="/about">Principals <span className="caret">▾</span></NavLink>
               <div className="drop">
