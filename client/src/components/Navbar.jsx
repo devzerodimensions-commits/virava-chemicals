@@ -14,10 +14,10 @@ const productLinks = [
 ];
 
 const principalLinks = [
-  ['Godrej Industries Limited', '/about', '/img/partners/logo1.png'],
-  ['HPL Additives Limited', '/about', '/img/partners/logo2.png'],
-  ['Oriental Carbon & Chemicals', '/about', '/img/partners/logo3.png'],
-  ['The Standard Chemicals Co.', '/about', '/img/partners/logo4.png'],
+  ['Godrej Industries Limited', '/#principals', '/img/partners/logo1.png'],
+  ['HPL Additives Limited', '/#principals', '/img/partners/logo2.png'],
+  ['Oriental Carbon & Chemicals', '/#principals', '/img/partners/logo3.png'],
+  ['The Standard Chemicals Co.', '/#principals', '/img/partners/logo4.png'],
 ];
 
 export default function Navbar({ settings }) {
@@ -63,7 +63,7 @@ export default function Navbar({ settings }) {
             <NavLink to="/" end>Home</NavLink>
             <NavLink to="/about">About Us</NavLink>
             <div className="has-drop">
-              <Link to="/about">Principals <span className="caret">▾</span></Link>
+              <Link to="/#principals">Principals <span className="caret">▾</span></Link>
               <div className="drop drop-wide">
                 {principalLinks.map(([label, to, logo]) => (
                   <Link key={label} to={to} className="drop-item">

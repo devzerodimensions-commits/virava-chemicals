@@ -41,8 +41,19 @@ export function useReveal(deps = []) {
   }, deps);
 }
 
-// Scroll to top on route change
+// Scroll to top on route change, or to a #hash section if present
 export function useScrollTop() {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) {
+      const go = () => {
+        const el = document.getElementById(hash.slice(1));
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      go();
+      const t = setTimeout(go, 350); // retry after async content settles
+      return () => clearTimeout(t);
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
 }

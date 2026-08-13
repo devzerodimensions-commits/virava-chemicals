@@ -114,7 +114,7 @@ export default function Home() {
       </section>
 
       {/* ---------------- PRINCIPALS ---------------- */}
-      <section className="section section-soft principals-sec">
+      <section className="section section-soft principals-sec" id="principals">
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Principals</span>
