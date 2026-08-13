@@ -105,11 +105,14 @@ export default function Home() {
             <h2 className="section-title" style={{ color: '#fff' }}>We are the exclusive <span className="serif">distributors</span> of</h2>
           </div>
           <div className="principals-grid">
-            {principals.map((p) => (
+            {principals.map((p, i) => (
               <div className="principal-card reveal" key={p.id}>
                 <div className="principal-logo"><img src={p.logo_url} alt={p.name} /></div>
-                <h3>{p.name}</h3>
-                <p>{p.description}</p>
+                <div className="principal-body">
+                  <span className="principal-num">Principal 0{i + 1}</span>
+                  <h3>{p.name}</h3>
+                  <p>{p.description}</p>
+                </div>
               </div>
             ))}
           </div>
