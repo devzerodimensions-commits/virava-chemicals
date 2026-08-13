@@ -63,7 +63,7 @@ export default function Navbar({ settings }) {
             <NavLink to="/" end>Home</NavLink>
             <NavLink to="/about">About Us</NavLink>
             <div className="has-drop">
-              <NavLink to="/about">Principals <span className="caret">▾</span></NavLink>
+              <Link to="/about">Principals <span className="caret">▾</span></Link>
               <div className="drop">
                 {principalLinks.map(([label, to]) => (
                   <Link key={label} to={to}>{label}</Link>
