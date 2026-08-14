@@ -4,17 +4,23 @@ import { pool, query } from '../src/db.js';
 
 dotenv.config();
 
-const slug = (s) =>
+export const slug = (s) =>
   s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 // ---------------------------------------------------------------- categories
-const categories = [
+export const categories = [
   { name: 'Fatty Alcohols', tagline: 'C8–C18 natural & synthetic alcohols',
     image: '/img/pro1.jpg',
     description: 'Natural and synthetic fatty alcohols used as emollients, emulsifiers and intermediates across personal care, detergents and industrial applications.' },
   { name: 'Fatty Acids', tagline: 'Distilled & fractionated acids',
     image: '/img/pro2.jpg',
     description: 'A complete range of saturated and unsaturated fatty acids for rubber, plastics, cosmetics, candles and lubricant industries.' },
+  { name: 'Stearic Acids', tagline: 'Triple-pressed & specialty grades',
+    image: '/img/banner1.jpg',
+    description: 'Saturated long-chain fatty acids that are a prominent component in the manufacture of cosmetics, detergents and lubricants, as well as numerous industrial applications.' },
+  { name: 'Oleic Acids', tagline: 'Distilled unsaturated grades',
+    image: '/img/banner2.jpg',
+    description: 'Distilled oleic acid grades used in lubricants, textile auxiliaries, soaps, intermediates and a broad range of industrial formulations.' },
   { name: 'Surfactants', tagline: 'Anionic, non-ionic & amphoteric',
     image: '/img/pro3.jpg',
     description: 'High-performance surfactants for detergents, personal care, textiles and industrial cleaning formulations.' },
@@ -37,13 +43,18 @@ const categories = [
 
 // ---------------------------------------------------------------- products
 // { c: category name, n: name, cas, grade, pack, desc }
-const products = [
+export const products = [
   // Fatty Alcohols
   { c: 'Fatty Alcohols', n: 'Lauryl Alcohol (C12)', cas: '112-53-8', grade: 'Cosmetic / Technical', pack: '160 kg drums', desc: 'C12 fatty alcohol used as an emollient and intermediate for surfactant manufacture.' },
   { c: 'Fatty Alcohols', n: 'Cetyl Alcohol (C16)', cas: '36653-82-4', grade: 'IP / Cosmetic', pack: '25 kg bags', desc: 'Waxy C16 alcohol used as a thickener and emollient in creams and lotions.' },
   { c: 'Fatty Alcohols', n: 'Stearyl Alcohol (C18)', cas: '112-92-5', grade: 'IP / Cosmetic', pack: '25 kg bags', desc: 'C18 fatty alcohol used as an emulsion stabiliser and opacifier.' },
   { c: 'Fatty Alcohols', n: 'Cetostearyl Alcohol', cas: '67762-27-0', grade: 'IP / BP', pack: '25 kg bags', desc: 'A blend of cetyl and stearyl alcohols widely used in pharmaceutical and cosmetic emulsions.' },
   { c: 'Fatty Alcohols', n: 'Oleyl Alcohol', cas: '143-28-2', grade: 'Cosmetic', pack: '180 kg drums', desc: 'Unsaturated fatty alcohol used as an emollient and carrier in personal care.' },
+  // Ginol range — Godrej trade names distributed by Virava
+  { c: 'Fatty Alcohols', n: 'Ginol 16 (95%)', cas: '36653-82-4', grade: '95% cetyl', pack: '25 kg bags', desc: 'Cetyl alcohol at 95% purity, used as a thickener, emollient and emulsion stabiliser.' },
+  { c: 'Fatty Alcohols', n: 'Ginol 16 (98%)', cas: '36653-82-4', grade: '98% cetyl', pack: '25 kg bags', desc: 'Higher-purity cetyl alcohol for personal care and pharmaceutical emulsions.' },
+  { c: 'Fatty Alcohols', n: 'Ginol 16 (99%)', cas: '36653-82-4', grade: '99% cetyl', pack: '25 kg bags', desc: 'Premium 99% cetyl alcohol where the tightest purity specification is required.' },
+  { c: 'Fatty Alcohols', n: 'Ginol 1618 (60:40)', cas: '67762-27-0', grade: '60:40 blend', pack: '25 kg bags', desc: 'Cetostearyl alcohol blended 60:40 for consistent emulsification across cosmetic bases.' },
 
   // Fatty Acids
   { c: 'Fatty Acids', n: 'Stearic Acid', cas: '57-11-4', grade: 'Rubber / Cosmetic', pack: '25 kg bags', desc: 'Versatile saturated fatty acid used in rubber, cosmetics, candles and lubricants.' },
@@ -51,6 +62,21 @@ const products = [
   { c: 'Fatty Acids', n: 'Palmitic Acid', cas: '57-10-3', grade: 'Technical', pack: '25 kg bags', desc: 'Saturated C16 fatty acid used in surfactants, cosmetics and candles.' },
   { c: 'Fatty Acids', n: 'Lauric Acid', cas: '143-07-7', grade: 'Technical', pack: '25 kg bags', desc: 'C12 fatty acid used in soaps, detergents and personal care.' },
   { c: 'Fatty Acids', n: 'Distilled Fatty Acid', cas: '', grade: 'Industrial', pack: 'Bulk / drums', desc: 'Distilled vegetable fatty acids for a wide range of industrial applications.' },
+  { c: 'Fatty Acids', n: 'Arachidic Acid 95%', cas: '506-30-9', grade: '95% min', pack: '25 kg bags', desc: 'Long-chain C20 saturated fatty acid used in lubricants, waxes and specialty formulations.' },
+  { c: 'Fatty Acids', n: 'Behenic Acid 85%', cas: '112-85-6', grade: '85% min', pack: '25 kg bags', desc: 'C22 saturated fatty acid used in personal care, lubricants and polymer additives.' },
+  { c: 'Fatty Acids', n: 'Behenic Acid 90%', cas: '112-85-6', grade: '90% min', pack: '25 kg bags', desc: 'Higher-purity behenic acid for demanding cosmetic and industrial applications.' },
+
+  // Stearic Acids — Godrej trade names distributed by Virava
+  { c: 'Stearic Acids', n: 'Hystric — Triple Pressed', cas: '57-11-4', grade: 'Triple pressed', pack: '25 kg bags', desc: 'Triple-pressed stearic acid of high purity for cosmetics, pharmaceuticals and premium rubber compounding.' },
+  { c: 'Stearic Acids', n: 'Textric', cas: '57-11-4', grade: 'Technical', pack: '25 kg bags', desc: 'Technical grade stearic acid widely used in textile auxiliaries, detergents and industrial processing.' },
+  { c: 'Stearic Acids', n: 'Textric SPL', cas: '57-11-4', grade: 'Special', pack: '25 kg bags', desc: 'Special grade stearic acid offering tighter specification for sensitive formulations.' },
+  { c: 'Stearic Acids', n: 'Distric', cas: '57-11-4', grade: 'Distilled', pack: '25 kg bags', desc: 'Distilled stearic acid used in rubber, plastics, candles and lubricant applications.' },
+
+  // Oleic Acids — Godrej trade names distributed by Virava
+  { c: 'Oleic Acids', n: 'Lubolic', cas: '112-80-1', grade: 'Technical', pack: '190 kg drums', desc: 'Distilled oleic acid for lubricants, soaps, textile auxiliaries and chemical intermediates.' },
+  { c: 'Oleic Acids', n: 'Lubolic E', cas: '112-80-1', grade: 'Special', pack: '190 kg drums', desc: 'Enhanced grade oleic acid with improved colour and stability for demanding applications.' },
+  { c: 'Oleic Acids', n: 'Lubolic 15', cas: '112-80-1', grade: 'Low titre', pack: '190 kg drums', desc: 'Low-titre oleic acid grade suited to cold-weather and low-temperature processing.' },
+  { c: 'Oleic Acids', n: 'Lubolic 20', cas: '112-80-1', grade: 'Standard titre', pack: '190 kg drums', desc: 'Standard titre oleic acid used across lubricant, textile and industrial formulations.' },
 
   // Surfactants
   { c: 'Surfactants', n: 'Sodium Lauryl Ether Sulphate (SLES)', cas: '9004-82-4', grade: '70% / 28%', pack: '220 kg drums', desc: 'Primary anionic surfactant for shampoos, hand-wash and liquid detergents.' },
@@ -62,6 +88,11 @@ const products = [
   { c: 'Glycerine', n: 'Refined Glycerine IP', cas: '56-81-5', grade: '99.5% IP', pack: '250 kg drums', desc: 'Pharmaceutical grade refined glycerine for pharma, food and cosmetic use.' },
   { c: 'Glycerine', n: 'Refined Glycerine USP/BP', cas: '56-81-5', grade: '99.7% USP/BP', pack: '250 kg drums', desc: 'High purity glycerine meeting USP and BP pharmacopoeia standards.' },
   { c: 'Glycerine', n: 'Technical Glycerine', cas: '56-81-5', grade: 'Technical', pack: '250 kg drums', desc: 'Industrial grade glycerine for technical and manufacturing applications.' },
+  // Pharmacopoeial grades — Godrej trade names distributed by Virava
+  { c: 'Glycerine', n: 'Glycerin BP', cas: '56-81-5', grade: 'BP', pack: '250 kg drums', desc: 'Vegetable glycerine meeting British Pharmacopoeia specification for pharma and personal care.' },
+  { c: 'Glycerine', n: 'Glycerin EP', cas: '56-81-5', grade: 'EP', pack: '250 kg drums', desc: 'European Pharmacopoeia grade glycerine for regulated pharmaceutical formulations.' },
+  { c: 'Glycerine', n: 'Glycerin CP', cas: '56-81-5', grade: 'CP', pack: '250 kg drums', desc: 'Chemically pure glycerine for food, cosmetic and fine-chemical applications.' },
+  { c: 'Glycerine', n: 'Glycerin IP', cas: '56-81-5', grade: 'IP', pack: '250 kg drums', desc: 'Indian Pharmacopoeia grade glycerine for domestic pharmaceutical manufacture.' },
 
   // Oleo Derivatives
   { c: 'Oleo Derivatives & Specialty Chemicals', n: 'Glyceryl Monostearate (GMS)', cas: '31566-31-1', grade: 'SE / Non-SE', pack: '25 kg bags', desc: 'Emulsifier and stabiliser for food, cosmetics and plastics.' },
