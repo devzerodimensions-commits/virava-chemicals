@@ -15,7 +15,7 @@
 .lb-mark img { height: 42px; display: block; }
 .lb-text { display: flex; flex-direction: column; line-height: 1.02; text-align: left; }
 .lb-text b { font-family: var(--head); font-weight: 800; font-size: 1.4rem; color: var(--navy); }
-.lb-text i { font-style: normal; font-family: var(--head); font-weight: 600; font-size: .62rem; letter-spacing: .34em; color: var(--red); }
+.lb-text i { font-style: normal; font-family: var(--head); font-weight: 700; font-size: .62rem; letter-spacing: .34em; color: #d81f26; }
 .login-card h1 { color: var(--navy); font-size: 1.5rem; margin-bottom: 4px; }
 .login-sub { color: var(--muted); font-size: .9rem; margin-bottom: 26px; }
 .login-form { display: grid; gap: 6px; text-align: left; }
@@ -38,7 +38,7 @@
 .ab-mark img { height: 30px; display: block; }
 .ab-text { display: flex; flex-direction: column; line-height: 1.02; }
 .ab-text b { font-family: var(--head); font-weight: 800; font-size: 1.2rem; color: #fff; }
-.ab-text i { font-style: normal; font-family: var(--head); font-weight: 600; font-size: .58rem; letter-spacing: .3em; color: var(--gold); }
+.ab-text i { font-style: normal; font-family: var(--head); font-weight: 700; font-size: .58rem; letter-spacing: .3em; color: #ee3b41; }
 .admin-nav { padding: 16px 12px; display: grid; gap: 4px; flex: 1; overflow-y: auto; }
 .admin-nav a {
   display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px;

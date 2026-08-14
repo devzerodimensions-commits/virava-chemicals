@@ -17,8 +17,8 @@
 .brand { display: flex; align-items: center; gap: 11px; }
 .brand-mark { height: 42px; width: auto; }
 .brand-lockup { display: flex; flex-direction: column; line-height: 1.02; }
-.brand-name { font-family: var(--head); font-weight: 800; font-size: 1.5rem; color: var(--navy); letter-spacing: .005em; }
-.brand-tag { font-family: var(--head); font-weight: 600; font-size: .66rem; letter-spacing: .38em; color: var(--red); }
+.brand-name { font-family: var(--head); font-weight: 800; font-size: 1.55rem; color: #161616; letter-spacing: -.01em; }
+.brand-tag { font-family: var(--head); font-weight: 700; font-size: .66rem; letter-spacing: .34em; color: #d81f26; }
 @media (max-width: 420px) { .brand-name { font-size: 1.25rem; } .brand-mark { height: 36px; } .brand-tag { letter-spacing: .3em; font-size: .6rem; } }
 
 .menu { margin-left: auto; display: flex; align-items: center; gap: 30px; }
