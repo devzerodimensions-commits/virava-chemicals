@@ -33,6 +33,54 @@ async function migrate() {
   }
 
   await syncGodrejCatalogue();
+  await fixCategoryImages();
+}
+
+// The original seed pointed every category at /img/pro1-4.jpg, which are the four
+// PRINCIPAL LOGOS (Godrej, HPL, OCCL, SCC) — not product photography. Categories
+// added later reused the generic site banners. Repoint them at the purpose-made
+// per-category images.
+//
+// Only rows still holding one of those known defaults are touched, so a picture an
+// admin has already chosen is never overwritten. One-shot, like the catalogue sync.
+async function fixCategoryImages() {
+  const KEY = 'migration_category_images';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const STALE = [
+    '/img/pro1.jpg', '/img/pro2.jpg', '/img/pro3.jpg', '/img/pro4.jpg',
+    '/img/banner1.jpg', '/img/banner2.jpg', '/img/banner3.jpg', '/img/about.jpg',
+    '/img/industries/2.jpg', '/img/industries/15.jpg', '',
+  ];
+
+  let cats = 0, prods = 0;
+  for (const c of seedCategories) {
+    const image = c.image;
+    if (!image.startsWith('/img/categories/')) continue;
+
+    const upd = await query(
+      'UPDATE categories SET image_url = $1 WHERE slug = $2 AND (image_url = ANY($3) OR image_url IS NULL) RETURNING id',
+      [image, slug(c.name), STALE]
+    );
+    if (!upd.rowCount) continue;
+    cats++;
+
+    // products inherit their category's picture at seed time, so they carry the
+    // same wrong logo — repoint the ones that were never given their own
+    const p = await query(
+      'UPDATE products SET image_url = $1 WHERE category_id = $2 AND (image_url = ANY($3) OR image_url IS NULL)',
+      [image, upd.rows[0].id, STALE]
+    );
+    prods += p.rowCount;
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: category imagery repointed (${cats} categories, ${prods} products).`);
 }
 
 // The Godrej trade-name catalogue (Ginol / Lubolic / Hystric / Textric / Distric /
