@@ -37,6 +37,29 @@ async function migrate() {
   await syncGodrejCatalogue();
   await fixCategoryImages();
   await backfillProductSpecs();
+  await syncGodrejSolutions();
+}
+
+// Godrej splits its range into four product solutions (oleochemicals, surfactants,
+// specialty chemicals, biotech). categories.solution records which one a category
+// belongs to, and the three non-oleochemical solutions brought their own
+// categories and trade names with them.
+async function syncGodrejSolutions() {
+  await query('ALTER TABLE categories ADD COLUMN IF NOT EXISTS solution TEXT');
+
+  // Safe on every boot: only fills a solution that has not been set, so an admin
+  // moving a category between solutions is never undone.
+  for (const c of seedCategories) {
+    if (!c.solution) continue;
+    await query(
+      'UPDATE categories SET solution = $1 WHERE slug = $2 AND solution IS NULL',
+      [c.solution, slug(c.name)]
+    );
+  }
+
+  // The catalogue insert itself is one-shot — syncGodrejCatalogue already claimed
+  // its own marker, so the newly added solution categories need a fresh one.
+  await insertMissingCatalogue('migration_godrej_solutions');
 }
 
 // The product detail page shows a spec table driven by products.specs, which was
@@ -125,7 +148,13 @@ async function fixCategoryImages() {
 // Gated on a one-shot marker rather than running every boot: without it, anything
 // an admin deliberately deletes in the panel would silently reappear on restart.
 async function syncGodrejCatalogue() {
-  const KEY = 'migration_godrej_catalogue';
+  await insertMissingCatalogue('migration_godrej_catalogue');
+}
+
+// Inserts any seed category/product the database does not have yet, then claims
+// `KEY` so it never runs again. Each batch of catalogue additions gets its own
+// key — a spent key must not swallow a later batch.
+async function insertMissingCatalogue(KEY) {
   const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
   if (done.rowCount) return;
 
@@ -148,10 +177,10 @@ async function syncGodrejCatalogue() {
     const s = slug(c.name);
     if (catBySlug.has(s)) continue;
     const { rows } = await query(
-      `INSERT INTO categories (slug, name, principal_id, tagline, description, image_url, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,(SELECT COALESCE(MAX(sort_order),0)+1 FROM categories))
+      `INSERT INTO categories (slug, name, principal_id, solution, tagline, description, image_url, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,(SELECT COALESCE(MAX(sort_order),0)+1 FROM categories))
        RETURNING id, slug, image_url`,
-      [s, c.name, principalFor(c.name), c.tagline, c.description, c.image]
+      [s, c.name, principalFor(c.name), c.solution || null, c.tagline, c.description, c.image]
     );
     catBySlug.set(s, rows[0]);
     addedCats++;
@@ -175,10 +204,11 @@ async function syncGodrejCatalogue() {
 
     await query(
       `INSERT INTO products (category_id, slug, name, description, cas_no, grade, packaging, image_url,
-                             sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,
+                             specs, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,
                (SELECT COALESCE(MAX(sort_order),0)+1 FROM products WHERE category_id = $1))`,
-      [cat.id, s, p.n, p.desc, p.cas || '', p.grade || '', p.pack || '', cat.image_url || '']
+      [cat.id, s, p.n, p.desc, p.cas || '', p.grade || '', p.pack || '', cat.image_url || '',
+       JSON.stringify(specsFor(p))]
     );
     addedProds++;
   }
@@ -188,7 +218,7 @@ async function syncGodrejCatalogue() {
      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
     [KEY, new Date().toISOString()]
   );
-  console.log(`Migration: Godrej catalogue synced (+${addedCats} categories, +${addedProds} products).`);
+  console.log(`Migration ${KEY}: +${addedCats} categories, +${addedProds} products.`);
 }
 
 async function ensure() {

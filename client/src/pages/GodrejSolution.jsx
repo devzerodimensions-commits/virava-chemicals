@@ -1,27 +1,67 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, Navigate } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import EnquiryModal from '../components/EnquiryModal.jsx';
-import './GodrejOleochemicals.css';
+import './GodrejSolution.css';
 
 const SLUG = 'godrej-industries-limited';
+
+/* Godrej divides its range into four product solutions. Each gets this same page,
+   scoped to the categories carrying that `solution` value. */
+export const SOLUTIONS = [
+  {
+    slug: 'oleochemicals', name: 'Oleochemicals',
+    portfolio: 'Oleochemicals Portfolio',
+    image: '/img/categories/glycerine.jpg',
+    title: <>High-purity oleochemicals for <span className="serif">demanding</span> industrial needs</>,
+    lead: 'Renewable fatty acids, fatty alcohols, glycerine and speciality derivatives — engineered for purity, consistency and performance across a wide range of industrial applications.',
+    points: ['Sustainably sourced and bio-based', 'Consistent, batch-to-batch quality', 'Adaptable across diverse industries'],
+  },
+  {
+    slug: 'surfactants', name: 'Surfactants',
+    portfolio: 'Our Surfactants Portfolio',
+    image: '/img/categories/surfactants.jpg',
+    title: <>Surfactants that build <span className="serif">foam</span>, cleaning and mildness</>,
+    lead: 'Anionic and non-ionic surfactants — AOS, SLS, SLES, ALS and KOS — supplied as pastes, liquids, needles and granules for home care, personal care and industrial cleaning.',
+    points: ['High foam and reliable detergency', 'Liquid, paste, needle and granule forms', 'Home care, personal care and industrial cleaning'],
+  },
+  {
+    slug: 'specialty-chemicals', name: 'Specialty Chemicals',
+    portfolio: 'Our Specialities Portfolio',
+    image: '/img/categories/oleo-derivatives.jpg',
+    title: <>Speciality chemistry for <span className="serif">formulation</span> performance</>,
+    lead: 'Conditioning systems, emulsifiers, esters and emollients, ethoxylates, food emulsifiers, performance additives and preservatives for personal care, home care and food.',
+    points: ['Conditioning, emulsification and sensory control', 'Food-grade and personal-care grades', 'Preservation and microbial control'],
+  },
+  {
+    slug: 'biotech', name: 'Biotech',
+    portfolio: 'Biosurfactants Portfolio',
+    image: '/img/categories/biotech.jpg',
+    title: <>Fermentation-derived <span className="serif">biosurfactants</span></>,
+    lead: 'Sophorolipid biosurfactants produced by fermentation — readily biodegradable, bio-based alternatives for home and personal care formulations.',
+    points: ['Bio-based and readily biodegradable', 'Produced by fermentation', 'Home care and personal care'],
+  },
+];
 
 // Order the portfolio the way Godrej groups it, rather than by the generic
 // category sort_order. Anything not listed falls in afterwards, alphabetically.
 const CATEGORY_ORDER = [
-  'glycerine', 'stearic-acids', 'fatty-acids', 'oleic-acids',
-  'fatty-alcohols', 'surfactants', 'oleo-derivatives-and-specialty-chemicals',
+  'glycerine', 'stearic-acids', 'fatty-acids', 'oleic-acids', 'fatty-alcohols',
+  'alpha-olefin-sulfonate-aos', 'sodium-lauryl-sulphate-sls',
+  'sodium-lauryl-ether-sulphate-sles', 'ammonium-lauryl-sulphate-als',
+  'di-potassium-oleate-sulfonate-kos', 'surfactants',
+  'conditioning-and-care-systems', 'emulsifiers-and-systems', 'esters-and-emollients',
+  'ethoxylates-and-surfactants', 'food-emulsifiers', 'performance-additives',
+  'preservatives-and-antimicrobials', 'oleo-derivatives-and-specialty-chemicals',
+  'sophorolipids',
 ];
 
-const HIGHLIGHTS = [
-  'Sustainably sourced and bio-based',
-  'Consistent, batch-to-batch quality',
-  'Adaptable across diverse industries',
-];
+export default function GodrejSolution() {
+  const { solution: solutionSlug } = useParams();
+  const solution = SOLUTIONS.find((s) => s.slug === solutionSlug);
 
-export default function GodrejOleochemicals() {
   const [data, setData] = useState(null);
   const [industries, setIndustries] = useState([]);
   const [active, setActive] = useState(0);
@@ -33,8 +73,12 @@ export default function GodrejOleochemicals() {
     api.get('/industries').then((r) => setIndustries(r.data)).catch(() => {});
   }, []);
 
+  useEffect(() => { setActive(0); sectionRefs.current = []; }, [solutionSlug]);
+
   const cats = useMemo(() => {
-    const list = (data?.categories || []).filter((c) => (c.products?.length || 0) > 0);
+    const list = (data?.categories || [])
+      .filter((c) => (c.products?.length || 0) > 0)
+      .filter((c) => c.solution === solutionSlug);
     return [...list].sort((a, b) => {
       const ia = CATEGORY_ORDER.indexOf(a.slug), ib = CATEGORY_ORDER.indexOf(b.slug);
       if (ia !== -1 && ib !== -1) return ia - ib;
@@ -42,7 +86,7 @@ export default function GodrejOleochemicals() {
       if (ib !== -1) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [data]);
+  }, [data, solutionSlug]);
 
   useReveal([cats, industries]);
 
@@ -71,6 +115,7 @@ export default function GodrejOleochemicals() {
     window.scrollTo({ top: y, behavior: 'smooth' });
   };
 
+  if (!solution) return <Navigate to={`/principals/${SLUG}/oleochemicals`} replace />;
   if (!data) return <div className="container section center"><p>Loading…</p></div>;
   if (data.error) return (
     <div className="container section center">
@@ -84,8 +129,8 @@ export default function GodrejOleochemicals() {
   return (
     <>
       <PageHeader
-        title="Oleochemicals"
-        image={cats[0]?.image_url || '/img/pro4.jpg'}
+        title={solution.name}
+        image={cats[0]?.image_url || solution.image}
         subtitle="Godrej Industries Limited — distributed across India by Virava Chemicals"
         crumbs={[{ label: 'Principals', to: '/#principals' }, { label: 'Godrej Industries Limited' }]}
       />
@@ -95,19 +140,15 @@ export default function GodrejOleochemicals() {
         <div className="container go-intro-grid">
           <div className="go-intro-side reveal">
             {data.logo_url && <img className="go-logo" src={data.logo_url} alt={data.name} />}
-            <span className="go-kicker">Oleochemicals</span>
+            <span className="go-kicker">{solution.name}</span>
           </div>
           <div className="go-intro-body reveal">
-            <h2 className="go-lead-title">
-              High-purity oleochemicals for <span className="serif">demanding</span> industrial needs
-            </h2>
+            <h2 className="go-lead-title">{solution.title}</h2>
             <p className="go-lead">
-              As exclusive distributors for {data.name}, Virava Chemicals supplies renewable fatty
-              acids, fatty alcohols, glycerine and specialty derivatives — engineered for purity,
-              consistency and performance across a wide range of industrial applications.
+              As exclusive distributors for {data.name}, Virava Chemicals supplies {solution.lead}
             </p>
             <ul className="go-points">
-              {HIGHLIGHTS.map((h) => <li key={h}>{h}</li>)}
+              {solution.points.map((h) => <li key={h}>{h}</li>)}
             </ul>
             <div className="go-figures">
               <div><b>{cats.length}</b><span>Product Categories</span></div>
@@ -119,10 +160,21 @@ export default function GodrejOleochemicals() {
       </section>
 
       {/* ---------------- PORTFOLIO ---------------- */}
-      {cats.length > 0 && (
+      {cats.length === 0 ? (
+        <section className="section section-soft">
+          <div className="container center">
+            <h2 className="go-section-title">{solution.portfolio}</h2>
+            <p className="section-intro">
+              We are building out this part of the range. Contact us for availability, grades and
+              pricing on {solution.name.toLowerCase()} from {data.name}.
+            </p>
+            <Link to="/contact" className="btn btn-primary">Talk to our team <span>→</span></Link>
+          </div>
+        </section>
+      ) : (
         <section className="section section-soft go-portfolio">
           <div className="container">
-            <h2 className="go-section-title">Oleochemicals Portfolio</h2>
+            <h2 className="go-section-title">{solution.portfolio}</h2>
 
             <div className="go-grid">
               {/* sticky category rail */}
@@ -180,7 +232,7 @@ export default function GodrejOleochemicals() {
       {industries.length > 0 && (
         <section className="section">
           <div className="container">
-            <h2 className="go-section-title">Oleochemical Markets</h2>
+            <h2 className="go-section-title">{solution.name} Markets</h2>
             <div className="go-markets">
               {industries.slice(0, 8).map((ind) => (
                 <Link to="/industries" className="go-market reveal" key={ind.id}>
@@ -196,14 +248,14 @@ export default function GodrejOleochemicals() {
         </section>
       )}
 
-      {/* ---------------- OTHER PRINCIPALS ---------------- */}
+      {/* ---------------- OTHER SOLUTIONS ---------------- */}
       <section className="section section-soft">
         <div className="container">
           <h2 className="go-section-title">Other Product Solutions</h2>
           <div className="go-others">
-            <Link to="/principals/hpl-additives-limited" className="go-other">HPL Additives</Link>
-            <Link to="/principals/oriental-carbon-and-chemicals-limited" className="go-other">Oriental Carbon &amp; Chemicals</Link>
-            <Link to="/principals/the-standard-chemicals-co-pvt-ltd" className="go-other">The Standard Chemicals Co.</Link>
+            {SOLUTIONS.filter((s) => s.slug !== solution.slug).map((s) => (
+              <Link key={s.slug} to={`/principals/${SLUG}/${s.slug}`} className="go-other">{s.name}</Link>
+            ))}
             <Link to="/products" className="go-other">All Products</Link>
           </div>
         </div>
@@ -214,7 +266,7 @@ export default function GodrejOleochemicals() {
         <div className="container">
           <div className="cat-cta reveal">
             <div>
-              <h3>Need a Godrej oleochemical grade?</h3>
+              <h3>Need a Godrej {solution.name.toLowerCase()} grade?</h3>
               <p>Get specifications, samples and bulk pricing from our team.</p>
             </div>
             <button className="btn btn-primary" onClick={() => setEnquiry({ name: '' })}>

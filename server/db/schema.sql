@@ -24,6 +24,7 @@ CREATE TABLE categories (
   slug         TEXT UNIQUE NOT NULL,
   name         TEXT NOT NULL,
   principal_id INT DEFAULT NULL,
+  solution    TEXT DEFAULT NULL,   -- Godrej product solution this category sits under
   tagline     TEXT DEFAULT '',
   description TEXT DEFAULT '',
   image_url   TEXT DEFAULT '',

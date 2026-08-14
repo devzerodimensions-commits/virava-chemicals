@@ -13,8 +13,16 @@ const productLinks = [
   ['STD Products', '/products/std-products'],
 ];
 
+const GODREJ = '/principals/godrej-industries-limited';
+
+// Godrej splits into four product solutions; the others go straight to their page.
 const principalLinks = [
-  ['Godrej Industries Limited', '/principals/godrej-industries-limited', '/img/partners/logo1.png'],
+  ['Godrej Industries Limited', `${GODREJ}/oleochemicals`, '/img/partners/logo1.png', [
+    ['Oleochemicals', `${GODREJ}/oleochemicals`],
+    ['Surfactants', `${GODREJ}/surfactants`],
+    ['Specialty Chemicals', `${GODREJ}/specialty-chemicals`],
+    ['Biotech', `${GODREJ}/biotech`],
+  ]],
   ['HPL Additives Limited', '/principals/hpl-additives-limited', '/img/partners/logo2.png'],
   ['Oriental Carbon & Chemicals', '/principals/oriental-carbon-and-chemicals-limited', '/img/partners/logo3.png'],
   ['The Standard Chemicals Co.', '/principals/the-standard-chemicals-co-pvt-ltd', '/img/partners/logo4.png'],
@@ -65,11 +73,21 @@ export default function Navbar({ settings }) {
             <div className="has-drop">
               <Link to="/#principals">Principals <span className="caret">▾</span></Link>
               <div className="drop drop-wide">
-                {principalLinks.map(([label, to, logo]) => (
-                  <Link key={label} to={to} className="drop-item">
-                    <img className="drop-logo" src={logo} alt="" />
-                    <span>{label}</span>
-                  </Link>
+                {principalLinks.map(([label, to, logo, subs]) => (
+                  <div className="drop-row" key={label}>
+                    <Link to={to} className="drop-item">
+                      <img className="drop-logo" src={logo} alt="" />
+                      <span>{label}</span>
+                      {subs && <span className="drop-caret">›</span>}
+                    </Link>
+                    {subs && (
+                      <div className="subdrop">
+                        {subs.map(([sLabel, sTo]) => (
+                          <Link key={sLabel} to={sTo} className="subdrop-item">{sLabel}</Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>

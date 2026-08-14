@@ -8,28 +8,76 @@ export const slug = (s) =>
   s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 // ---------------------------------------------------------------- categories
+// `solution` groups a Godrej category under one of its four product solutions.
+// Categories belonging to the other principals leave it undefined.
 export const categories = [
-  { name: 'Fatty Alcohols', tagline: 'C8–C18 natural & synthetic alcohols',
+  { name: 'Fatty Alcohols', tagline: 'C8–C18 natural & synthetic alcohols', solution: 'oleochemicals',
     image: '/img/categories/fatty-alcohols.jpg',
     description: 'Natural and synthetic fatty alcohols used as emollients, emulsifiers and intermediates across personal care, detergents and industrial applications.' },
-  { name: 'Fatty Acids', tagline: 'Distilled & fractionated acids',
+  { name: 'Fatty Acids', tagline: 'Distilled & fractionated acids', solution: 'oleochemicals',
     image: '/img/categories/fatty-acids.jpg',
     description: 'A complete range of saturated and unsaturated fatty acids for rubber, plastics, cosmetics, candles and lubricant industries.' },
-  { name: 'Stearic Acids', tagline: 'Triple-pressed & specialty grades',
+  { name: 'Stearic Acids', tagline: 'Triple-pressed & specialty grades', solution: 'oleochemicals',
     image: '/img/categories/stearic-acids.jpg',
     description: 'Saturated long-chain fatty acids that are a prominent component in the manufacture of cosmetics, detergents and lubricants, as well as numerous industrial applications.' },
-  { name: 'Oleic Acids', tagline: 'Distilled unsaturated grades',
+  { name: 'Oleic Acids', tagline: 'Distilled unsaturated grades', solution: 'oleochemicals',
     image: '/img/categories/oleic-acids.jpg',
     description: 'Distilled oleic acid grades used in lubricants, textile auxiliaries, soaps, intermediates and a broad range of industrial formulations.' },
-  { name: 'Surfactants', tagline: 'Anionic, non-ionic & amphoteric',
+  { name: 'Surfactants', tagline: 'Anionic, non-ionic & amphoteric', solution: 'surfactants',
     image: '/img/categories/surfactants.jpg',
     description: 'High-performance surfactants for detergents, personal care, textiles and industrial cleaning formulations.' },
-  { name: 'Glycerine', tagline: 'Refined IP / BP / USP grades',
+  { name: 'Glycerine', tagline: 'Refined IP / BP / USP grades', solution: 'oleochemicals',
     image: '/img/categories/glycerine.jpg',
     description: 'Refined vegetable glycerine of pharmaceutical and technical grade for pharma, food, cosmetics and industrial use.' },
-  { name: 'Oleo Derivatives & Specialty Chemicals', tagline: 'Esters, amines & specialty blends',
+  { name: 'Oleo Derivatives & Specialty Chemicals', tagline: 'Esters, amines & specialty blends', solution: 'specialty-chemicals',
     image: '/img/categories/oleo-derivatives.jpg',
     description: 'Value-added oleochemical derivatives — esters, amines, GMS and specialty chemicals engineered for specific industrial performance.' },
+
+  // --- Surfactants solution -------------------------------------------------
+  { name: 'Alpha Olefin Sulfonate (AOS)', tagline: 'High-foaming anionic surfactant', solution: 'surfactants',
+    image: '/img/categories/surfactants.jpg',
+    description: 'Alpha olefin sulfonate liquids offering high foam, good detergency and stability in hard water, used across home and personal care.' },
+  { name: 'Sodium Lauryl Sulphate (SLS)', tagline: 'Needles, granules & powder', solution: 'surfactants',
+    image: '/img/categories/surfactants.jpg',
+    description: 'Primary anionic surfactant supplied as needles, granules and powder for personal care, toothpaste and cleaning formulations.' },
+  { name: 'Sodium Lauryl Ether Sulphate (SLES)', tagline: '2 mole ether sulphate grades', solution: 'surfactants',
+    image: '/img/categories/surfactants.jpg',
+    description: 'Workhorse anionic surfactant for shampoos, hand wash and liquid detergents, supplied in paste and liquid actives.' },
+  { name: 'Ammonium Lauryl Sulphate (ALS)', tagline: 'Mild ammonium sulphate surfactant', solution: 'surfactants',
+    image: '/img/categories/surfactants.jpg',
+    description: 'Ammonium-neutralised lauryl sulphate used where a lower pH and mild sensory profile are required in personal care.' },
+  { name: 'Di-Potassium Oleate Sulfonate (KOS)', tagline: 'Oleate-based sulfonate', solution: 'surfactants',
+    image: '/img/categories/surfactants.jpg',
+    description: 'Potassium oleate sulfonate surfactant used as a co-surfactant and emulsifier in industrial and cleaning applications.' },
+
+  // --- Specialty Chemicals solution ----------------------------------------
+  { name: 'Conditioning & Care Systems', tagline: 'Quats, amides & conditioning agents', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Cationic conditioning agents, amides and care systems for hair care, fabric softening and skin care formulations.' },
+  { name: 'Emulsifiers & Systems', tagline: 'Self-emulsifying bases & waxes', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Emulsifier blends and self-emulsifying wax systems that build stable oil-in-water and water-in-oil emulsions.' },
+  { name: 'Esters & Emollients', tagline: 'Light and rich ester emollients', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Ester emollients and pearlising agents delivering spreadability, sensory feel and opacity in personal care.' },
+  { name: 'Ethoxylates & Surfactants', tagline: 'Non-ionic ethoxylates', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Alcohol ethoxylates, amine oxides and non-ionic surfactants for cleaning, emulsification and wetting.' },
+  { name: 'Food Emulsifiers', tagline: 'Polyglycerol esters & food-grade systems', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Food-grade emulsifiers, polyglycerol esters and viscosity systems for bakery, confectionery and processed food.' },
+  { name: 'Performance Additives', tagline: 'Process and performance chemistry', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Additives that tune process and end-product performance across coatings, cleaning and industrial formulations.' },
+  { name: 'Preservatives & Antimicrobials', tagline: 'Preservation & microbial control', solution: 'specialty-chemicals',
+    image: '/img/categories/oleo-derivatives.jpg',
+    description: 'Preservatives, quaternary biocides and antimicrobial systems for personal care, home care and industrial use.' },
+
+  // --- Biotech solution -----------------------------------------------------
+  { name: 'Sophorolipids', tagline: 'Fermentation-derived biosurfactants', solution: 'biotech',
+    image: '/img/categories/biotech.jpg',
+    description: 'Fermentation-derived biosurfactants offering readily biodegradable, bio-based performance for home and personal care.' },
+
   { name: 'HPL Products', tagline: 'HPL Additives — polymer & rubber additives',
     image: '/img/industries/2.jpg',
     description: 'Antioxidants, accelerators and additives from HPL Additives Limited for the rubber, plastics and polymer industries.' },
@@ -99,6 +147,65 @@ export const products = [
   { c: 'Oleo Derivatives & Specialty Chemicals', n: 'Isopropyl Myristate (IPM)', cas: '110-27-0', grade: 'Cosmetic', pack: '180 kg drums', desc: 'Light emollient ester used widely in cosmetics and personal care.' },
   { c: 'Oleo Derivatives & Specialty Chemicals', n: 'Isopropyl Palmitate (IPP)', cas: '142-91-6', grade: 'Cosmetic', pack: '180 kg drums', desc: 'Emollient ester providing a smooth, non-greasy feel in formulations.' },
   { c: 'Oleo Derivatives & Specialty Chemicals', n: 'Fatty Amines', cas: '', grade: 'Industrial', pack: 'Drums', desc: 'Oleochemical amines used in fabric softeners, flotation and asphalt additives.' },
+
+  // Surfactants solution — Godrej trade names distributed by Virava
+  { c: 'Alpha Olefin Sulfonate (AOS)', n: 'Alfodet L46', grade: 'Liquid, ~46% active', pack: '220 kg drums', desc: 'Alpha olefin sulfonate liquid delivering high foam and good detergency in home and personal care cleaning systems.' },
+  { c: 'Alpha Olefin Sulfonate (AOS)', n: 'Alfodet XL46', grade: 'Liquid, ~46% active', pack: '220 kg drums', desc: 'Higher-clarity AOS liquid for formulations where colour and appearance matter.' },
+  { c: 'Alpha Olefin Sulfonate (AOS)', n: 'Ginasul TWS', grade: 'Liquid', pack: '220 kg drums', desc: 'AOS-based surfactant used as a primary or co-surfactant in cleaning formulations.' },
+  { c: 'Alpha Olefin Sulfonate (AOS)', n: 'Ginasul 6836', grade: 'Liquid', pack: '220 kg drums', desc: 'Alpha olefin sulfonate grade offering stable foam across a broad pH range.' },
+
+  { c: 'Sodium Lauryl Sulphate (SLS)', n: 'Ginopol 24G', grade: 'Granules', pack: '25 kg bags', desc: 'Granular sodium lauryl sulphate for powder detergents and dry-blend applications.' },
+  { c: 'Sodium Lauryl Sulphate (SLS)', n: 'Ginopol 24N', grade: 'Needles', pack: '25 kg bags', desc: 'Needle-form sodium lauryl sulphate offering high foam for personal care and cleaning products.' },
+  { c: 'Sodium Lauryl Sulphate (SLS)', n: 'Ginopol 28N', grade: 'Needles', pack: '25 kg bags', desc: 'Higher-active needle grade sodium lauryl sulphate for concentrated formulations.' },
+  { c: 'Sodium Lauryl Sulphate (SLS)', n: 'Ginopol 24P', grade: 'Powder', pack: '25 kg bags', desc: 'Powder sodium lauryl sulphate suited to toothpaste and dry powder systems.' },
+
+  { c: 'Sodium Lauryl Ether Sulphate (SLES)', n: 'Godrej SLES L24-230', grade: 'Liquid, ~26% active', pack: '220 kg drums', desc: 'Liquid 2 mole sodium lauryl ether sulphate for ready-to-use liquid cleaning formulations.' },
+  { c: 'Sodium Lauryl Ether Sulphate (SLES)', n: 'Godrej SLES P24-270', grade: 'Paste, ~70% active', pack: '220 kg drums', desc: 'High-active SLES paste — the standard base for shampoos, hand wash and liquid detergents.' },
+  { c: 'Sodium Lauryl Ether Sulphate (SLES)', n: 'Godrej SLES P24-170', grade: 'Paste, ~70% active', pack: '220 kg drums', desc: 'SLES paste grade offering an alternative viscosity and handling profile.' },
+
+  { c: 'Ammonium Lauryl Sulphate (ALS)', n: 'Ginoneos ALS', grade: 'Liquid', pack: '220 kg drums', desc: 'Ammonium lauryl sulphate for lower-pH personal care formulations needing a mild sensory profile.' },
+
+  { c: 'Di-Potassium Oleate Sulfonate (KOS)', n: 'Ginoneos KOS', grade: 'Liquid', pack: '220 kg drums', desc: 'Di-potassium oleate sulfonate used as a co-surfactant and emulsifier in industrial cleaning.' },
+
+  // Specialty Chemicals solution — Godrej trade names distributed by Virava
+  { c: 'Conditioning & Care Systems', n: 'Ginamide 22CP', grade: 'Specialty', pack: '50 kg bags', desc: 'Amide-based conditioning agent for hair care and fabric care formulations.' },
+  { c: 'Conditioning & Care Systems', n: 'Ginomol ST', grade: 'Specialty', pack: '50 kg bags', desc: 'Conditioning and care ingredient used to improve substantivity and feel.' },
+  { c: 'Conditioning & Care Systems', n: 'Ginoquat CP', grade: 'Cationic', pack: '50 kg drums', desc: 'Quaternary conditioning agent delivering detangling and softness in hair care.' },
+  { c: 'Conditioning & Care Systems', n: 'Ginoquat EW', grade: 'Cationic', pack: '50 kg drums', desc: 'Emulsifying cationic quat for conditioners and fabric softening systems.' },
+
+  { c: 'Emulsifiers & Systems', n: 'Ginamix AG TA15', grade: 'Emulsifier blend', pack: '50 kg bags', desc: 'Emulsifier system for stable oil-in-water emulsions in personal care.' },
+  { c: 'Emulsifiers & Systems', n: 'Ginamix CBP', grade: 'Emulsifier blend', pack: '50 kg bags', desc: 'Blended emulsifier base simplifying formulation of creams and lotions.' },
+  { c: 'Emulsifiers & Systems', n: 'Ginol EW 91S', grade: 'Self-emulsifying', pack: '25 kg bags', desc: 'Self-emulsifying fatty alcohol base for straightforward emulsion build.' },
+  { c: 'Emulsifiers & Systems', n: 'Ginowax AO', grade: 'Emulsifying wax', pack: '25 kg bags', desc: 'Emulsifying wax providing body and stability to cream formulations.' },
+
+  { c: 'Esters & Emollients', n: 'Ginapearl 4218', grade: 'Pearlising agent', pack: '50 kg drums', desc: 'Pearlising concentrate giving shampoos and washes an opaque, pearlescent appearance.' },
+  { c: 'Esters & Emollients', n: 'Gincol EHS', grade: 'Ester', pack: '180 kg drums', desc: 'Light ester emollient with a dry, non-greasy skin feel.' },
+  { c: 'Esters & Emollients', n: 'Gincol FB DMG', grade: 'Ester', pack: '180 kg drums', desc: 'Ester emollient used to adjust spreadability and sensory profile.' },
+  { c: 'Esters & Emollients', n: 'Gincol OS', grade: 'Ester', pack: '180 kg drums', desc: 'Oleate ester emollient offering rich cushion in skin care formulations.' },
+
+  { c: 'Ethoxylates & Surfactants', n: 'Ginonic CSA 12', grade: 'Non-ionic', pack: '200 kg drums', desc: 'Alcohol ethoxylate non-ionic surfactant for wetting, emulsification and cleaning.' },
+  { c: 'Ethoxylates & Surfactants', n: 'Ginamide AO', grade: 'Amine oxide', pack: '200 kg drums', desc: 'Amine oxide surfactant used as a foam booster and viscosity builder.' },
+  { c: 'Ethoxylates & Surfactants', n: 'Ginamide B', grade: 'Amide', pack: '200 kg drums', desc: 'Alkanolamide used to stabilise foam and thicken liquid cleaning systems.' },
+  { c: 'Ethoxylates & Surfactants', n: 'Ginodet DLSS', grade: 'Anionic', pack: '200 kg drums', desc: 'Sulphosuccinate-type mild anionic surfactant for gentle cleansing.' },
+
+  { c: 'Food Emulsifiers', n: 'Dynapol PGE SFO', grade: 'Food grade', pack: '25 kg drums', desc: 'Polyglycerol ester of sunflower oil used as a food-grade emulsifier.' },
+  { c: 'Food Emulsifiers', n: 'DynaTar 95-62-80', grade: 'Food grade', pack: '25 kg drums', desc: 'Food-grade emulsifier system for bakery and confectionery applications.' },
+  { c: 'Food Emulsifiers', n: 'DynaVisc 9008', grade: 'Food grade', pack: '25 kg drums', desc: 'Viscosity and texture modifier for processed food formulations.' },
+  { c: 'Food Emulsifiers', n: 'DynaVisc 999', grade: 'Food grade', pack: '25 kg drums', desc: 'Food-grade viscosity system used to control body and mouthfeel.' },
+
+  { c: 'Performance Additives', n: 'Ginacryl PC SB501', grade: 'Performance additive', pack: '200 kg drums', desc: 'Acrylic performance additive for coatings and industrial formulations.' },
+  { c: 'Performance Additives', n: 'Ginoclin CA', grade: 'Performance additive', pack: '200 kg drums', desc: 'Cleaning performance additive supporting soil removal and rinsing.' },
+  { c: 'Performance Additives', n: 'Ginophos CD', grade: 'Phosphate ester', pack: '200 kg drums', desc: 'Phosphate ester additive used for emulsification and corrosion control.' },
+  { c: 'Performance Additives', n: 'Godrej IMD 18-NH2', grade: 'Amine', pack: '200 kg drums', desc: 'Fatty amine intermediate for performance chemistry applications.' },
+
+  { c: 'Preservatives & Antimicrobials', n: 'Ginodet BKC 50', grade: '50% active', pack: '200 kg drums', desc: 'Benzalkonium chloride solution used as a quaternary biocide and sanitiser base.' },
+  { c: 'Preservatives & Antimicrobials', n: 'Ginoguard GP', grade: 'Preservative', pack: '50 kg drums', desc: 'Broad-spectrum preservative system for personal care and home care.' },
+  { c: 'Preservatives & Antimicrobials', n: 'Ginoguard PGB', grade: 'Preservative', pack: '50 kg drums', desc: 'Glycol-based preservative booster with multifunctional properties.' },
+  { c: 'Preservatives & Antimicrobials', n: 'Godrej P10', grade: 'Preservative', pack: '50 kg drums', desc: 'Preservative concentrate for microbial control in aqueous formulations.' },
+
+  // Biotech solution — Godrej trade names distributed by Virava
+  { c: 'Sophorolipids', n: 'SLNOVA A', grade: 'Acidic sophorolipid', pack: '200 kg drums', desc: 'Fermentation-derived acidic sophorolipid biosurfactant — readily biodegradable and bio-based, for home and personal care.' },
+  { c: 'Sophorolipids', n: 'SLNOVA L', grade: 'Lactonic sophorolipid', pack: '200 kg drums', desc: 'Lactonic sophorolipid biosurfactant offering antimicrobial and surface-active performance from a renewable source.' },
 
   // HPL
   { c: 'HPL Products', n: 'Rubber Antioxidants', cas: '', grade: 'Industrial', pack: '25 kg bags', desc: 'Antioxidants from HPL Additives that protect rubber from thermal and oxidative ageing.' },
@@ -323,9 +430,10 @@ export async function run(closePool = true) {
   for (let i = 0; i < categories.length; i++) {
     const c = categories[i];
     const { rows } = await query(
-      `INSERT INTO categories (slug, name, principal_id, tagline, description, image_url, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
-      [slug(c.name), c.name, catPrincipal(c.name), c.tagline, c.description, c.image, i]
+      `INSERT INTO categories (slug, name, principal_id, solution, tagline, description, image_url, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+      [slug(c.name), c.name, catPrincipal(c.name), c.solution || null,
+       c.tagline, c.description, c.image, i]
     );
     catId[c.name] = { id: rows[0].id, image: c.image };
   }
