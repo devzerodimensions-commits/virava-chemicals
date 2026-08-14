@@ -4,7 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { pool, query } from '../src/db.js';
-import { run as seed, categories as seedCategories, products as seedProducts, slug } from './seed.js';
+import {
+  run as seed, categories as seedCategories, products as seedProducts, slug, specsFor,
+} from './seed.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -34,6 +36,38 @@ async function migrate() {
 
   await syncGodrejCatalogue();
   await fixCategoryImages();
+  await backfillProductSpecs();
+}
+
+// The product detail page shows a spec table driven by products.specs, which was
+// empty for everything seeded before it existed. Fill in the rows we can state
+// factually — physical form, application scope, grade and INCI name.
+//
+// Only rows whose specs are still empty are written, so anything entered in the
+// admin panel is preserved. One-shot, like the migrations above.
+async function backfillProductSpecs() {
+  const KEY = 'migration_product_specs';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  let n = 0;
+  for (const p of seedProducts) {
+    const specs = specsFor(p);
+    if (!Object.keys(specs).length) continue;
+    const r = await query(
+      `UPDATE products SET specs = $1
+        WHERE name = $2 AND (specs IS NULL OR specs = '{}'::jsonb)`,
+      [JSON.stringify(specs), p.n]
+    );
+    n += r.rowCount;
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: product specs backfilled (${n} products).`);
 }
 
 // The original seed pointed every category at /img/pro1-4.jpg, which are the four

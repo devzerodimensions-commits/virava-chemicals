@@ -4,7 +4,6 @@ import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import EnquiryModal from '../components/EnquiryModal.jsx';
-import ProductModal from '../components/ProductModal.jsx';
 import './GodrejOleochemicals.css';
 
 const SLUG = 'godrej-industries-limited';
@@ -22,23 +21,10 @@ const HIGHLIGHTS = [
   'Adaptable across diverse industries',
 ];
 
-// applications shown inside a product's detail modal, by category slug
-const CATEGORY_APPS = {
-  'fatty-alcohols': ['Personal Care', 'Detergents', 'Cosmetics', 'Emulsifiers'],
-  'fatty-acids': ['Rubber', 'Plastics', 'Cosmetics', 'Candles', 'Lubricants'],
-  'stearic-acids': ['Cosmetics', 'Detergents', 'Lubricants', 'Rubber'],
-  'oleic-acids': ['Lubricants', 'Textiles', 'Soaps', 'Intermediates'],
-  'surfactants': ['Detergents', 'Personal Care', 'Textiles', 'Industrial Cleaning'],
-  'glycerine': ['Pharmaceuticals', 'Food', 'Cosmetics', 'Paints & Resins'],
-  'oleo-derivatives-and-specialty-chemicals': ['Cosmetics', 'Food', 'Plastics', 'Personal Care'],
-};
-
 export default function GodrejOleochemicals() {
   const [data, setData] = useState(null);
   const [industries, setIndustries] = useState([]);
   const [active, setActive] = useState(0);
-  const [product, setProduct] = useState(null);
-  const [productCat, setProductCat] = useState(null);
   const [enquiry, setEnquiry] = useState(null);
   const sectionRefs = useRef([]);
 
@@ -172,14 +158,10 @@ export default function GodrejOleochemicals() {
 
                     <div className="go-products">
                       {c.products.map((p) => (
-                        <button
-                          className="go-product"
-                          key={p.id}
-                          onClick={() => { setProduct(p); setProductCat(c); }}
-                        >
+                        <Link className="go-product" key={p.id} to={`/product/${p.slug}`}>
                           <span className="go-product-name">{p.name}</span>
                           <span className="go-product-arrow">›</span>
-                        </button>
+                        </Link>
                       ))}
                     </div>
 
@@ -241,16 +223,6 @@ export default function GodrejOleochemicals() {
           </div>
         </div>
       </section>
-
-      {product && (
-        <ProductModal
-          product={product}
-          categoryName={productCat?.name}
-          applications={CATEGORY_APPS[productCat?.slug] || []}
-          onClose={() => setProduct(null)}
-          onEnquire={(p) => { setProduct(null); setEnquiry(p); }}
-        />
-      )}
 
       {enquiry && (
         <EnquiryModal

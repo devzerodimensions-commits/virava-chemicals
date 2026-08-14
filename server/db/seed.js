@@ -114,6 +114,104 @@ export const products = [
   { c: 'STD Products', n: 'Industrial Intermediates', cas: '', grade: 'Industrial', pack: 'As required', desc: 'Chemical intermediates serving diverse manufacturing sectors.' },
 ];
 
+// ---------------------------------------------------------------- product specs
+// Extra rows for the product detail page, in the style principals publish.
+// Deliberately limited to things that are actually true of the material: the
+// physical form and application scope come from the category, and INCI names are
+// the real ones. Nothing here invents a performance claim.
+export const CATEGORY_SPECS = {
+  'Fatty Alcohols': {
+    'Typical Properties': 'White waxy solid or pastilles, low odour, soluble in alcohols and oils.',
+    'Application Details': 'Emollients, emulsifiers, thickeners and surfactant intermediates for personal care, detergents and industrial formulations.',
+  },
+  'Fatty Acids': {
+    'Typical Properties': 'Solid flakes to viscous liquid depending on chain length and titre.',
+    'Application Details': 'Rubber compounding, plastics processing, cosmetics, candles, lubricants and textile auxiliaries.',
+  },
+  'Stearic Acids': {
+    'Typical Properties': 'White to off-white waxy flakes or beads, mild characteristic odour.',
+    'Application Details': 'Cosmetics, detergents, lubricants, rubber compounding and general industrial processing.',
+  },
+  'Oleic Acids': {
+    'Typical Properties': 'Pale yellow oily liquid at room temperature, characteristic odour.',
+    'Application Details': 'Lubricants, soaps, textile auxiliaries, intermediates and industrial formulations.',
+  },
+  'Surfactants': {
+    'Typical Properties': 'Clear to hazy liquid, paste or needles depending on active content.',
+    'Application Details': 'Shampoos, hand wash, liquid detergents, personal care and industrial cleaning.',
+  },
+  'Glycerine': {
+    'Typical Properties': 'Clear, colourless, odourless viscous liquid; hygroscopic; miscible with water.',
+    'Application Details': 'Pharmaceutical, food, cosmetic, personal care and industrial applications including paints and resins.',
+  },
+  'Oleo Derivatives & Specialty Chemicals': {
+    'Typical Properties': 'Varies by product — clear ester liquids through to white solid emulsifiers.',
+    'Application Details': 'Cosmetics, food, plastics and personal care formulations requiring value-added oleochemical derivatives.',
+  },
+  'HPL Products': {
+    'Typical Properties': 'Powder, granules or masterbatch depending on additive type.',
+    'Application Details': 'Rubber, tyre, plastics and polymer processing.',
+  },
+  'OCCL Products': {
+    'Typical Properties': 'Free-flowing powder, oil-treated grades available.',
+    'Application Details': 'Tyre and rubber vulcanisation.',
+  },
+  'STD Products': {
+    'Typical Properties': 'Varies by product.',
+    'Application Details': 'A broad spectrum of manufacturing industries.',
+  },
+};
+
+// Real INCI names, keyed by product. Products absent from this map simply do not
+// get an INCI Name row.
+export const INCI_NAMES = {
+  'Lauryl Alcohol (C12)': 'Lauryl Alcohol',
+  'Cetyl Alcohol (C16)': 'Cetyl Alcohol',
+  'Stearyl Alcohol (C18)': 'Stearyl Alcohol',
+  'Cetostearyl Alcohol': 'Cetearyl Alcohol',
+  'Oleyl Alcohol': 'Oleyl Alcohol',
+  'Ginol 16 (95%)': 'Cetyl Alcohol',
+  'Ginol 16 (98%)': 'Cetyl Alcohol',
+  'Ginol 16 (99%)': 'Cetyl Alcohol',
+  'Ginol 1618 (60:40)': 'Cetearyl Alcohol',
+  'Stearic Acid': 'Stearic Acid',
+  'Oleic Acid': 'Oleic Acid',
+  'Palmitic Acid': 'Palmitic Acid',
+  'Lauric Acid': 'Lauric Acid',
+  'Arachidic Acid 95%': 'Arachidic Acid',
+  'Behenic Acid 85%': 'Behenic Acid',
+  'Behenic Acid 90%': 'Behenic Acid',
+  'Hystric — Triple Pressed': 'Stearic Acid',
+  'Textric': 'Stearic Acid',
+  'Textric SPL': 'Stearic Acid',
+  'Distric': 'Stearic Acid',
+  'Lubolic': 'Oleic Acid',
+  'Lubolic E': 'Oleic Acid',
+  'Lubolic 15': 'Oleic Acid',
+  'Lubolic 20': 'Oleic Acid',
+  'Refined Glycerine IP': 'Glycerin',
+  'Refined Glycerine USP/BP': 'Glycerin',
+  'Technical Glycerine': 'Glycerin',
+  'Glycerin BP': 'Glycerin',
+  'Glycerin EP': 'Glycerin',
+  'Glycerin CP': 'Glycerin',
+  'Glycerin IP': 'Glycerin',
+  'Sodium Lauryl Ether Sulphate (SLES)': 'Sodium Laureth Sulfate',
+  'Sodium Lauryl Sulphate (SLS)': 'Sodium Lauryl Sulfate',
+  'Cocamidopropyl Betaine (CAPB)': 'Cocamidopropyl Betaine',
+  'Cocamide DEA': 'Cocamide DEA',
+  'Glyceryl Monostearate (GMS)': 'Glyceryl Stearate',
+  'Isopropyl Myristate (IPM)': 'Isopropyl Myristate',
+  'Isopropyl Palmitate (IPP)': 'Isopropyl Palmitate',
+};
+
+export const specsFor = (p) => {
+  const s = { ...(CATEGORY_SPECS[p.c] || {}) };
+  if (p.grade) s.Feature = `${p.grade} grade, supplied by Virava Chemicals.`;
+  if (INCI_NAMES[p.n]) s['INCI Name'] = INCI_NAMES[p.n];
+  return s;
+};
+
 // ---------------------------------------------------------------- principals
 const principals = [
   { name: 'Godrej Industries Limited', logo: '/img/partners/logo1.png', website: 'https://www.godrejchemicals.com/',
@@ -237,10 +335,10 @@ export async function run(closePool = true) {
   for (const p of products) {
     const cat = catId[p.c];
     await query(
-      `INSERT INTO products (category_id, slug, name, description, cas_no, grade, packaging, image_url, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      `INSERT INTO products (category_id, slug, name, description, cas_no, grade, packaging, image_url, specs, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
       [cat.id, slug(p.n) + '-' + (++pi), p.n, p.desc, p.cas || '', p.grade || '',
-       p.pack || '', cat.image, pi]
+       p.pack || '', cat.image, JSON.stringify(specsFor(p)), pi]
     );
   }
 

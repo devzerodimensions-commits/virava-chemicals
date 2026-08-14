@@ -2,13 +2,21 @@ import { useState } from 'react';
 import api from '../api.js';
 import './EnquiryModal.css';
 
-export default function EnquiryModal({ product, category, onClose }) {
+// `intent` distinguishes a sample request from a price enquiry — without it both
+// buttons on the product page land in the inbox looking identical.
+export default function EnquiryModal({ product, category, intent, onClose }) {
+  const sample = intent === 'sample';
+  const lead = sample ? 'Sample request' : 'Enquiry';
   const subject = product
-    ? `Enquiry: ${product.name}`
-    : category ? `Enquiry: ${category}` : 'Product Enquiry';
+    ? `${lead}: ${product.name}`
+    : category ? `${lead}: ${category}` : 'Product Enquiry';
   const [form, setForm] = useState({
     name: '', email: '', phone: '', company: '',
-    message: product ? `I would like to enquire about ${product.name}.` : '',
+    message: product
+      ? (sample
+          ? `I would like to request a sample of ${product.name}.`
+          : `I would like to enquire about ${product.name}.`)
+      : '',
   });
   const [status, setStatus] = useState('');
 

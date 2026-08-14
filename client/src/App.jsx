@@ -12,6 +12,7 @@ import Contact from './pages/Contact.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
 import PrincipalDetail from './pages/PrincipalDetail.jsx';
 import GodrejOleochemicals from './pages/GodrejOleochemicals.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
 
 import AdminLogin from './admin/Login.jsx';
 import AdminLayout from './admin/AdminLayout.jsx';
@@ -60,6 +61,8 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:slug" element={<CategoryDetail />} />
+        {/* singular /product/:slug is one product; plural /products/:slug is a category */}
+        <Route path="/product/:slug" element={<ProductDetail />} />
         <Route path="/industries" element={<Industries />} />
         {/* Godrej gets a dedicated oleochemicals page; must precede the generic
             :slug route below, which still serves the other three principals. */}
