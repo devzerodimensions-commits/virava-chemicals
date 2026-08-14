@@ -108,6 +108,48 @@
 @media (max-width: 1000px) { .cat-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .cat-grid { grid-template-columns: 1fr; } }
 
+/* ---------------- PRODUCT RANGE CARDS ---------------- */
+.range-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px; }
+.range-card {
+  display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.range-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: #d0d0d0; }
+.range-img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--bg-soft); }
+.range-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.range-card:hover .range-img img { transform: scale(1.07); }
+.range-kicker {
+  position: absolute; left: 12px; bottom: 12px; background: rgba(0,0,0,.72); color: #fff;
+  font-family: var(--head); font-weight: 600; font-size: .68rem;
+  letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px;
+  backdrop-filter: blur(2px);
+}
+.range-body { display: flex; flex-direction: column; flex: 1; padding: 20px 20px 22px; }
+.range-body h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: 7px; line-height: 1.25; }
+.range-body p { font-size: .875rem; color: var(--muted); line-height: 1.55; margin: 0 0 16px; text-wrap: pretty; }
+/* pushes the meta row to the bottom so it lines up across cards of unequal copy */
+.range-meta {
+  margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-family: var(--head); font-weight: 600; font-size: .85rem; color: var(--navy);
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.range-meta em { font-style: normal; color: var(--muted); font-weight: 500; }
+.range-arrow { color: var(--btn); font-size: 1rem; transition: transform .2s ease; }
+.range-card:hover .range-arrow { transform: translateX(4px); }
+
+/* trailing tile — keeps the grid a clean 4x2 and offers the finder */
+.range-cta { background: var(--navy); border-color: var(--navy); }
+.range-cta-in { display: flex; flex-direction: column; flex: 1; padding: 26px 22px 22px; }
+.range-cta-in h3 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+.range-cta-in p { color: #b8b8b8; font-size: .875rem; line-height: 1.55; margin: 0 0 16px; }
+.range-cta .range-meta { color: #fff; border-top-color: rgba(255,255,255,.2); }
+.range-cta .range-meta em { color: #b8b8b8; }
+
+@media (max-width: 1100px) { .range-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 860px)  { .range-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
+@media (max-width: 520px)  { .range-grid { grid-template-columns: 1fr; } }
+
 /* ---------------- PRINCIPALS ---------------- */
 .principals-list { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 50px; }
 .principal-row {

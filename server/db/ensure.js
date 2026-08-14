@@ -38,6 +38,9 @@ async function migrate() {
   await fixCategoryImages();
   await backfillProductSpecs();
   await syncGodrejSolutions();
+  // HPL/OCCL/STD were still on borrowed industry photos and the About collage;
+  // needs its own key because the first image pass already spent that one.
+  await fixCategoryImages('migration_principal_images');
 }
 
 // Godrej splits its range into four product solutions (oleochemicals, surfactants,
@@ -100,8 +103,7 @@ async function backfillProductSpecs() {
 //
 // Only rows still holding one of those known defaults are touched, so a picture an
 // admin has already chosen is never overwritten. One-shot, like the catalogue sync.
-async function fixCategoryImages() {
-  const KEY = 'migration_category_images';
+async function fixCategoryImages(KEY = 'migration_category_images') {
   const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
   if (done.rowCount) return;
 

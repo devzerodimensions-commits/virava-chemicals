@@ -79,13 +79,13 @@ export const categories = [
     description: 'Fermentation-derived biosurfactants offering readily biodegradable, bio-based performance for home and personal care.' },
 
   { name: 'HPL Products', tagline: 'HPL Additives — polymer & rubber additives',
-    image: '/img/industries/2.jpg',
+    image: '/img/categories/hpl-products.jpg',
     description: 'Antioxidants, accelerators and additives from HPL Additives Limited for the rubber, plastics and polymer industries.' },
   { name: 'OCCL Products', tagline: 'Oriental Carbon — insoluble sulphur',
-    image: '/img/industries/15.jpg',
+    image: '/img/categories/occl-products.jpg',
     description: 'Insoluble sulphur and specialty products from Oriental Carbon & Chemicals Limited, primarily for the tyre and rubber industry.' },
   { name: 'STD Products', tagline: 'The Standard Chemicals range',
-    image: '/img/about.jpg',
+    image: '/img/categories/std-products.jpg',
     description: 'Specialty chemicals from The Standard Chemicals Co. Pvt. Ltd. serving a broad spectrum of industries.' },
 ];
 

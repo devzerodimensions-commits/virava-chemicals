@@ -1,11 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
+import { SOLUTIONS } from './GodrejSolution.jsx';
 import './Home.css';
+
+const SOLUTION_BLURBS = {
+  oleochemicals: 'Glycerine, stearic and fatty acids, oleic acids and fatty alcohols.',
+  surfactants: 'AOS, SLS, SLES, ALS and KOS in liquid, paste, needle and granule forms.',
+  'specialty-chemicals': 'Conditioning systems, emulsifiers, esters, ethoxylates and preservatives.',
+  biotech: 'Fermentation-derived sophorolipid biosurfactants.',
+};
+
+// The three principals we represent alongside Godrej
+const OTHER_RANGES = [
+  { slug: 'hpl-products', kicker: 'HPL Additives', to: '/principals/hpl-additives-limited',
+    blurb: 'Antioxidants, accelerators and antidegradants for rubber and polymers.' },
+  { slug: 'occl-products', kicker: 'Oriental Carbon', to: '/principals/oriental-carbon-and-chemicals-limited',
+    blurb: 'Insoluble sulphur for tyre and rubber vulcanisation.' },
+  { slug: 'std-products', kicker: 'Standard Chemicals', to: '/principals/the-standard-chemicals-co-pvt-ltd',
+    blurb: 'Specialty chemicals and intermediates across diverse industries.' },
+];
 
 /* Highlight-strip icons. Emoji were used here before, but they render as full
    colour on every OS (and differently on each), which fights the black & white
@@ -48,14 +66,47 @@ export default function Home() {
   const [industries, setIndustries] = useState([]);
   const [blogs, setBlogs] = useState([]);
 
+  const [products, setProducts] = useState([]);
+
   useEffect(() => {
     api.get('/categories').then((r) => setCats(r.data)).catch(() => {});
     api.get('/principals').then((r) => setPrincipals(r.data)).catch(() => {});
     api.get('/industries').then((r) => setIndustries(r.data)).catch(() => {});
     api.get('/blogs').then((r) => setBlogs(r.data)).catch(() => {});
+    api.get('/products').then((r) => setProducts(r.data)).catch(() => {});
   }, []);
 
-  useReveal([cats, principals, industries, blogs]);
+  // The home page shows the seven ranges we actually sell under, not every
+  // category — Godrej alone has twenty, most of them sub-categories of a
+  // solution, and listing them all buried the page in near-identical cards.
+  const ranges = useMemo(() => {
+    const bySlug = new Map(cats.map((c) => [c.slug, c]));
+    const countIn = (pred) => products.filter((p) => {
+      const c = bySlug.get(p.category_slug);
+      return c ? pred(c) : false;
+    }).length;
+    const imageOf = (slug, fallback) => bySlug.get(slug)?.image_url || fallback;
+
+    const solutions = SOLUTIONS.map((s) => ({
+      name: s.name,
+      kicker: 'Godrej Industries',
+      to: `/principals/godrej-industries-limited/${s.slug}`,
+      image: s.image,
+      blurb: SOLUTION_BLURBS[s.slug],
+      count: countIn((c) => c.solution === s.slug),
+    }));
+
+    const others = OTHER_RANGES
+      .filter(({ slug }) => bySlug.has(slug))
+      .map(({ slug, kicker, to, blurb }) => ({
+        name: bySlug.get(slug).name, kicker, to, blurb,
+        image: imageOf(slug), count: countIn((c) => c.slug === slug),
+      }));
+
+    return [...solutions, ...others];
+  }, [cats, products]);
+
+  useReveal([ranges, principals, industries, blogs]);
 
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -98,7 +149,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- PRODUCT CATEGORIES ---------------- */}
+      {/* ---------------- PRODUCT RANGE ---------------- */}
       <section className="section section-soft">
         <div className="container">
           <div className="center reveal">
@@ -106,17 +157,30 @@ export default function Home() {
             <h2 className="section-title">Chemicals we <span className="serif">supply</span></h2>
             <p className="section-intro">A comprehensive portfolio of oleochemicals and specialty products sourced from the country's most reputed manufacturers.</p>
           </div>
-          <div className="cat-grid">
-            {cats.map((c) => (
-              <Link to={`/products/${c.slug}`} className="cat-card reveal" key={c.id}>
-                <div className="cat-img"><img src={c.image_url} alt={c.name} /></div>
-                <div className="cat-body">
-                  <h3>{c.name}</h3>
-                  <p>{c.tagline}</p>
-                  <span className="cat-link">View products →</span>
+          <div className="range-grid">
+            {ranges.map((r) => (
+              <Link to={r.to} className="range-card reveal" key={r.name}>
+                <div className="range-img">
+                  <img src={r.image} alt={r.name} loading="lazy" />
+                  <span className="range-kicker">{r.kicker}</span>
+                </div>
+                <div className="range-body">
+                  <h3>{r.name}</h3>
+                  <p>{r.blurb}</p>
+                  <span className="range-meta">
+                    {r.count > 0 && <em>{r.count} products</em>}
+                    <span className="range-arrow">→</span>
+                  </span>
                 </div>
               </Link>
             ))}
+            <Link to="/products" className="range-card range-cta reveal">
+              <div className="range-cta-in">
+                <h3>Browse the full range</h3>
+                <p>Search every grade by chemistry or principal.</p>
+                <span className="range-meta"><em>All products</em><span className="range-arrow">→</span></span>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
