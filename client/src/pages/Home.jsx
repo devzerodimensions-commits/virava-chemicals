@@ -64,33 +64,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- WHAT WE DO / SERVICES ---------------- */}
-      <section className="section services-sec">
-        <div className="container">
-          <div className="center reveal">
-            <span className="eyebrow">What We Do</span>
-            <h2 className="section-title">More than a trader — your <span className="serif">supply partner</span></h2>
-            <p className="section-intro">As an agency house, Virava connects Indian industry with the country's most reputed chemical manufacturers — backed by five decades of trust, quality and dependable service.</p>
-          </div>
-          <div className="services-grid">
-            {[
-              ['🤝', 'Exclusive Distribution', 'Authorised & exclusive distributor of Godrej Industries Ltd, HPL, OCCL and The Standard Chemicals Co.'],
-              ['🔗', 'Reliable Sourcing', 'A steady, consistent supply of oleochemicals and specialty products sourced directly from reputed principals.'],
-              ['✅', 'Quality Assured', 'Products meeting IP / BP / USP and international standards — trusted for pharma, food and industrial use.'],
-              ['🚚', 'Bulk & Timely Supply', 'Dependable bulk supply with well-planned logistics and on-time delivery across India.'],
-              ['🧪', 'Technical Guidance', 'Support on the right grade, specification and application for your specific industry and process.'],
-              ['🏆', 'Three-Generation Trust', '50+ years of goodwill, 35+ awards and 3000+ satisfied customers across 20+ industries.'],
-            ].map(([ic, t, d]) => (
-              <div className="service-card reveal" key={t}>
-                <span className="service-ic">{ic}</span>
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ---------------- PRODUCT CATEGORIES ---------------- */}
       <section className="section section-soft">
         <div className="container">
