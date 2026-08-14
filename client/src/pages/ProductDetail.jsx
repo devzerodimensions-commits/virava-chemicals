@@ -58,7 +58,7 @@ export default function ProductDetail() {
             {product.category_name && (
               <>
                 <span className="pd2-sep">|</span>
-                <Link to={`/products/${product.category_slug}`}>{product.category_name}</Link>
+                <Link to={`/products?category=${product.category_slug}`}>{product.category_name}</Link>
               </>
             )}
           </nav>

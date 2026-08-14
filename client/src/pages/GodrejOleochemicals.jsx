@@ -165,7 +165,7 @@ export default function GodrejOleochemicals() {
                       ))}
                     </div>
 
-                    <Link to={`/products/${c.slug}`} className="btn btn-outline go-view-all">
+                    <Link to={`/products?category=${c.slug}`} className="btn btn-outline go-view-all">
                       View All Products
                     </Link>
                   </article>

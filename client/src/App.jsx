@@ -5,8 +5,7 @@ import { useScrollTop } from './hooks.js';
 import PublicLayout from './components/PublicLayout.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
-import Products from './pages/Products.jsx';
-import CategoryDetail from './pages/CategoryDetail.jsx';
+import ProductFinder, { CategoryRedirect } from './pages/ProductFinder.jsx';
 import Industries from './pages/Industries.jsx';
 import Contact from './pages/Contact.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
@@ -59,9 +58,9 @@ export default function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:slug" element={<CategoryDetail />} />
-        {/* singular /product/:slug is one product; plural /products/:slug is a category */}
+        <Route path="/products" element={<ProductFinder />} />
+        {/* the old per-category page is now the finder pre-filtered by category */}
+        <Route path="/products/:slug" element={<CategoryRedirect />} />
         <Route path="/product/:slug" element={<ProductDetail />} />
         <Route path="/industries" element={<Industries />} />
         {/* Godrej gets a dedicated oleochemicals page; must precede the generic

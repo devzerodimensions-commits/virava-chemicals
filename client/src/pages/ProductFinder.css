@@ -1,0 +1,123 @@
+/* ===========================================================
+   Product finder — search + filters over a product card grid
+   =========================================================== */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------------- filters ---------------- */
+.pf-filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 26px; }
+
+.pf-search { position: relative; flex: 1 1 320px; max-width: 420px; }
+.pf-search input {
+  width: 100%; font-family: var(--sans); font-size: .95rem; color: var(--ink);
+  padding: 13px 42px 13px 20px; border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; transition: border-color .2s ease;
+}
+.pf-search input:focus { outline: none; border-color: var(--navy); }
+.pf-search input::-webkit-search-cancel-button { cursor: pointer; }
+.pf-search-ic {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: 1.2rem; pointer-events: none;
+}
+
+.pf-select { position: relative; display: inline-flex; }
+.pf-select-label {
+  position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+  font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); pointer-events: none;
+}
+.pf-select select {
+  appearance: none; font-family: var(--head); font-weight: 600; font-size: .95rem;
+  color: var(--navy); background: #fff; cursor: pointer;
+  padding: 13px 40px 13px 96px; border: 1px solid var(--line); border-radius: 999px;
+  transition: border-color .2s ease;
+}
+.pf-select::after {
+  content: '▾'; position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); pointer-events: none; font-size: .9rem;
+}
+.pf-select select:focus { outline: none; border-color: var(--navy); }
+
+/* ---------------- active filter row ---------------- */
+.pf-status {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; padding-bottom: 18px; margin-bottom: 34px; border-bottom: 1px solid var(--line);
+}
+.pf-status-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pf-count { font-size: .92rem; color: var(--body); }
+.pf-chip {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-family: var(--sans); font-size: .85rem; color: var(--navy);
+  background: var(--bg-navy-soft); border: 1px solid var(--line);
+  padding: 6px 14px; border-radius: 999px; transition: background .2s ease, color .2s ease;
+}
+.pf-chip:hover { background: var(--navy); border-color: var(--navy); color: #fff; }
+.pf-clear {
+  background: none; border: 0; cursor: pointer; padding: 0;
+  font-family: var(--sans); font-size: .9rem; color: var(--body);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.pf-clear:hover { color: var(--navy); }
+
+/* ---------------- card grid ---------------- */
+.pf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 46px 30px; }
+.pf-card { display: block; }
+.pf-card-img {
+  position: relative; border-radius: var(--radius); overflow: hidden;
+  aspect-ratio: 4 / 3; background: var(--bg-soft); margin-bottom: 14px;
+}
+.pf-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.pf-card:hover .pf-card-img img { transform: scale(1.05); }
+.pf-card-cap {
+  position: absolute; inset: auto 0 0 0; display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 12px; padding: 18px 18px 16px; color: #fff;
+  background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.34) 60%, transparent 100%);
+}
+.pf-card-cap h3 { color: #fff; margin: 0; font-size: 1.05rem; line-height: 1.25; }
+.pf-card-arrow { font-size: 1.4rem; line-height: 1; transition: transform .2s ease; }
+.pf-card:hover .pf-card-arrow { transform: translateX(4px); }
+.pf-card-meta { display: block; font-size: .78rem; color: var(--muted); margin-bottom: 8px; }
+.pf-card-desc { color: var(--body); font-size: .92rem; line-height: 1.6; margin: 0; }
+
+.pf-empty { text-align: center; padding: 60px 0; }
+.pf-empty h3 { color: var(--navy); margin-bottom: 8px; }
+.pf-empty p { color: var(--body); margin-bottom: 22px; }
+
+/* ---------------- why us ---------------- */
+.pf-why { display: grid; grid-template-columns: 420px 1fr; gap: 60px; align-items: start; }
+.pf-why-media img { width: 100%; border-radius: var(--radius); aspect-ratio: 4 / 5; object-fit: cover; }
+.pf-why-title { font-size: clamp(1.6rem, 3vw, 2.4rem); color: var(--navy); margin-bottom: 26px; }
+
+.pf-acc { border-bottom: 1px solid var(--line); }
+.pf-acc summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  cursor: pointer; list-style: none; padding: 20px 0;
+  font-family: var(--head); font-weight: 600; font-size: 1.02rem; color: var(--navy);
+}
+.pf-acc summary::-webkit-details-marker { display: none; }
+/* plus that becomes a minus when the panel is open */
+.pf-acc-ic { position: relative; flex-shrink: 0; width: 14px; height: 14px; }
+.pf-acc-ic::before, .pf-acc-ic::after {
+  content: ''; position: absolute; left: 0; top: 6px; width: 14px; height: 2px;
+  background: var(--navy); transition: transform .25s ease;
+}
+.pf-acc-ic::after { transform: rotate(90deg); }
+.pf-acc[open] .pf-acc-ic::after { transform: rotate(0deg); }
+.pf-acc p { color: var(--body); line-height: 1.8; margin: 0; padding: 0 34px 22px 0; font-size: .96rem; }
+
+/* ---------------- responsive ---------------- */
+@media (max-width: 1040px) {
+  .pf-grid { grid-template-columns: repeat(2, 1fr); gap: 40px 24px; }
+  .pf-why { grid-template-columns: 1fr; gap: 34px; }
+  .pf-why-media img { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 700px) {
+  .pf-grid { grid-template-columns: 1fr; gap: 34px; }
+  .pf-filters { flex-direction: column; align-items: stretch; }
+  .pf-search { max-width: none; }
+  .pf-select select { width: 100%; }
+  .pf-status { align-items: flex-start; }
+}
