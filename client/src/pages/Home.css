@@ -34,24 +34,35 @@
 .hero-dots button.on { background: var(--red); width: 46px; }
 
 /* ---------------- HIGHLIGHTS ---------------- */
-.highlights { padding-top: 54px; position: relative; z-index: 5; }
-.highlights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.highlights { padding: 54px 0 64px; position: relative; z-index: 5; }
+.highlights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .highlight {
-  background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 20px;
-  display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow-sm);
+  background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px 22px;
+  /* top-aligned, not centred: descriptions run to different line counts, and
+     centring each card independently left the four titles on ragged baselines */
+  display: flex; align-items: flex-start; gap: 16px; box-shadow: var(--shadow-sm);
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   position: relative; overflow: hidden;
 }
 .highlight::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--red); transform: scaleY(0); transform-origin: top; transition: transform .3s ease; }
-.highlight:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: #d6ddf0; }
+.highlight:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: #d0d0d0; }
 .highlight:hover::before { transform: scaleY(1); }
 .hl-ic {
-  flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px;
-  background: linear-gradient(135deg, var(--bg-navy-soft), #eef3fb);
-  border: 1px solid var(--line); display: grid; place-items: center; font-size: 1.7rem;
+  flex-shrink: 0; width: 46px; height: 46px; border-radius: 12px; margin-top: 2px;
+  background: var(--bg-navy-soft); border: 1px solid var(--line);
+  display: grid; place-items: center; color: var(--navy);
+  transition: background .25s ease, border-color .25s ease, color .25s ease;
 }
-.highlight strong { display: block; font-family: var(--head); color: var(--navy); font-size: 1.14rem; margin-bottom: 3px; }
-.highlight span { font-size: .84rem; color: var(--muted); line-height: 1.4; }
+.hl-ic svg { width: 22px; height: 22px; }
+.highlight:hover .hl-ic { background: var(--navy); border-color: var(--navy); color: #fff; }
+.hl-text { min-width: 0; }
+/* scoped to .hl-text, not `.highlight span` — .hl-ic is itself a <span>, so the
+   looser selector outranked it and repainted the icons muted grey */
+.hl-text strong {
+  display: block; font-family: var(--head); color: var(--navy);
+  font-size: 1.05rem; line-height: 1.3; letter-spacing: -.01em; margin-bottom: 5px;
+}
+.hl-text span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.5; text-wrap: pretty; }
 
 @media (max-width: 1000px) { .highlights-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 700px) {

@@ -7,6 +7,40 @@ import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
 import './Home.css';
 
+/* Highlight-strip icons. Emoji were used here before, but they render as full
+   colour on every OS (and differently on each), which fights the black & white
+   palette — these are monochrome line icons that inherit currentColor. */
+const HL_ICONS = {
+  awards: [
+    'M6 9H4.5a2.5 2.5 0 0 1 0-5H6', 'M18 9h1.5a2.5 2.5 0 0 0 0-5H18', 'M4 22h16',
+    'M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22',
+    'M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22',
+    'M18 2H6v7a6 6 0 0 0 12 0V2Z',
+  ],
+  partner: [
+    'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71',
+    'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',
+  ],
+  industries: [
+    'M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z',
+    'M17 18h1', 'M12 18h1', 'M7 18h1',
+  ],
+  generations: [
+    'M5 22h14', 'M5 2h14',
+    'M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22',
+    'M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2',
+  ],
+};
+
+function HlIcon({ name }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      {HL_ICONS[name].map((d) => <path d={d} key={d} />)}
+    </svg>
+  );
+}
+
 export default function Home() {
   const settings = useSettings();
   const [cats, setCats] = useState([]);
@@ -51,14 +85,14 @@ export default function Home() {
       <section className="highlights">
         <div className="container highlights-grid">
           {[
-            ['🏆', '35+ Awards', 'Recognised & award-winning brand'],
-            ['🤝', 'Godrej Partner', 'Exclusive distributors of oleo chemicals'],
-            ['🏭', '20+ Industries', 'Served across diverse sectors'],
-            ['⏳', '3 Generations', 'Trusted since 1997'],
+            ['awards', '35+ Awards', 'Recognised & award-winning brand'],
+            ['partner', 'Godrej Partner', 'Exclusive distributors of oleo chemicals'],
+            ['industries', '20+ Industries', 'Served across diverse sectors'],
+            ['generations', '3 Generations', 'Trusted since 1997'],
           ].map(([ic, t, d]) => (
             <div className="highlight" key={t}>
-              <span className="hl-ic">{ic}</span>
-              <div><strong>{t}</strong><span>{d}</span></div>
+              <span className="hl-ic"><HlIcon name={ic} /></span>
+              <div className="hl-text"><strong>{t}</strong><span>{d}</span></div>
             </div>
           ))}
         </div>
