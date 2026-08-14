@@ -64,32 +64,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- ABOUT ---------------- */}
-      <section className="section about-sec">
-        <div className="container about-grid">
-          <div className="about-media reveal">
-            <img src="/img/about.jpg" alt="Virava Chemicals" />
-            <div className="about-badge">
-              <Counter end={settings.stat_experience || 50} suffix="+" />
-              <span>Years of Trust</span>
-            </div>
-          </div>
-          <div className="about-body reveal">
-            <span className="eyebrow">Welcome to Virava Chemicals</span>
-            <h2 className="section-title">Quality, Service & <span className="serif">Transparency</span> for three generations</h2>
-            <p>{settings.about_full ||
-              'Virava Chemicals is committed towards quality service and transparency with its customers and principals. We are a valued business partner of Godrej Industries Ltd, a leader in oleo chemicals.'}</p>
-            <ul className="about-points">
-              <li>Agency house serving industry for 5+ decades</li>
-              <li>Exclusive distributor of Godrej Industries Ltd</li>
-              <li>Wide portfolio of oleochemicals & specialty products</li>
-              <li>Trusted supply across 20+ industries</li>
-            </ul>
-            <Link to="/about" className="btn btn-navy">Learn More About Us <span>→</span></Link>
-          </div>
-        </div>
-      </section>
-
       {/* ---------------- WHAT WE DO / SERVICES ---------------- */}
       <section className="section services-sec">
         <div className="container">
