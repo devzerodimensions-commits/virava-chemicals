@@ -8,7 +8,7 @@
 .footer-mark img { height: 34px; width: auto; display: block; }
 .footer-lockup { display: flex; flex-direction: column; line-height: 1.02; }
 .footer-name { font-family: var(--head); font-weight: 800; font-size: 1.45rem; color: #fff; }
-.footer-tag { font-family: var(--head); font-weight: 700; font-size: .64rem; letter-spacing: .34em; color: #ee3b41; }
+.footer-tag { font-family: var(--head); font-weight: 600; font-size: .64rem; letter-spacing: .36em; color: #ee3b41; }
 .footer-about p { font-size: .92rem; line-height: 1.7; }
 .footer-socials { display: flex; gap: 10px; margin-top: 18px; }
 .footer-socials a {
