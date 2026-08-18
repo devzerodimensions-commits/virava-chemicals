@@ -5,15 +5,16 @@ import { useReveal } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
-import { SOLUTIONS } from './GodrejSolution.jsx';
+import { FALLBACK_SOLUTIONS } from './GodrejSolution.jsx';
 import './Home.css';
 
-const SOLUTION_BLURBS = {
-  oleochemicals: 'Glycerine, stearic and fatty acids, oleic acids and fatty alcohols.',
-  surfactants: 'AOS, SLS, SLES, ALS and KOS in liquid, paste, needle and granule forms.',
-  'specialty-chemicals': 'Conditioning systems, emulsifiers, esters, ethoxylates and preservatives.',
-  biotech: 'Fermentation-derived sophorolipid biosurfactants.',
-};
+// Shown only until /highlights resolves, or if it fails
+const FALLBACK_HIGHLIGHTS = [
+  { id: 'a', icon: 'awards', title: '35+ Awards', subtitle: 'Recognised & award-winning brand' },
+  { id: 'b', icon: 'partner', title: 'Godrej Partner', subtitle: 'Exclusive distributors of oleo chemicals' },
+  { id: 'c', icon: 'industries', title: '20+ Industries', subtitle: 'Served across diverse sectors' },
+  { id: 'd', icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1997' },
+];
 
 // The three principals we represent alongside Godrej
 const OTHER_RANGES = [
@@ -51,10 +52,12 @@ const HL_ICONS = {
 };
 
 function HlIcon({ name }) {
+  // the icon is admin-editable, so an unrecognised value must degrade, not throw
+  const paths = HL_ICONS[name] || HL_ICONS.awards;
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      {HL_ICONS[name].map((d) => <path d={d} key={d} />)}
+      {paths.map((d) => <path d={d} key={d} />)}
     </svg>
   );
 }
@@ -67,6 +70,8 @@ export default function Home() {
   const [blogs, setBlogs] = useState([]);
 
   const [products, setProducts] = useState([]);
+  const [solutions, setSolutions] = useState(FALLBACK_SOLUTIONS);
+  const [highlights, setHighlights] = useState(FALLBACK_HIGHLIGHTS);
 
   useEffect(() => {
     api.get('/categories').then((r) => setCats(r.data)).catch(() => {});
@@ -74,6 +79,8 @@ export default function Home() {
     api.get('/industries').then((r) => setIndustries(r.data)).catch(() => {});
     api.get('/blogs').then((r) => setBlogs(r.data)).catch(() => {});
     api.get('/products').then((r) => setProducts(r.data)).catch(() => {});
+    api.get('/solutions').then((r) => { if (r.data?.length) setSolutions(r.data); }).catch(() => {});
+    api.get('/highlights').then((r) => { if (r.data?.length) setHighlights(r.data); }).catch(() => {});
   }, []);
 
   // The home page shows the seven ranges we actually sell under, not every
@@ -87,12 +94,12 @@ export default function Home() {
     }).length;
     const imageOf = (slug, fallback) => bySlug.get(slug)?.image_url || fallback;
 
-    const solutions = SOLUTIONS.map((s) => ({
+    const solutionCards = solutions.map((s) => ({
       name: s.name,
       kicker: 'Godrej Industries',
       to: `/principals/godrej-industries-limited/${s.slug}`,
-      image: s.image,
-      blurb: SOLUTION_BLURBS[s.slug],
+      image: s.image_url,
+      blurb: s.blurb,
       count: countIn((c) => c.solution === s.slug),
     }));
 
@@ -103,10 +110,10 @@ export default function Home() {
         image: imageOf(slug), count: countIn((c) => c.slug === slug),
       }));
 
-    return [...solutions, ...others];
-  }, [cats, products]);
+    return [...solutionCards, ...others];
+  }, [cats, products, solutions]);
 
-  useReveal([ranges, principals, industries, blogs]);
+  useReveal([ranges, principals, industries, blogs, highlights]);
 
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -135,15 +142,10 @@ export default function Home() {
       {/* ---------------- QUICK HIGHLIGHTS ---------------- */}
       <section className="highlights">
         <div className="container highlights-grid">
-          {[
-            ['awards', '35+ Awards', 'Recognised & award-winning brand'],
-            ['partner', 'Godrej Partner', 'Exclusive distributors of oleo chemicals'],
-            ['industries', '20+ Industries', 'Served across diverse sectors'],
-            ['generations', '3 Generations', 'Trusted since 1997'],
-          ].map(([ic, t, d]) => (
-            <div className="highlight" key={t}>
-              <span className="hl-ic"><HlIcon name={ic} /></span>
-              <div className="hl-text"><strong>{t}</strong><span>{d}</span></div>
+          {highlights.map((h) => (
+            <div className="highlight" key={h.id ?? h.title}>
+              <span className="hl-ic"><HlIcon name={h.icon} /></span>
+              <div className="hl-text"><strong>{h.title}</strong><span>{h.subtitle}</span></div>
             </div>
           ))}
         </div>

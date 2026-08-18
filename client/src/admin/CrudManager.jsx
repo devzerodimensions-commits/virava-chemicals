@@ -1,6 +1,59 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import api from '../api.js';
 import './admin.css';
+
+/**
+ * Editor for a free-form JSON object of label -> text, used for the spec rows on
+ * the product page. Rows are kept in local state so a half-typed label does not
+ * collapse into the object and lose the row's other half.
+ */
+function KeyValueEditor({ value, onChange, hint, suggestions = [] }) {
+  const toRows = (obj) => Object.entries(obj || {}).map(([k, v]) => ({ k, v: String(v) }));
+  const [rows, setRows] = useState(() => toRows(value));
+  const lastPushed = useRef(null);
+
+  // reset when the modal switches to a different record
+  useEffect(() => {
+    const incoming = JSON.stringify(value || {});
+    if (incoming !== lastPushed.current) setRows(toRows(value));
+    // eslint-disable-next-line
+  }, [value]);
+
+  const push = (next) => {
+    setRows(next);
+    const obj = {};
+    for (const { k, v } of next) if (k.trim()) obj[k.trim()] = v;
+    lastPushed.current = JSON.stringify(obj);
+    onChange(obj);
+  };
+
+  const setRow = (i, patch) => push(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  const addRow = (k = '') => push([...rows, { k, v: '' }]);
+  const removeRow = (i) => push(rows.filter((_, j) => j !== i));
+  const unused = suggestions.filter((s) => !rows.some((r) => r.k === s));
+
+  return (
+    <div className="kv-editor">
+      {rows.length === 0 && <p className="kv-empty">{hint || 'No rows yet.'}</p>}
+      {rows.map((r, i) => (
+        <div className="kv-row" key={i}>
+          <input className="kv-key" placeholder="Label" value={r.k}
+            onChange={(e) => setRow(i, { k: e.target.value })} />
+          <textarea className="kv-val" rows="2" placeholder="Value" value={r.v}
+            onChange={(e) => setRow(i, { v: e.target.value })} />
+          <button type="button" className="icon-btn danger" title="Remove row"
+            onClick={() => removeRow(i)}>🗑</button>
+        </div>
+      ))}
+      <div className="kv-add">
+        <button type="button" className="btn btn-outline btn-sm" onClick={() => addRow()}>+ Add row</button>
+        {unused.map((s) => (
+          <button type="button" className="kv-suggest" key={s} onClick={() => addRow(s)}>+ {s}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Generic list + create/edit/delete manager.
@@ -121,6 +174,13 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
                       <input type="checkbox" checked={!!editing[f.key]} onChange={(e) => setField(f.key, e.target.checked)} />
                       <span>{f.hint || 'Active / visible on site'}</span>
                     </label>
+                  ) : f.type === 'keyvalue' ? (
+                    <KeyValueEditor
+                      value={editing[f.key]}
+                      onChange={(v) => setField(f.key, v)}
+                      hint={f.hint}
+                      suggestions={f.suggestions}
+                    />
                   ) : f.type === 'image' ? (
                     <div className="af-image">
                       {editing[f.key] && <img src={editing[f.key]} alt="" className="af-preview" />}

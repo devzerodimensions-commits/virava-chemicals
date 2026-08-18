@@ -23,6 +23,9 @@ import AdminIndustries from './admin/AdminIndustries.jsx';
 import AdminPrincipals from './admin/AdminPrincipals.jsx';
 import AdminHero from './admin/AdminHero.jsx';
 import AdminBlogs from './admin/AdminBlogs.jsx';
+import AdminSolutions from './admin/AdminSolutions.jsx';
+import AdminHighlights from './admin/AdminHighlights.jsx';
+import AdminFaqs from './admin/AdminFaqs.jsx';
 import AdminSettings from './admin/AdminSettings.jsx';
 import RequireAuth from './admin/RequireAuth.jsx';
 
@@ -86,6 +89,9 @@ export default function App() {
         <Route path="industries" element={<AdminIndustries />} />
         <Route path="principals" element={<AdminPrincipals />} />
         <Route path="hero" element={<AdminHero />} />
+        <Route path="solutions" element={<AdminSolutions />} />
+        <Route path="highlights" element={<AdminHighlights />} />
+        <Route path="why" element={<AdminFaqs />} />
         <Route path="blogs" element={<AdminBlogs />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>

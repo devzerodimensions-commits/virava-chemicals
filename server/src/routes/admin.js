@@ -36,7 +36,9 @@ router.get('/dashboard', async (_req, res) => {
       (SELECT count(*) FROM industries) AS industries,
       (SELECT count(*) FROM principals) AS principals,
       (SELECT count(*) FROM enquiries)  AS enquiries,
-      (SELECT count(*) FROM enquiries WHERE status = 'new') AS new_enquiries
+      (SELECT count(*) FROM enquiries WHERE status = 'new') AS new_enquiries,
+      (SELECT count(*) FROM solutions)  AS solutions,
+      (SELECT count(*) FROM blogs)      AS blogs
   `);
   const recent = await query('SELECT * FROM enquiries ORDER BY created_at DESC LIMIT 6');
   res.json({ counts: counts.rows[0], recent: recent.rows });
@@ -133,8 +135,22 @@ function crud(resource, table, columns) {
   });
 }
 
+const INT_COLS = new Set(['category_id', 'principal_id', 'sort_order', 'product_id']);
+// columns where an empty form field means "not set" rather than an empty string
+const NULLABLE_COLS = new Set(['category_id', 'principal_id', 'solution']);
+
 function normalize(col, val) {
   if (col === 'specs') return typeof val === 'string' ? val : JSON.stringify(val || {});
+  // <select> and <input type="number"> hand back strings; '' must not reach an INT column
+  if (val === '' || val === null || val === undefined) {
+    if (NULLABLE_COLS.has(col)) return null;
+    if (col === 'sort_order') return 0;
+    return val ?? null;
+  }
+  if (INT_COLS.has(col)) {
+    const n = Number(val);
+    return Number.isFinite(n) ? n : null;
+  }
   return val;
 }
 
@@ -148,8 +164,11 @@ router.get('/products', async (_req, res) => {
   res.json(rows);
 });
 
+// principal_id and solution were missing here, so a category created in the panel
+// belonged to no principal and appeared on no solution page.
 crud('categories', 'categories',
-  ['slug', 'name', 'tagline', 'description', 'image_url', 'sort_order', 'is_active']);
+  ['slug', 'name', 'principal_id', 'solution', 'tagline', 'description', 'image_url',
+   'sort_order', 'is_active']);
 crud('products', 'products',
   ['category_id', 'slug', 'name', 'description', 'cas_no', 'grade', 'packaging', 'specs',
    'image_url', 'sort_order', 'is_active']);
@@ -162,5 +181,12 @@ crud('hero-slides', 'hero_slides',
 crud('blogs', 'blogs',
   ['slug', 'title', 'excerpt', 'content', 'category', 'author', 'image_url',
    'published_at', 'sort_order', 'is_active']);
+crud('solutions', 'solutions',
+  ['slug', 'name', 'portfolio_title', 'headline', 'lead', 'points', 'blurb', 'image_url',
+   'sort_order', 'is_active']);
+crud('highlights', 'highlights',
+  ['icon', 'title', 'subtitle', 'sort_order', 'is_active']);
+crud('faqs', 'faqs',
+  ['question', 'answer', 'sort_order', 'is_active']);
 
 export default router;

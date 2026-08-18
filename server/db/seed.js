@@ -340,6 +340,59 @@ const industryNames = [
   'Industrial Surfactants', 'Construction',
 ];
 
+// ---------------------------------------------------------------- solutions
+// Godrej's four product solutions. *starred* words render as the italic accent.
+export const solutions = [
+  { slug: 'oleochemicals', name: 'Oleochemicals',
+    portfolio_title: 'Oleochemicals Portfolio',
+    headline: 'High-purity oleochemicals for *demanding* industrial needs',
+    lead: 'renewable fatty acids, fatty alcohols, glycerine and speciality derivatives — engineered for purity, consistency and performance across a wide range of industrial applications.',
+    points: 'Sustainably sourced and bio-based\nConsistent, batch-to-batch quality\nAdaptable across diverse industries',
+    blurb: 'Glycerine, stearic and fatty acids, oleic acids and fatty alcohols.',
+    image: '/img/categories/glycerine.jpg' },
+  { slug: 'surfactants', name: 'Surfactants',
+    portfolio_title: 'Our Surfactants Portfolio',
+    headline: 'Surfactants that build *foam*, cleaning and mildness',
+    lead: 'anionic and non-ionic surfactants — AOS, SLS, SLES, ALS and KOS — supplied as pastes, liquids, needles and granules for home care, personal care and industrial cleaning.',
+    points: 'High foam and reliable detergency\nLiquid, paste, needle and granule forms\nHome care, personal care and industrial cleaning',
+    blurb: 'AOS, SLS, SLES, ALS and KOS in liquid, paste, needle and granule forms.',
+    image: '/img/categories/surfactants.jpg' },
+  { slug: 'specialty-chemicals', name: 'Specialty Chemicals',
+    portfolio_title: 'Our Specialities Portfolio',
+    headline: 'Speciality chemistry for *formulation* performance',
+    lead: 'conditioning systems, emulsifiers, esters and emollients, ethoxylates, food emulsifiers, performance additives and preservatives for personal care, home care and food.',
+    points: 'Conditioning, emulsification and sensory control\nFood-grade and personal-care grades\nPreservation and microbial control',
+    blurb: 'Conditioning systems, emulsifiers, esters, ethoxylates and preservatives.',
+    image: '/img/categories/oleo-derivatives.jpg' },
+  { slug: 'biotech', name: 'Biotech',
+    portfolio_title: 'Biosurfactants Portfolio',
+    headline: 'Fermentation-derived *biosurfactants*',
+    lead: 'sophorolipid biosurfactants produced by fermentation — readily biodegradable, bio-based alternatives for home and personal care formulations.',
+    points: 'Bio-based and readily biodegradable\nProduced by fermentation\nHome care and personal care',
+    blurb: 'Fermentation-derived sophorolipid biosurfactants.',
+    image: '/img/categories/biotech.jpg' },
+];
+
+// ---------------------------------------------------------------- highlights
+export const highlights = [
+  { icon: 'awards', title: '35+ Awards', subtitle: 'Recognised & award-winning brand' },
+  { icon: 'partner', title: 'Godrej Partner', subtitle: 'Exclusive distributors of oleo chemicals' },
+  { icon: 'industries', title: '20+ Industries', subtitle: 'Served across diverse sectors' },
+  { icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1997' },
+];
+
+// ---------------------------------------------------------------- faqs
+export const faqs = [
+  { question: 'Application depth that helps customers move faster',
+    answer: 'Five decades in the agency business means we know how these chemicals behave in the field. We help with grade selection, substitutions and troubleshooting across personal care, detergents, rubber, plastics, textiles and lubricants — not just quoting a price.' },
+  { question: 'A broad portfolio from reputed manufacturers',
+    answer: 'As exclusive distributors of Godrej Industries Ltd, and representing HPL Additives, Oriental Carbon & Chemicals and The Standard Chemicals Co., we cover fatty alcohols, fatty acids, surfactants, glycerine, oleo derivatives and specialty additives from one supplier.' },
+  { question: 'Reliable supply backed by real warehousing',
+    answer: 'Established warehousing, a strong distribution network and experienced staff mean consistent, on-time delivery — including bulk quantities and repeat scheduled supply.' },
+  { question: 'Quality and transparency across three generations',
+    answer: 'Products come from certified manufacturers with documentation to match. Honest, transparent dealing with customers and principals alike is what the firm was built on.' },
+];
+
 // ---------------------------------------------------------------- hero slides
 const heroSlides = [
   { title: 'The Most Trusted Name in Industrial Chemicals',
@@ -399,7 +452,7 @@ const settings = {
 
 export async function run(closePool = true) {
   console.log('Seeding Virava Chemicals database...');
-  await query(`TRUNCATE enquiries, products, categories, principals, industries, hero_slides, blogs, site_settings, admins RESTART IDENTITY CASCADE`);
+  await query(`TRUNCATE enquiries, products, categories, principals, industries, hero_slides, blogs, site_settings, admins, solutions, highlights, faqs RESTART IDENTITY CASCADE`);
 
   // principals (first, so categories can reference them)
   const pKeyId = {}; // godrej/hpl/occl/std -> id
@@ -447,6 +500,30 @@ export async function run(closePool = true) {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
       [cat.id, slug(p.n) + '-' + (++pi), p.n, p.desc, p.cas || '', p.grade || '',
        p.pack || '', cat.image, JSON.stringify(specsFor(p)), pi]
+    );
+  }
+
+  // solutions / highlights / faqs
+  for (let i = 0; i < solutions.length; i++) {
+    const s = solutions[i];
+    await query(
+      `INSERT INTO solutions (slug, name, portfolio_title, headline, lead, points, blurb, image_url, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [s.slug, s.name, s.portfolio_title, s.headline, s.lead, s.points, s.blurb, s.image, i]
+    );
+  }
+  for (let i = 0; i < highlights.length; i++) {
+    const h = highlights[i];
+    await query(
+      'INSERT INTO highlights (icon, title, subtitle, sort_order) VALUES ($1,$2,$3,$4)',
+      [h.icon, h.title, h.subtitle, i]
+    );
+  }
+  for (let i = 0; i < faqs.length; i++) {
+    const f = faqs[i];
+    await query(
+      'INSERT INTO faqs (question, answer, sort_order) VALUES ($1,$2,$3)',
+      [f.question, f.answer, i]
     );
   }
 

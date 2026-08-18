@@ -10,6 +10,9 @@ DROP TABLE IF EXISTS hero_slides CASCADE;
 DROP TABLE IF EXISTS blogs CASCADE;
 DROP TABLE IF EXISTS site_settings CASCADE;
 DROP TABLE IF EXISTS admins CASCADE;
+DROP TABLE IF EXISTS solutions CASCADE;
+DROP TABLE IF EXISTS highlights CASCADE;
+DROP TABLE IF EXISTS faqs CASCADE;
 
 CREATE TABLE admins (
   id            SERIAL PRIMARY KEY,
@@ -112,6 +115,41 @@ CREATE TABLE enquiries (
 CREATE TABLE site_settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL DEFAULT ''
+);
+
+-- Godrej's product solutions. Drives the four solution pages and the range cards
+-- on the home page. `headline` renders *starred* words as the italic accent.
+CREATE TABLE solutions (
+  id              SERIAL PRIMARY KEY,
+  slug            TEXT UNIQUE NOT NULL,
+  name            TEXT NOT NULL,
+  portfolio_title TEXT DEFAULT '',
+  headline        TEXT DEFAULT '',
+  lead            TEXT DEFAULT '',
+  points          TEXT DEFAULT '',   -- one per line
+  blurb           TEXT DEFAULT '',   -- short line for the home range card
+  image_url       TEXT DEFAULT '',
+  sort_order      INT NOT NULL DEFAULT 0,
+  is_active       BOOLEAN NOT NULL DEFAULT true
+);
+
+-- The four-up strip under the home hero
+CREATE TABLE highlights (
+  id         SERIAL PRIMARY KEY,
+  icon       TEXT DEFAULT 'awards',  -- awards | partner | industries | generations
+  title      TEXT NOT NULL,
+  subtitle   TEXT DEFAULT '',
+  sort_order INT NOT NULL DEFAULT 0,
+  is_active  BOOLEAN NOT NULL DEFAULT true
+);
+
+-- "Why Virava Chemicals?" accordion on the products page
+CREATE TABLE faqs (
+  id         SERIAL PRIMARY KEY,
+  question   TEXT NOT NULL,
+  answer     TEXT DEFAULT '',
+  sort_order INT NOT NULL DEFAULT 0,
+  is_active  BOOLEAN NOT NULL DEFAULT true
 );
 
 CREATE INDEX idx_products_category ON products(category_id);

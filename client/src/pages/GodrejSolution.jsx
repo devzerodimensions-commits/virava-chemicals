@@ -9,41 +9,36 @@ import './GodrejSolution.css';
 const SLUG = 'godrej-industries-limited';
 
 /* Godrej divides its range into four product solutions. Each gets this same page,
-   scoped to the categories carrying that `solution` value. */
-export const SOLUTIONS = [
-  {
-    slug: 'oleochemicals', name: 'Oleochemicals',
-    portfolio: 'Oleochemicals Portfolio',
-    image: '/img/categories/glycerine.jpg',
-    title: <>High-purity oleochemicals for <span className="serif">demanding</span> industrial needs</>,
-    lead: 'Renewable fatty acids, fatty alcohols, glycerine and speciality derivatives — engineered for purity, consistency and performance across a wide range of industrial applications.',
-    points: ['Sustainably sourced and bio-based', 'Consistent, batch-to-batch quality', 'Adaptable across diverse industries'],
-  },
-  {
-    slug: 'surfactants', name: 'Surfactants',
-    portfolio: 'Our Surfactants Portfolio',
-    image: '/img/categories/surfactants.jpg',
-    title: <>Surfactants that build <span className="serif">foam</span>, cleaning and mildness</>,
-    lead: 'Anionic and non-ionic surfactants — AOS, SLS, SLES, ALS and KOS — supplied as pastes, liquids, needles and granules for home care, personal care and industrial cleaning.',
-    points: ['High foam and reliable detergency', 'Liquid, paste, needle and granule forms', 'Home care, personal care and industrial cleaning'],
-  },
-  {
-    slug: 'specialty-chemicals', name: 'Specialty Chemicals',
-    portfolio: 'Our Specialities Portfolio',
-    image: '/img/categories/oleo-derivatives.jpg',
-    title: <>Speciality chemistry for <span className="serif">formulation</span> performance</>,
-    lead: 'Conditioning systems, emulsifiers, esters and emollients, ethoxylates, food emulsifiers, performance additives and preservatives for personal care, home care and food.',
-    points: ['Conditioning, emulsification and sensory control', 'Food-grade and personal-care grades', 'Preservation and microbial control'],
-  },
-  {
-    slug: 'biotech', name: 'Biotech',
-    portfolio: 'Biosurfactants Portfolio',
-    image: '/img/categories/biotech.jpg',
-    title: <>Fermentation-derived <span className="serif">biosurfactants</span></>,
-    lead: 'Sophorolipid biosurfactants produced by fermentation — readily biodegradable, bio-based alternatives for home and personal care formulations.',
-    points: ['Bio-based and readily biodegradable', 'Produced by fermentation', 'Home care and personal care'],
-  },
+   scoped to the categories carrying that `solution` value.
+
+   The copy lives in the `solutions` table and is edited in the admin panel; this
+   list is only the fallback used before the fetch resolves, or if it fails. */
+export const FALLBACK_SOLUTIONS = [
+  { slug: 'oleochemicals', name: 'Oleochemicals', portfolio_title: 'Oleochemicals Portfolio',
+    image_url: '/img/categories/glycerine.jpg' },
+  { slug: 'surfactants', name: 'Surfactants', portfolio_title: 'Our Surfactants Portfolio',
+    image_url: '/img/categories/surfactants.jpg' },
+  { slug: 'specialty-chemicals', name: 'Specialty Chemicals', portfolio_title: 'Our Specialities Portfolio',
+    image_url: '/img/categories/oleo-derivatives.jpg' },
+  { slug: 'biotech', name: 'Biotech', portfolio_title: 'Biosurfactants Portfolio',
+    image_url: '/img/categories/biotech.jpg' },
 ];
+
+/* Renders *starred* words as the italic brand accent, so an admin can control the
+   emphasis in a headline from a plain text field. */
+export function AccentText({ text = '' }) {
+  return (
+    <>
+      {String(text).split(/(\*[^*]+\*)/g).filter(Boolean).map((part, i) =>
+        part.startsWith('*') && part.endsWith('*') && part.length > 2
+          ? <span className="serif" key={i}>{part.slice(1, -1)}</span>
+          : <span key={i}>{part}</span>
+      )}
+    </>
+  );
+}
+
+export const linesOf = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
 // Order the portfolio the way Godrej groups it, rather than by the generic
 // category sort_order. Anything not listed falls in afterwards, alphabetically.
@@ -60,10 +55,10 @@ const CATEGORY_ORDER = [
 
 export default function GodrejSolution() {
   const { solution: solutionSlug } = useParams();
-  const solution = SOLUTIONS.find((s) => s.slug === solutionSlug);
 
   const [data, setData] = useState(null);
   const [industries, setIndustries] = useState([]);
+  const [allSolutions, setAllSolutions] = useState(FALLBACK_SOLUTIONS);
   const [active, setActive] = useState(0);
   const [enquiry, setEnquiry] = useState(null);
   const sectionRefs = useRef([]);
@@ -71,7 +66,12 @@ export default function GodrejSolution() {
   useEffect(() => {
     api.get(`/principals/${SLUG}`).then((r) => setData(r.data)).catch(() => setData({ error: true }));
     api.get('/industries').then((r) => setIndustries(r.data)).catch(() => {});
+    api.get('/solutions')
+      .then((r) => { if (r.data?.length) setAllSolutions(r.data); })
+      .catch(() => {});
   }, []);
+
+  const solution = allSolutions.find((s) => s.slug === solutionSlug);
 
   useEffect(() => { setActive(0); sectionRefs.current = []; }, [solutionSlug]);
 
@@ -115,7 +115,12 @@ export default function GodrejSolution() {
     window.scrollTo({ top: y, behavior: 'smooth' });
   };
 
-  if (!solution) return <Navigate to={`/principals/${SLUG}/oleochemicals`} replace />;
+  // unknown slug — fall back to the first solution rather than 404ing, so renaming
+  // a slug in the admin panel cannot strand the page
+  if (!solution) {
+    const first = allSolutions[0];
+    return first ? <Navigate to={`/principals/${SLUG}/${first.slug}`} replace /> : null;
+  }
   if (!data) return <div className="container section center"><p>Loading…</p></div>;
   if (data.error) return (
     <div className="container section center">
@@ -130,7 +135,7 @@ export default function GodrejSolution() {
     <>
       <PageHeader
         title={solution.name}
-        image={cats[0]?.image_url || solution.image}
+        image={cats[0]?.image_url || solution.image_url}
         subtitle="Godrej Industries Limited — distributed across India by Virava Chemicals"
         crumbs={[{ label: 'Principals', to: '/#principals' }, { label: 'Godrej Industries Limited' }]}
       />
@@ -143,12 +148,14 @@ export default function GodrejSolution() {
             <span className="go-kicker">{solution.name}</span>
           </div>
           <div className="go-intro-body reveal">
-            <h2 className="go-lead-title">{solution.title}</h2>
-            <p className="go-lead">
-              As exclusive distributors for {data.name}, Virava Chemicals supplies {solution.lead}
-            </p>
+            <h2 className="go-lead-title"><AccentText text={solution.headline} /></h2>
+            {solution.lead && (
+              <p className="go-lead">
+                As exclusive distributors for {data.name}, Virava Chemicals supplies {solution.lead}
+              </p>
+            )}
             <ul className="go-points">
-              {solution.points.map((h) => <li key={h}>{h}</li>)}
+              {linesOf(solution.points).map((h) => <li key={h}>{h}</li>)}
             </ul>
             <div className="go-figures">
               <div><b>{cats.length}</b><span>Product Categories</span></div>
@@ -163,7 +170,7 @@ export default function GodrejSolution() {
       {cats.length === 0 ? (
         <section className="section section-soft">
           <div className="container center">
-            <h2 className="go-section-title">{solution.portfolio}</h2>
+            <h2 className="go-section-title">{solution.portfolio_title}</h2>
             <p className="section-intro">
               We are building out this part of the range. Contact us for availability, grades and
               pricing on {solution.name.toLowerCase()} from {data.name}.
@@ -174,7 +181,7 @@ export default function GodrejSolution() {
       ) : (
         <section className="section section-soft go-portfolio">
           <div className="container">
-            <h2 className="go-section-title">{solution.portfolio}</h2>
+            <h2 className="go-section-title">{solution.portfolio_title}</h2>
 
             <div className="go-grid">
               {/* sticky category rail */}
@@ -253,7 +260,7 @@ export default function GodrejSolution() {
         <div className="container">
           <h2 className="go-section-title">Other Product Solutions</h2>
           <div className="go-others">
-            {SOLUTIONS.filter((s) => s.slug !== solution.slug).map((s) => (
+            {allSolutions.filter((s) => s.slug !== solution.slug).map((s) => (
               <Link key={s.slug} to={`/principals/${SLUG}/${s.slug}`} className="go-other">{s.name}</Link>
             ))}
             <Link to="/products" className="go-other">All Products</Link>

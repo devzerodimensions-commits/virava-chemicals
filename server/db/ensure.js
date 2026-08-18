@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { pool, query } from '../src/db.js';
 import {
   run as seed, categories as seedCategories, products as seedProducts, slug, specsFor,
+  solutions as seedSolutions, highlights as seedHighlights, faqs as seedFaqs,
 } from './seed.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -41,6 +42,58 @@ async function migrate() {
   // HPL/OCCL/STD were still on borrowed industry photos and the About collage;
   // needs its own key because the first image pass already spent that one.
   await fixCategoryImages('migration_principal_images');
+  await addEditableContentTables();
+}
+
+// Solution copy, the home highlight strip and the "Why Virava" answers were all
+// hardcoded in the frontend, so nothing about them could be changed without a
+// deploy. Move them into tables the admin panel can edit.
+//
+// CREATE TABLE IF NOT EXISTS is safe every boot; the row seeding is guarded so it
+// only populates an empty table — edits and deletions are never undone.
+async function addEditableContentTables() {
+  await query(`CREATE TABLE IF NOT EXISTS solutions (
+    id SERIAL PRIMARY KEY, slug TEXT UNIQUE NOT NULL, name TEXT NOT NULL,
+    portfolio_title TEXT DEFAULT '', headline TEXT DEFAULT '', lead TEXT DEFAULT '',
+    points TEXT DEFAULT '', blurb TEXT DEFAULT '', image_url TEXT DEFAULT '',
+    sort_order INT NOT NULL DEFAULT 0, is_active BOOLEAN NOT NULL DEFAULT true)`);
+  await query(`CREATE TABLE IF NOT EXISTS highlights (
+    id SERIAL PRIMARY KEY, icon TEXT DEFAULT 'awards', title TEXT NOT NULL,
+    subtitle TEXT DEFAULT '', sort_order INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true)`);
+  await query(`CREATE TABLE IF NOT EXISTS faqs (
+    id SERIAL PRIMARY KEY, question TEXT NOT NULL, answer TEXT DEFAULT '',
+    sort_order INT NOT NULL DEFAULT 0, is_active BOOLEAN NOT NULL DEFAULT true)`);
+
+  const empty = async (t) => (await query(`SELECT count(*)::int AS n FROM ${t}`)).rows[0].n === 0;
+
+  if (await empty('solutions')) {
+    for (let i = 0; i < seedSolutions.length; i++) {
+      const s = seedSolutions[i];
+      await query(
+        `INSERT INTO solutions (slug, name, portfolio_title, headline, lead, points, blurb, image_url, sort_order)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (slug) DO NOTHING`,
+        [s.slug, s.name, s.portfolio_title, s.headline, s.lead, s.points, s.blurb, s.image, i]
+      );
+    }
+    console.log(`Migration: seeded ${seedSolutions.length} solutions.`);
+  }
+  if (await empty('highlights')) {
+    for (let i = 0; i < seedHighlights.length; i++) {
+      const h = seedHighlights[i];
+      await query('INSERT INTO highlights (icon, title, subtitle, sort_order) VALUES ($1,$2,$3,$4)',
+        [h.icon, h.title, h.subtitle, i]);
+    }
+    console.log(`Migration: seeded ${seedHighlights.length} highlights.`);
+  }
+  if (await empty('faqs')) {
+    for (let i = 0; i < seedFaqs.length; i++) {
+      const f = seedFaqs[i];
+      await query('INSERT INTO faqs (question, answer, sort_order) VALUES ($1,$2,$3)',
+        [f.question, f.answer, i]);
+    }
+    console.log(`Migration: seeded ${seedFaqs.length} FAQs.`);
+  }
 }
 
 // Godrej splits its range into four product solutions (oleochemicals, surfactants,

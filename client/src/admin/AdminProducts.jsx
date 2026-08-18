@@ -28,6 +28,9 @@ export default function AdminProducts() {
         { key: 'packaging', label: 'Packaging' },
         { key: 'sort_order', label: 'Sort Order', type: 'number' },
         { key: 'description', label: 'Description', type: 'textarea', full: true },
+        { key: 'specs', label: 'Specification rows (shown on the product page)', type: 'keyvalue', full: true,
+          hint: 'No extra rows yet — CAS Number, Grade and Packaging above are always shown.',
+          suggestions: ['Feature', 'Benefits', 'Typical Properties', 'Application Details', 'INCI Name'] },
         { key: 'image_url', label: 'Image', type: 'image', full: true },
         { key: 'is_active', label: 'Status', type: 'checkbox', full: true },
       ]}

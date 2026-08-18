@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
+import api from '../api.js';
 import './Navbar.css';
 
 const productLinks = [
@@ -15,14 +16,15 @@ const productLinks = [
 
 const GODREJ = '/principals/godrej-industries-limited';
 
-// Godrej splits into four product solutions; the others go straight to their page.
-const principalLinks = [
-  ['Godrej Industries Limited', `${GODREJ}/oleochemicals`, '/img/partners/logo1.png', [
-    ['Oleochemicals', `${GODREJ}/oleochemicals`],
-    ['Surfactants', `${GODREJ}/surfactants`],
-    ['Specialty Chemicals', `${GODREJ}/specialty-chemicals`],
-    ['Biotech', `${GODREJ}/biotech`],
-  ]],
+// Fallback until /solutions resolves — the live list comes from the admin panel
+const FALLBACK_SOLUTION_LINKS = [
+  ['Oleochemicals', 'oleochemicals'],
+  ['Surfactants', 'surfactants'],
+  ['Specialty Chemicals', 'specialty-chemicals'],
+  ['Biotech', 'biotech'],
+];
+
+const otherPrincipals = [
   ['HPL Additives Limited', '/principals/hpl-additives-limited', '/img/partners/logo2.png'],
   ['Oriental Carbon & Chemicals', '/principals/oriental-carbon-and-chemicals-limited', '/img/partners/logo3.png'],
   ['The Standard Chemicals Co.', '/principals/the-standard-chemicals-co-pvt-ltd', '/img/partners/logo4.png'],
@@ -31,7 +33,23 @@ const principalLinks = [
 export default function Navbar({ settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [solutionLinks, setSolutionLinks] = useState(FALLBACK_SOLUTION_LINKS);
   const loc = useLocation();
+
+  useEffect(() => {
+    api.get('/solutions')
+      .then((r) => {
+        if (r.data?.length) setSolutionLinks(r.data.map((s) => [s.name, s.slug]));
+      })
+      .catch(() => {});
+  }, []);
+
+  const principalLinks = [
+    ['Godrej Industries Limited', `${GODREJ}/${solutionLinks[0]?.[1] || 'oleochemicals'}`,
+      '/img/partners/logo1.png',
+      solutionLinks.map(([label, slug]) => [label, `${GODREJ}/${slug}`])],
+    ...otherPrincipals,
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

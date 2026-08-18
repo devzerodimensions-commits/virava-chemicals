@@ -5,15 +5,16 @@ import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import './ProductFinder.css';
 
-const WHY = [
-  ['Application depth that helps customers move faster',
-   'Five decades in the agency business means we know how these chemicals behave in the field. We help with grade selection, substitutions and troubleshooting across personal care, detergents, rubber, plastics, textiles and lubricants — not just quoting a price.'],
-  ['A broad portfolio from reputed manufacturers',
-   'As exclusive distributors of Godrej Industries Ltd, and representing HPL Additives, Oriental Carbon & Chemicals and The Standard Chemicals Co., we cover fatty alcohols, fatty acids, surfactants, glycerine, oleo derivatives and specialty additives from one supplier.'],
-  ['Reliable supply backed by real warehousing',
-   'Established warehousing, a strong distribution network and experienced staff mean consistent, on-time delivery — including bulk quantities and repeat scheduled supply.'],
-  ['Quality and transparency across three generations',
-   'Products come from certified manufacturers with documentation to match. Honest, transparent dealing with customers and principals alike is what the firm was built on.'],
+// Editable under Why Virava in the admin panel; this is only the pre-fetch fallback.
+const FALLBACK_WHY = [
+  { id: 'a', question: 'Application depth that helps customers move faster',
+    answer: 'Five decades in the agency business means we know how these chemicals behave in the field. We help with grade selection, substitutions and troubleshooting across personal care, detergents, rubber, plastics, textiles and lubricants — not just quoting a price.' },
+  { id: 'b', question: 'A broad portfolio from reputed manufacturers',
+    answer: 'As exclusive distributors of Godrej Industries Ltd, and representing HPL Additives, Oriental Carbon & Chemicals and The Standard Chemicals Co., we cover fatty alcohols, fatty acids, surfactants, glycerine, oleo derivatives and specialty additives from one supplier.' },
+  { id: 'c', question: 'Reliable supply backed by real warehousing',
+    answer: 'Established warehousing, a strong distribution network and experienced staff mean consistent, on-time delivery — including bulk quantities and repeat scheduled supply.' },
+  { id: 'd', question: 'Quality and transparency across three generations',
+    answer: 'Products come from certified manufacturers with documentation to match. Honest, transparent dealing with customers and principals alike is what the firm was built on.' },
 ];
 
 /* /products/:slug used to be its own category page. It is now a pre-filtered
@@ -29,6 +30,7 @@ export default function ProductFinder() {
   const [products, setProducts] = useState([]);
   const [cats, setCats] = useState([]);
   const [principals, setPrincipals] = useState([]);
+  const [why, setWhy] = useState(FALLBACK_WHY);
   const [loading, setLoading] = useState(true);
 
   const q = params.get('q') || '';
@@ -43,6 +45,7 @@ export default function ProductFinder() {
     ]).then(([p, c, pr]) => {
       setProducts(p); setCats(c); setPrincipals(pr); setLoading(false);
     });
+    api.get('/faqs').then((r) => { if (r.data?.length) setWhy(r.data); }).catch(() => {});
   }, []);
 
   // products carry their category, and categories carry their principal
@@ -179,10 +182,10 @@ export default function ProductFinder() {
           </div>
           <div className="pf-why-body reveal">
             <h2 className="pf-why-title">Why Virava Chemicals?</h2>
-            {WHY.map(([q2, a]) => (
-              <details className="pf-acc" key={q2}>
-                <summary>{q2}<span className="pf-acc-ic" aria-hidden="true" /></summary>
-                <p>{a}</p>
+            {why.map((f) => (
+              <details className="pf-acc" key={f.id ?? f.question}>
+                <summary>{f.question}<span className="pf-acc-ic" aria-hidden="true" /></summary>
+                <p>{f.answer}</p>
               </details>
             ))}
           </div>

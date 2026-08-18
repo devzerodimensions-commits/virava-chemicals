@@ -7,9 +7,12 @@ const nav = [
   ['enquiries', '✉', 'Enquiries'],
   ['products', '🧪', 'Products'],
   ['categories', '📁', 'Categories'],
+  ['solutions', '🧬', 'Solutions'],
   ['industries', '🏭', 'Industries'],
   ['principals', '🤝', 'Principals'],
   ['hero', '🖼', 'Hero Slides'],
+  ['highlights', '⭐', 'Highlights'],
+  ['why', '❓', 'Why Virava'],
   ['blogs', '📝', 'Blogs'],
   ['settings', '⚙', 'Settings'],
 ];

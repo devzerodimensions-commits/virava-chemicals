@@ -75,6 +75,27 @@ router.get('/principals/:slug', async (req, res) => {
   res.json({ ...principal, categories });
 });
 
+router.get('/solutions', async (_req, res) => {
+  const { rows } = await query(
+    'SELECT * FROM solutions WHERE is_active = true ORDER BY sort_order, id'
+  );
+  res.json(rows);
+});
+
+router.get('/highlights', async (_req, res) => {
+  const { rows } = await query(
+    'SELECT * FROM highlights WHERE is_active = true ORDER BY sort_order, id'
+  );
+  res.json(rows);
+});
+
+router.get('/faqs', async (_req, res) => {
+  const { rows } = await query(
+    'SELECT * FROM faqs WHERE is_active = true ORDER BY sort_order, id'
+  );
+  res.json(rows);
+});
+
 router.get('/industries', async (_req, res) => {
   const { rows } = await query(
     'SELECT * FROM industries WHERE is_active = true ORDER BY sort_order, name'

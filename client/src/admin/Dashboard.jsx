@@ -6,8 +6,10 @@ import './admin.css';
 const cards = [
   ['products', '🧪', 'Products', '/admin/products', '#161616'],
   ['categories', '📁', 'Categories', '/admin/categories', '#333333'],
+  ['solutions', '🧬', 'Solutions', '/admin/solutions', '#404040'],
   ['industries', '🏭', 'Industries', '/admin/industries', '#4d4d4d'],
   ['principals', '🤝', 'Principals', '/admin/principals', '#666666'],
+  ['blogs', '📝', 'Blog Posts', '/admin/blogs', '#737373'],
   ['enquiries', '✉', 'Total Enquiries', '/admin/enquiries', '#000000'],
   ['new_enquiries', '🔔', 'New Enquiries', '/admin/enquiries', '#808080'],
 ];
