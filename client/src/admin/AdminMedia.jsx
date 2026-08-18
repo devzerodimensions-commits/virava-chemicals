@@ -6,7 +6,10 @@ const fmtSize = (b) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` :
 
 export default function AdminMedia() {
   const [media, setMedia] = useState({ uploads: [], bundled: [] });
-  const [tab, setTab] = useState('uploads');
+  // "All" by default: on a fresh deploy nothing has been uploaded yet, and
+  // opening straight onto an empty Uploaded tab made it look like the library
+  // was broken when 50 site images were sitting one tab over.
+  const [tab, setTab] = useState('all');
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -25,10 +28,14 @@ export default function AdminMedia() {
   useEffect(load, []);
 
   const files = useMemo(() => {
-    const list = tab === 'uploads' ? media.uploads : media.bundled;
+    const list = tab === 'uploads' ? media.uploads
+      : tab === 'bundled' ? media.bundled
+      : [...media.uploads, ...media.bundled];
     const needle = q.trim().toLowerCase();
     return needle ? list.filter((f) => f.path.toLowerCase().includes(needle)) : list;
   }, [media, tab, q]);
+
+  const total = media.uploads.length + media.bundled.length;
 
   const upload = async (fileList) => {
     const picked = [...fileList].filter((f) => f.type.startsWith('image/'));
@@ -103,6 +110,9 @@ export default function AdminMedia() {
       <div className="panel">
         <div className="media-bar">
           <div className="media-tabs">
+            <button className={tab === 'all' ? 'on' : ''} onClick={() => setTab('all')}>
+              All <em>{total}</em>
+            </button>
             <button className={tab === 'uploads' ? 'on' : ''} onClick={() => setTab('uploads')}>
               Uploaded <em>{media.uploads.length}</em>
             </button>
@@ -119,15 +129,26 @@ export default function AdminMedia() {
             These ship with the site and cannot be deleted here — but you can copy any path and use it in an image field.
           </p>
         )}
+        {tab === 'uploads' && media.uploads.length === 0 && media.bundled.length > 0 && !q && (
+          <p className="media-note">
+            Nothing has been uploaded yet. The {media.bundled.length} images already used across the
+            site are under <button className="link-btn" onClick={() => setTab('bundled')}>Site images</button>.
+          </p>
+        )}
 
         {loading ? <p className="empty">Loading…</p> : files.length === 0 ? (
-          <p className="empty">{q ? 'Nothing matches that search.' : 'No images yet — upload some above.'}</p>
+          <p className="empty">{q ? 'Nothing matches that search.' : 'No images here yet — upload some above.'}</p>
         ) : (
           <div className="media-grid">
             {files.map((f) => (
               <div className="media-card" key={f.url}>
                 <button className="media-thumb" onClick={() => openPreview(f)} title="Details">
                   <img src={f.url} alt={f.name} loading="lazy" />
+                  {tab === 'all' && (
+                    <span className={`media-src ${f.source}`}>
+                      {f.source === 'upload' ? 'Uploaded' : 'Site'}
+                    </span>
+                  )}
                 </button>
                 <div className="media-meta">
                   <span className="media-name" title={f.path}>{f.path}</span>

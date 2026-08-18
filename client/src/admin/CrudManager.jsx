@@ -8,22 +8,20 @@ import './admin.css';
  */
 function MediaPicker({ onPick, onClose }) {
   const [media, setMedia] = useState({ uploads: [], bundled: [] });
-  const [tab, setTab] = useState('uploads');
+  const [tab, setTab] = useState('all');
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/admin/media')
-      .then((r) => {
-        setMedia(r.data);
-        // land on whichever tab actually has something in it
-        if (!r.data.uploads?.length && r.data.bundled?.length) setTab('bundled');
-      })
+      .then((r) => setMedia(r.data))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const list = (tab === 'uploads' ? media.uploads : media.bundled) || [];
+  const list = (tab === 'uploads' ? media.uploads
+    : tab === 'bundled' ? media.bundled
+    : [...(media.uploads || []), ...(media.bundled || [])]) || [];
   const needle = q.trim().toLowerCase();
   const files = needle ? list.filter((f) => f.path.toLowerCase().includes(needle)) : list;
 
@@ -34,6 +32,9 @@ function MediaPicker({ onPick, onClose }) {
         <h2>Choose an image</h2>
         <div className="media-bar">
           <div className="media-tabs">
+            <button type="button" className={tab === 'all' ? 'on' : ''} onClick={() => setTab('all')}>
+              All <em>{(media.uploads?.length || 0) + (media.bundled?.length || 0)}</em>
+            </button>
             <button type="button" className={tab === 'uploads' ? 'on' : ''} onClick={() => setTab('uploads')}>
               Uploaded <em>{media.uploads?.length || 0}</em>
             </button>
