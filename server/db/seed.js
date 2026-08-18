@@ -394,16 +394,19 @@ export const faqs = [
 ];
 
 // ---------------------------------------------------------------- hero slides
-const heroSlides = [
+export const heroSlides = [
   { title: 'The Most Trusted Name in Industrial Chemicals',
     subtitle: 'Reputed & award-winning brand serving the industrial world of India since 1997.',
-    image: '/img/banner3.jpg', cta_text: 'Explore Our Products', cta_link: '/products' },
+    image: '/img/slides/godrej.jpg', cta_text: 'Explore Our Products', cta_link: '/products' },
   { title: 'Exclusive Distributors of Godrej Oleo Chemicals',
     subtitle: 'A valued business partner of Godrej Industries Ltd — a leader in oleo chemicals.',
-    image: '/img/banner1.jpg', cta_text: 'Our Principals', cta_link: '/about' },
+    image: '/img/slides/hpl.jpg', cta_text: 'Our Principals', cta_link: '/#principals' },
   { title: 'Quality, Service & Transparency for Three Generations',
     subtitle: 'Fatty alcohols, fatty acids, surfactants, glycerine & specialty chemicals.',
-    image: '/img/banner4.jpg', cta_text: 'Get in Touch', cta_link: '/contact' },
+    image: '/img/slides/occl.jpg', cta_text: 'Get in Touch', cta_link: '/contact' },
+  { title: 'Insoluble Sulphur, Additives & Specialty Chemicals',
+    subtitle: 'Representing HPL Additives, Oriental Carbon & Chemicals and The Standard Chemicals Co.',
+    image: '/img/slides/standard.jpg', cta_text: 'Browse the Range', cta_link: '/products' },
 ];
 
 // ---------------------------------------------------------------- blogs

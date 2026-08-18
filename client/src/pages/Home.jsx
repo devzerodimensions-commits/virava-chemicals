@@ -72,6 +72,7 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [solutions, setSolutions] = useState(FALLBACK_SOLUTIONS);
   const [highlights, setHighlights] = useState(FALLBACK_HIGHLIGHTS);
+  const [slides, setSlides] = useState([]);
 
   useEffect(() => {
     api.get('/categories').then((r) => setCats(r.data)).catch(() => {});
@@ -81,6 +82,7 @@ export default function Home() {
     api.get('/products').then((r) => setProducts(r.data)).catch(() => {});
     api.get('/solutions').then((r) => { if (r.data?.length) setSolutions(r.data); }).catch(() => {});
     api.get('/highlights').then((r) => { if (r.data?.length) setHighlights(r.data); }).catch(() => {});
+    api.get('/hero-slides').then((r) => setSlides(r.data)).catch(() => {});
   }, []);
 
   // The home page shows the seven ranges we actually sell under, not every
@@ -135,8 +137,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- HERO SLIDER (one slide per principal) ---------------- */}
-      <HeroSlider items={principals} />
+      {/* ---------------- HERO SLIDER (managed under Hero Slides in the admin) ---------------- */}
+      <HeroSlider items={slides} />
 
       <div className="home-content">
       {/* ---------------- QUICK HIGHLIGHTS ---------------- */}

@@ -7,6 +7,7 @@ import { pool, query } from '../src/db.js';
 import {
   run as seed, categories as seedCategories, products as seedProducts, slug, specsFor,
   solutions as seedSolutions, highlights as seedHighlights, faqs as seedFaqs,
+  heroSlides as seedHeroSlides,
 } from './seed.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +44,49 @@ async function migrate() {
   // needs its own key because the first image pass already spent that one.
   await fixCategoryImages('migration_principal_images');
   await addEditableContentTables();
+  await fixHeroSlides();
+}
+
+// The home carousel ignored the hero_slides table entirely — it was handed the
+// principals list and picked a background from a hardcoded path, so the rows
+// pointed at generic site banners nobody ever saw. Now that the slider actually
+// renders them, move them onto the purpose-made banner photography and add the
+// fourth slide, so wiring it up does not change how the page looks.
+//
+// Only rows still holding the original seeded image are touched.
+async function fixHeroSlides() {
+  const KEY = 'migration_hero_slides';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const OLD = ['/img/banner1.jpg', '/img/banner3.jpg', '/img/banner4.jpg', ''];
+  let moved = 0, added = 0;
+  for (let i = 0; i < seedHeroSlides.length; i++) {
+    const s = seedHeroSlides[i];
+    const hit = await query(
+      `UPDATE hero_slides SET image_url = $1
+        WHERE title = $2 AND (image_url = ANY($3) OR image_url IS NULL) RETURNING id`,
+      [s.image, s.title, OLD]
+    );
+    if (hit.rowCount) { moved++; continue; }
+
+    const exists = await query('SELECT 1 FROM hero_slides WHERE title = $1', [s.title]);
+    if (!exists.rowCount) {
+      await query(
+        `INSERT INTO hero_slides (title, subtitle, image_url, cta_text, cta_link, sort_order)
+         VALUES ($1,$2,$3,$4,$5,$6)`,
+        [s.title, s.subtitle, s.image, s.cta_text, s.cta_link, i]
+      );
+      added++;
+    }
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: hero slides repointed (${moved} updated, ${added} added).`);
 }
 
 // Solution copy, the home highlight strip and the "Why Virava" answers were all
