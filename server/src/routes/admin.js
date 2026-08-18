@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -119,6 +120,78 @@ router.get('/dashboard', async (_req, res) => {
   `);
   const recent = await query('SELECT * FROM enquiries ORDER BY created_at DESC LIMIT 6');
   res.json({ counts: counts.rows[0], recent: recent.rows });
+});
+
+// ---- Admin users ------------------------------------------------------------
+// password_hash never leaves the server.
+const SAFE_USER = 'id, name, email, created_at';
+const MIN_PASSWORD = 8;
+
+router.get('/users', async (req, res) => {
+  const { rows } = await query(`SELECT ${SAFE_USER} FROM admins ORDER BY id`);
+  res.json(rows.map((u) => ({ ...u, is_self: u.id === req.admin.id })));
+});
+
+router.post('/users', async (req, res) => {
+  const name = (req.body.name || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
+  const password = req.body.password || '';
+  if (!name || !email) return res.status(400).json({ error: 'Name and email are required' });
+  if (password.length < MIN_PASSWORD) {
+    return res.status(400).json({ error: `Password must be at least ${MIN_PASSWORD} characters` });
+  }
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const { rows } = await query(
+      `INSERT INTO admins (name, email, password_hash) VALUES ($1,$2,$3) RETURNING ${SAFE_USER}`,
+      [name, email, hash]
+    );
+    res.status(201).json(rows[0]);
+  } catch (e) {
+    if (e.code === '23505') return res.status(409).json({ error: 'That email is already in use' });
+    throw e;
+  }
+});
+
+router.put('/users/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  const name = (req.body.name || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
+  const password = req.body.password || '';
+  if (!name || !email) return res.status(400).json({ error: 'Name and email are required' });
+  if (password && password.length < MIN_PASSWORD) {
+    return res.status(400).json({ error: `Password must be at least ${MIN_PASSWORD} characters` });
+  }
+  try {
+    // a blank password field means "leave it alone", not "clear it"
+    const sql = password
+      ? `UPDATE admins SET name=$1, email=$2, password_hash=$3 WHERE id=$4 RETURNING ${SAFE_USER}`
+      : `UPDATE admins SET name=$1, email=$2 WHERE id=$3 RETURNING ${SAFE_USER}`;
+    const params = password
+      ? [name, email, await bcrypt.hash(password, 10), id]
+      : [name, email, id];
+    const { rows } = await query(sql, params);
+    if (!rows[0]) return res.status(404).json({ error: 'User not found' });
+    res.json(rows[0]);
+  } catch (e) {
+    if (e.code === '23505') return res.status(409).json({ error: 'That email is already in use' });
+    throw e;
+  }
+});
+
+router.delete('/users/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  // deleting yourself, or the only remaining account, locks everyone out
+  if (id === req.admin.id) {
+    return res.status(400).json({ error: 'You cannot delete the account you are signed in with' });
+  }
+  const { rows } = await query('SELECT count(*)::int AS n FROM admins');
+  if (rows[0].n <= 1) {
+    return res.status(400).json({ error: 'At least one admin user must remain' });
+  }
+  const del = await query('DELETE FROM admins WHERE id = $1 RETURNING id', [id]);
+  if (!del.rows[0]) return res.status(404).json({ error: 'User not found' });
+  res.json({ ok: true });
 });
 
 // ---- Settings ----

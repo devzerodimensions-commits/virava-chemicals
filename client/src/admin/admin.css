@@ -141,6 +141,13 @@
 .af-upload:hover { background: var(--navy); color: #fff; }
 .af-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 6px; }
 
+/* ---- users ---- */
+.user-you { margin-left: 8px; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; }
+.af-hint { font-weight: 400; color: var(--muted); font-size: .78rem; text-transform: none; letter-spacing: 0; }
+.form-err { color: #c0392b; background: #fdeeec; border: 1px solid #f5c6c0; border-radius: 8px; padding: 10px 14px; font-size: .86rem; margin: 0; }
+.notice-ok { color: #1ba85f; background: #e7f7ee; border-color: #bfe8d2; font-size: .9rem; padding: 14px 18px; margin-bottom: 16px; }
+.icon-btn:disabled { opacity: .3; cursor: not-allowed; }
+
 /* ---- media library ---- */
 .media-drop {
   border: 2px dashed #d5d5d5; border-radius: 12px; background: #fafafa;

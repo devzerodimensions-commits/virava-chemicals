@@ -27,6 +27,7 @@ import AdminSolutions from './admin/AdminSolutions.jsx';
 import AdminHighlights from './admin/AdminHighlights.jsx';
 import AdminFaqs from './admin/AdminFaqs.jsx';
 import AdminMedia from './admin/AdminMedia.jsx';
+import AdminUsers from './admin/AdminUsers.jsx';
 import AdminSettings from './admin/AdminSettings.jsx';
 import RequireAuth from './admin/RequireAuth.jsx';
 
@@ -95,6 +96,7 @@ export default function App() {
         <Route path="highlights" element={<AdminHighlights />} />
         <Route path="why" element={<AdminFaqs />} />
         <Route path="blogs" element={<AdminBlogs />} />
+        <Route path="users" element={<AdminUsers />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>
 

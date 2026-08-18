@@ -15,6 +15,7 @@ const nav = [
   ['highlights', '⭐', 'Highlights'],
   ['why', '❓', 'Why Virava'],
   ['blogs', '📝', 'Blogs'],
+  ['users', '👥', 'Users'],
   ['settings', '⚙', 'Settings'],
 ];
 
