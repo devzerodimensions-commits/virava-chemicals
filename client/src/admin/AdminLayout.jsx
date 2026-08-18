@@ -11,6 +11,7 @@ const nav = [
   ['industries', '🏭', 'Industries'],
   ['principals', '🤝', 'Principals'],
   ['hero', '🖼', 'Hero Slides'],
+  ['media', '🖼️', 'Media'],
   ['highlights', '⭐', 'Highlights'],
   ['why', '❓', 'Why Virava'],
   ['blogs', '📝', 'Blogs'],

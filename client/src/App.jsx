@@ -26,6 +26,7 @@ import AdminBlogs from './admin/AdminBlogs.jsx';
 import AdminSolutions from './admin/AdminSolutions.jsx';
 import AdminHighlights from './admin/AdminHighlights.jsx';
 import AdminFaqs from './admin/AdminFaqs.jsx';
+import AdminMedia from './admin/AdminMedia.jsx';
 import AdminSettings from './admin/AdminSettings.jsx';
 import RequireAuth from './admin/RequireAuth.jsx';
 
@@ -89,6 +90,7 @@ export default function App() {
         <Route path="industries" element={<AdminIndustries />} />
         <Route path="principals" element={<AdminPrincipals />} />
         <Route path="hero" element={<AdminHero />} />
+        <Route path="media" element={<AdminMedia />} />
         <Route path="solutions" element={<AdminSolutions />} />
         <Route path="highlights" element={<AdminHighlights />} />
         <Route path="why" element={<AdminFaqs />} />

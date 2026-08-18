@@ -3,6 +3,66 @@ import api from '../api.js';
 import './admin.css';
 
 /**
+ * Pick an existing image instead of re-uploading one. Reads the same media list
+ * as the Media page, so anything visible there can be reused here.
+ */
+function MediaPicker({ onPick, onClose }) {
+  const [media, setMedia] = useState({ uploads: [], bundled: [] });
+  const [tab, setTab] = useState('uploads');
+  const [q, setQ] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/admin/media')
+      .then((r) => {
+        setMedia(r.data);
+        // land on whichever tab actually has something in it
+        if (!r.data.uploads?.length && r.data.bundled?.length) setTab('bundled');
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const list = (tab === 'uploads' ? media.uploads : media.bundled) || [];
+  const needle = q.trim().toLowerCase();
+  const files = needle ? list.filter((f) => f.path.toLowerCase().includes(needle)) : list;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 60 }}>
+      <div className="admin-modal media-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        <h2>Choose an image</h2>
+        <div className="media-bar">
+          <div className="media-tabs">
+            <button type="button" className={tab === 'uploads' ? 'on' : ''} onClick={() => setTab('uploads')}>
+              Uploaded <em>{media.uploads?.length || 0}</em>
+            </button>
+            <button type="button" className={tab === 'bundled' ? 'on' : ''} onClick={() => setTab('bundled')}>
+              Site images <em>{media.bundled?.length || 0}</em>
+            </button>
+          </div>
+          <input className="media-search" type="search" placeholder="Search…" value={q}
+            onChange={(e) => setQ(e.target.value)} />
+        </div>
+        {loading ? <p className="empty">Loading…</p> : files.length === 0 ? (
+          <p className="empty">Nothing here yet.</p>
+        ) : (
+          <div className="media-grid picker">
+            {files.map((f) => (
+              <button type="button" className="media-card pick" key={f.url}
+                onClick={() => { onPick(f.url); onClose(); }}>
+                <span className="media-thumb"><img src={f.url} alt={f.name} loading="lazy" /></span>
+                <span className="media-name" title={f.path}>{f.path}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Editor for a free-form JSON object of label -> text, used for the spec rows on
  * the product page. Rows are kept in local state so a half-typed label does not
  * collapse into the object and lose the row's other half.
@@ -71,6 +131,7 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
   const [dynFields, setDynFields] = useState(fields);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [picking, setPicking] = useState(null); // field key the media picker is filling
 
   const load = () => {
     setLoading(true);
@@ -187,11 +248,16 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
                       <div className="af-image-inputs">
                         <input type="text" placeholder="/img/... or upload"
                           value={editing[f.key] ?? ''} onChange={(e) => setField(f.key, e.target.value)} />
-                        <label className="af-upload">
-                          Upload
-                          <input type="file" accept="image/*" hidden
-                            onChange={(e) => e.target.files[0] && uploadImage(f.key, e.target.files[0])} />
-                        </label>
+                        <div className="af-image-btns">
+                          <label className="af-upload">
+                            Upload
+                            <input type="file" accept="image/*" hidden
+                              onChange={(e) => e.target.files[0] && uploadImage(f.key, e.target.files[0])} />
+                          </label>
+                          <button type="button" className="af-upload" onClick={() => setPicking(f.key)}>
+                            Choose from Media
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -207,6 +273,13 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
             </form>
           </div>
         </div>
+      )}
+
+      {picking && (
+        <MediaPicker
+          onPick={(url) => setField(picking, url)}
+          onClose={() => setPicking(null)}
+        />
       )}
     </div>
   );

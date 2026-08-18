@@ -27,6 +27,83 @@ router.post('/upload', upload.single('image'), (req, res) => {
   res.json({ url: `/uploads/${req.file.filename}` });
 });
 
+// ---- Media library ----------------------------------------------------------
+// Two sources: files uploaded through the panel (deletable) and the images
+// shipped with the project (read-only — they live in git, not on the disk the
+// server can write to).
+const IMAGE_RE = /\.(jpe?g|png|gif|webp|svg|avif)$/i;
+
+// dist is what a deployed server actually serves; public is the dev source
+const bundledRoot = [
+  path.join(__dirname, '..', '..', '..', 'client', 'dist', 'img'),
+  path.join(__dirname, '..', '..', '..', 'client', 'public', 'img'),
+].find((p) => fs.existsSync(p));
+
+function walk(dir, base = '') {
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const rel = base ? `${base}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) { out.push(...walk(path.join(dir, entry.name), rel)); continue; }
+    if (!IMAGE_RE.test(entry.name)) continue;
+    const st = fs.statSync(path.join(dir, entry.name));
+    out.push({ name: entry.name, path: rel, size: st.size, mtime: st.mtimeMs });
+  }
+  return out;
+}
+
+router.get('/media', (_req, res) => {
+  const uploads = fs.existsSync(uploadDir)
+    ? walk(uploadDir).map((f) => ({ ...f, url: `/uploads/${f.path}`, source: 'upload' }))
+    : [];
+  const bundled = bundledRoot
+    ? walk(bundledRoot).map((f) => ({ ...f, url: `/img/${f.path}`, source: 'bundled' }))
+    : [];
+  const bySize = (a, b) => b.mtime - a.mtime;
+  res.json({ uploads: uploads.sort(bySize), bundled: bundled.sort((a, b) => a.path.localeCompare(b.path)) });
+});
+
+router.post('/media', upload.array('images', 20), (req, res) => {
+  if (!req.files?.length) return res.status(400).json({ error: 'No files uploaded' });
+  res.status(201).json({ files: req.files.map((f) => ({ name: f.filename, url: `/uploads/${f.filename}`, size: f.size })) });
+});
+
+router.delete('/media', (req, res) => {
+  const { url } = req.body || {};
+  if (!url || !url.startsWith('/uploads/')) {
+    return res.status(400).json({ error: 'Only uploaded files can be deleted' });
+  }
+  // resolve and confirm the target is really inside the upload directory, so a
+  // crafted "../" cannot reach anything else on disk
+  const target = path.resolve(uploadDir, url.replace(/^\/uploads\//, ''));
+  if (path.relative(uploadDir, target).startsWith('..') || path.isAbsolute(path.relative(uploadDir, target))) {
+    return res.status(400).json({ error: 'Invalid path' });
+  }
+  if (!fs.existsSync(target)) return res.status(404).json({ error: 'File not found' });
+  fs.unlinkSync(target);
+  res.json({ ok: true });
+});
+
+// Where a media file is referenced, so deleting one is an informed choice
+router.get('/media/usage', async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).json({ error: 'url required' });
+  const where = [];
+  const checks = [
+    ['Products', 'SELECT name FROM products WHERE image_url = $1'],
+    ['Categories', 'SELECT name FROM categories WHERE image_url = $1'],
+    ['Industries', 'SELECT name FROM industries WHERE image_url = $1'],
+    ['Principals', 'SELECT name FROM principals WHERE logo_url = $1'],
+    ['Hero Slides', 'SELECT title AS name FROM hero_slides WHERE image_url = $1'],
+    ['Blogs', 'SELECT title AS name FROM blogs WHERE image_url = $1'],
+    ['Solutions', 'SELECT name FROM solutions WHERE image_url = $1'],
+  ];
+  for (const [label, sql] of checks) {
+    const { rows } = await query(sql, [url]);
+    if (rows.length) where.push({ area: label, items: rows.map((r) => r.name) });
+  }
+  res.json({ url, usedIn: where });
+});
+
 // ---- Dashboard overview ----
 router.get('/dashboard', async (_req, res) => {
   const counts = await query(`
