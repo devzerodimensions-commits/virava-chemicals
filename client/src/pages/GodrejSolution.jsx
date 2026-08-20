@@ -8,6 +8,9 @@ import './GodrejSolution.css';
 
 const SLUG = 'godrej-industries-limited';
 
+// how many products each category shows before "View All Products"
+const PREVIEW_COUNT = 4;
+
 /* Godrej divides its range into four product solutions. Each gets this same page,
    scoped to the categories carrying that `solution` value.
 
@@ -197,8 +200,10 @@ export default function GodrejSolution() {
                     )}
                     {c.description && <p className="go-cat-desc">{c.description}</p>}
 
+                    {/* a preview only — Speciality Emulsifiers alone runs to
+                        eleven, which buried the rest of the page */}
                     <div className="go-products">
-                      {c.products.map((p) => (
+                      {c.products.slice(0, PREVIEW_COUNT).map((p) => (
                         <Link className="go-product" key={p.id} to={`/product/${p.slug}`}>
                           <span className="go-product-name">{p.name}</span>
                           <span className="go-product-arrow">›</span>
@@ -208,6 +213,9 @@ export default function GodrejSolution() {
 
                     <Link to={`/products?category=${c.slug}`} className="btn btn-outline go-view-all">
                       View All Products
+                      {c.products.length > PREVIEW_COUNT && (
+                        <span className="go-more">+{c.products.length - PREVIEW_COUNT}</span>
+                      )}
                     </Link>
                   </article>
                 ))}
