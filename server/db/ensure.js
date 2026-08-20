@@ -9,6 +9,7 @@ import {
   solutions as seedSolutions, highlights as seedHighlights, faqs as seedFaqs,
   heroSlides as seedHeroSlides,
 } from './seed.js';
+import { GODREJ_CATALOGUE } from './godrej-catalogue.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,6 +46,106 @@ async function migrate() {
   await fixCategoryImages('migration_principal_images');
   await addEditableContentTables();
   await fixHeroSlides();
+  await applyGodrejSheet();
+}
+
+// Replaces the Godrej catalogue with the client's own product sheet. The earlier
+// data was transcribed from godrejchemicals.com and listed grades Virava does not
+// actually sell (Alfodet, Textric SPL, Glycerin EP, Ginopol 28N, a whole Oleic
+// Acids category), while missing about seventy products it does.
+//
+// Nothing is deleted. Superseded categories and products are set is_active=false,
+// so they vanish from the site but remain in the admin panel and can be switched
+// back on. One-shot, on its own marker.
+async function applyGodrejSheet() {
+  const KEY = 'migration_godrej_sheet_v2';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const pr = await query("SELECT id FROM principals WHERE name ILIKE '%godrej%' LIMIT 1");
+  const godrejId = pr.rows[0]?.id;
+  if (!godrejId) { console.warn('Godrej principal missing — skipping sheet import.'); return; }
+
+  const keepCategory = new Set(GODREJ_CATALOGUE.map((c) => c.slug));
+  // keyed on category + name, not name alone: several products share a name with
+  // a stale entry sitting in a different category, and matching on name would
+  // leave that copy active while the sheet's copy is inserted elsewhere
+  const keepPairs = new Set();
+  let cats = 0, added = 0, sort = 0;
+
+  for (const c of GODREJ_CATALOGUE) {
+    // upsert the category itself
+    const existing = await query('SELECT id FROM categories WHERE slug = $1', [c.slug]);
+    let catId;
+    if (existing.rowCount) {
+      catId = existing.rows[0].id;
+      await query(
+        `UPDATE categories SET name=$1, principal_id=$2, solution=$3, tagline=$4,
+                description=$5, image_url=$6, sort_order=$7, is_active=true WHERE id=$8`,
+        [c.name, godrejId, c.solution, c.tagline, c.description, c.image, sort++, catId]
+      );
+    } else {
+      const ins = await query(
+        `INSERT INTO categories (slug, name, principal_id, solution, tagline, description, image_url, sort_order)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+        [c.slug, c.name, godrejId, c.solution, c.tagline, c.description, c.image, sort++]
+      );
+      catId = ins.rows[0].id;
+      cats++;
+    }
+
+    // products
+    let pSort = 0;
+    for (const p of c.products) {
+      keepPairs.add(`${catId}::${p.n}`);
+      const specs = {
+        ...(p.chem ? { 'Chemical Name': p.chem } : {}),
+        'Application Details': c.description,
+      };
+      const hit = await query('SELECT id FROM products WHERE category_id=$1 AND name=$2', [catId, p.n]);
+      if (hit.rowCount) {
+        await query('UPDATE products SET is_active=true, sort_order=$1 WHERE id=$2', [pSort++, hit.rows[0].id]);
+        continue;
+      }
+      // slug must be unique across the table, so disambiguate on collision
+      let s = slug(p.n), i = 1;
+      while ((await query('SELECT 1 FROM products WHERE slug=$1', [s])).rowCount) s = `${slug(p.n)}-${++i}`;
+      await query(
+        `INSERT INTO products (category_id, slug, name, description, image_url, specs, sort_order)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [catId, s, p.n, p.chem ? `${p.n} — ${p.chem}.` : c.description,
+         c.image, JSON.stringify(specs), pSort++]
+      );
+      added++;
+    }
+  }
+
+  // retire what the sheet does not list, Godrej only — other principals untouched
+  const retiredCats = await query(
+    `UPDATE categories SET is_active=false
+      WHERE principal_id=$1 AND slug <> ALL($2) RETURNING id`,
+    [godrejId, [...keepCategory]]
+  );
+  const live = await query(
+    `SELECT p.id, p.category_id, p.name FROM products p
+       JOIN categories c ON c.id = p.category_id
+      WHERE c.principal_id = $1 AND p.is_active = true`,
+    [godrejId]
+  );
+  const stale = live.rows
+    .filter((r) => !keepPairs.has(`${r.category_id}::${r.name}`))
+    .map((r) => r.id);
+  const retiredProds = stale.length
+    ? await query('UPDATE products SET is_active=false WHERE id = ANY($1) RETURNING id', [stale])
+    : { rowCount: 0 };
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: Godrej sheet applied (+${cats} categories, +${added} products; ` +
+    `retired ${retiredCats.rowCount} categories, ${retiredProds.rowCount} products).`);
 }
 
 // The home carousel ignored the hero_slides table entirely — it was handed the

@@ -40,19 +40,6 @@ export function AccentText({ text = '' }) {
 
 export const linesOf = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
-// Order the portfolio the way Godrej groups it, rather than by the generic
-// category sort_order. Anything not listed falls in afterwards, alphabetically.
-const CATEGORY_ORDER = [
-  'glycerine', 'stearic-acids', 'fatty-acids', 'oleic-acids', 'fatty-alcohols',
-  'alpha-olefin-sulfonate-aos', 'sodium-lauryl-sulphate-sls',
-  'sodium-lauryl-ether-sulphate-sles', 'ammonium-lauryl-sulphate-als',
-  'di-potassium-oleate-sulfonate-kos', 'surfactants',
-  'conditioning-and-care-systems', 'emulsifiers-and-systems', 'esters-and-emollients',
-  'ethoxylates-and-surfactants', 'food-emulsifiers', 'performance-additives',
-  'preservatives-and-antimicrobials', 'oleo-derivatives-and-specialty-chemicals',
-  'sophorolipids',
-];
-
 export default function GodrejSolution() {
   const { solution: solutionSlug } = useParams();
 
@@ -75,18 +62,13 @@ export default function GodrejSolution() {
 
   useEffect(() => { setActive(0); sectionRefs.current = []; }, [solutionSlug]);
 
-  const cats = useMemo(() => {
-    const list = (data?.categories || [])
-      .filter((c) => (c.products?.length || 0) > 0)
-      .filter((c) => c.solution === solutionSlug);
-    return [...list].sort((a, b) => {
-      const ia = CATEGORY_ORDER.indexOf(a.slug), ib = CATEGORY_ORDER.indexOf(b.slug);
-      if (ia !== -1 && ib !== -1) return ia - ib;
-      if (ia !== -1) return -1;
-      if (ib !== -1) return 1;
-      return a.name.localeCompare(b.name);
-    });
-  }, [data, solutionSlug]);
+  // The API already returns categories by sort_order, which the catalogue import
+  // sets to the order they appear in the client's sheet — so keep that order
+  // rather than imposing one here. Reordering in the admin now moves the rail.
+  const cats = useMemo(() => (data?.categories || [])
+    .filter((c) => (c.products?.length || 0) > 0)
+    .filter((c) => c.solution === solutionSlug),
+  [data, solutionSlug]);
 
   useReveal([cats, industries]);
 
