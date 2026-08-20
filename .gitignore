@@ -22,6 +22,13 @@ pg.zip
 server/uploads/*
 !server/uploads/.gitkeep
 
+# client source documents — the product sheet carries per-kg rates, which should
+# not reach a hosted repo. Kept locally; the catalogue lives in godrej-catalogue.js
+*.xlsx
+*.xls
+*.docx
+~$*
+
 # misc
 *.log
 home.html
