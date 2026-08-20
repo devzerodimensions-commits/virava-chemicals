@@ -193,7 +193,7 @@
 .stats-head .serif { font-family: var(--serif); font-style: italic; color: var(--gold); }
 .stats-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .stat { text-align: center; border-left: 1px solid rgba(255,255,255,.15); padding: 8px 12px; }
-.stat b { font-family: var(--head); font-weight: 800; font-size: clamp(3.2rem, 4.6vw, 5rem); color: #fff; display: block; line-height: 1; letter-spacing: -.02em; }
+.stat b { font-family: var(--head); font-weight: 800; font-size: 2.2rem; color: #fff; display: block; line-height: 1.1; letter-spacing: -.01em; }
 /* Counter renders its own <span>, so the label rule must not reach inside <b> —
    an unscoped `.stat span` matched the number too and shrank it to label size */
 .stat b span { font-size: inherit; color: inherit; display: inline; margin: 0; letter-spacing: inherit; }
