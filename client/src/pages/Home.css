@@ -1,10 +1,57 @@
 /* ---------------- INTRO BAND (above hero slider) ---------------- */
-.intro-band { background: #fff; text-align: center; padding: 66px 0 56px; border-bottom: 1px solid var(--line); }
-.intro-band .eyebrow { justify-content: center; }
-.intro-title { font-size: clamp(1.9rem, 4vw, 3rem); color: var(--navy); max-width: 900px; margin: 8px auto 18px; line-height: 1.16; }
+.intro-band {
+  background: #fff; text-align: center; padding: 66px 0 56px;
+  border-bottom: 1px solid var(--line); position: relative; overflow: hidden;
+}
+/* faint wash that settles behind the copy as it arrives */
+.intro-band::before {
+  content: ''; position: absolute; left: 50%; top: -140px;
+  width: 720px; height: 420px; transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.045), transparent 68%);
+  pointer-events: none; animation: introWash 1.4s ease;
+}
+.intro-band > .container { position: relative; z-index: 1; }
+
+/* The cascade comes from four different DURATIONS, not from delays with a
+   fill-mode. Delayed animations need fill:both to stay hidden until their turn,
+   and anything that stops them running — a backgrounded tab, a paused
+   compositor — then leaves this copy at opacity 0 permanently. With no
+   fill-mode the resting state is simply "visible", so the worst case is the
+   entrance not playing rather than the headline disappearing. Same reasoning as
+   the .reveal rule in theme.css. */
+.intro-band .eyebrow { justify-content: center; animation: introUp .5s ease; }
+.intro-band .eyebrow::before { transform-origin: left center; animation: introRule .7s ease; }
+.intro-title {
+  font-size: clamp(1.9rem, 4vw, 3rem); color: var(--navy); max-width: 900px;
+  margin: 8px auto 18px; line-height: 1.16; animation: introUp .75s ease;
+}
 .intro-title .serif { font-family: var(--serif); font-style: italic; color: var(--red); }
-.intro-text { max-width: 780px; margin: 0 auto 28px; color: var(--body); font-size: 1.05rem; line-height: 1.78; }
-.intro-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.intro-text {
+  max-width: 780px; margin: 0 auto 28px; color: var(--body); font-size: 1.05rem;
+  line-height: 1.78; animation: introUp .95s ease;
+}
+.intro-cta {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  animation: introUp 1.15s ease;
+}
+
+/* Transform only, deliberately no opacity. An animation that has started but is
+   not progressing — a throttled background tab, a headless renderer, a crawler —
+   paints the keyframe at t=0. If that keyframe were opacity:0 the H1 above the
+   fold would render invisible, which is a far worse outcome than a missing
+   entrance. Sliding text is always readable at every frame. */
+@keyframes introUp {
+  from { transform: translateY(22px); }
+  to   { transform: none; }
+}
+@keyframes introRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes introWash { from { opacity: 0; transform: translateX(-50%) scale(.92); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-band::before,
+  .intro-band .eyebrow, .intro-band .eyebrow::before,
+  .intro-title, .intro-text, .intro-cta { animation: none; }
+}
 
 /* ---------------- HERO ---------------- */
 .hero { position: sticky; top: 0; z-index: 1; height: 100vh; min-height: 560px; max-height: 860px; overflow: hidden; display: flex; align-items: center; }
