@@ -190,6 +190,11 @@ export default function Home() {
       </section>
 
       {/* ---------------- PRINCIPALS ---------------- */}
+      {/* Hidden when there is nothing to list. A heading with an empty void under
+          it reads as a broken page — which is exactly how this looked when the
+          database went away, and how it would look if every row were deactivated
+          in the admin panel. */}
+      {principals.length > 0 && (
       <section className="section section-soft principals-sec" id="principals">
         <div className="container">
           <div className="center reveal">
@@ -212,8 +217,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ---------------- INDUSTRIES ---------------- */}
+      {industries.length > 0 && (
       <section className="section">
         <div className="container">
           <div className="center reveal">
@@ -234,6 +241,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ---------------- STATS ---------------- */}
       <section className="stats-sec">
