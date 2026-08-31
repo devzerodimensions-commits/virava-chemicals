@@ -67,7 +67,7 @@ export default function Navbar({ settings }) {
           <span><i className="ic">✉</i> {settings?.email || 'viravachemicals@gmail.com'}</span>
           <span className="sep">|</span>
           <span><i className="ic">✆</i> {settings?.phone1 || '+91-079-29708697'}</span>
-          <span className="topbar-tag">Trusted Chemical Distributors since {settings?.established || '1997'}</span>
+          <span className="topbar-tag">Trusted Chemical Distributors since {settings?.established || '1996'}</span>
         </div>
       </div>
 

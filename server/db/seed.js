@@ -378,7 +378,7 @@ export const highlights = [
   { icon: 'awards', title: '35+ Awards', subtitle: 'Recognised & award-winning brand' },
   { icon: 'partner', title: 'Godrej Partner', subtitle: 'Exclusive distributors of oleo chemicals' },
   { icon: 'industries', title: '20+ Industries', subtitle: 'Served across diverse sectors' },
-  { icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1997' },
+  { icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1996' },
 ];
 
 // ---------------------------------------------------------------- faqs
@@ -396,7 +396,7 @@ export const faqs = [
 // ---------------------------------------------------------------- hero slides
 export const heroSlides = [
   { title: 'The Most Trusted Name in Industrial Chemicals',
-    subtitle: 'Reputed & award-winning brand serving the industrial world of India since 1997.',
+    subtitle: 'Reputed & award-winning brand serving the industrial world of Gujarat since 1996.',
     image: '/img/slides/godrej.jpg', cta_text: 'Explore Our Products', cta_link: '/products' },
   { title: 'Exclusive Distributors of Godrej Oleo Chemicals',
     subtitle: 'A valued business partner of Godrej Industries Ltd — a leader in oleo chemicals.',
@@ -438,8 +438,8 @@ const blogs = [
 const settings = {
   company_name: 'Virava Chemicals',
   tagline: 'The Most Trusted, Reputed & Award Winning Brand Serving the Industrial World of India',
-  established: '1997',
-  founder: 'Mr. Siddharth S. Shah',
+  established: '1996',
+  founder: 'Mr. Siddharth Shah',
   about_short: 'Virava Chemicals is a closely held partnership firm and an agency house serving the industrial world with quality products from reputed manufacturers for more than five decades.',
   about_full: 'Virava Chemicals is committed towards quality service and transparency with its customers and principals. Determined with direction since three generations, Virava has achieved goodwill and a reputable position in various industries. We are a valued business partner of Godrej Industries Ltd, a leader in oleo chemicals, and also represent other renowned manufacturers of the country as our principals.',
   address: "402 'Arista' - The Business Hub, Above Pantaloons, Nr. Madhur Hall, Anand Nagar Road, Satellite, Ahmedabad - 380015",
@@ -448,7 +448,7 @@ const settings = {
   email: 'viravachemicals@gmail.com',
   stat_experience: '50',
   stat_awards: '35',
-  stat_customers: '3000',
+  stat_customers: '2500',
   map_embed: 'https://www.google.com/maps?q=Arista+The+Business+Hub+Satellite+Ahmedabad&output=embed',
   facebook: '', linkedin: '', twitter: '',
 };

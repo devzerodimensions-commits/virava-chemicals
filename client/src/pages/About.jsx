@@ -7,26 +7,36 @@ import PageHeader from '../components/PageHeader.jsx';
 import Counter from '../components/Counter.jsx';
 import './pages.css';
 
+/* Copy on this page comes from the client's own "Virava Chemicals.docx" — their
+   mission statement and the five guiding principles are quoted as written, aside
+   from a few plain typos (manufactures → manufacturers, not matter → no matter,
+   Principles → Principals, which they use to mean the companies they represent). */
+
+const PRINCIPLES = [
+  'Reach as many customers as possible to make them aware of our products.',
+  'Suggest customers the best chemicals that cater to their need.',
+  'Provide the best service, pre and post-sale.',
+  'Conduct the business in the most transparent manner with both our customers and our principals.',
+  'Do all of the above in the most cost-effective manner.',
+];
+
 export default function About() {
   const settings = useSettings();
   const [principals, setPrincipals] = useState([]);
   useEffect(() => { api.get('/principals').then((r) => setPrincipals(r.data)).catch(() => {}); }, []);
   useReveal([principals]);
 
-  const values = [
-    ['Quality', 'Products from the country\'s most reputed and certified manufacturers.'],
-    ['Transparency', 'Honest, transparent dealings with customers and principals alike.'],
-    ['Reliability', 'Consistent, on-time supply built on five decades of experience.'],
-    ['Partnership', 'Long-term relationships that grow with our customers\' businesses.'],
-  ];
+  const founded = settings.established || '1996';
+  const founder = settings.founder || 'Mr. Siddharth Shah';
+  const customers = settings.stat_customers || 2500;
 
   return (
     <>
       <PageHeader title="About Virava Chemicals" image="/img/banner3.jpg"
-        subtitle="A trusted agency house serving the industrial world of India for over five decades."
+        subtitle="An agency house serving the industrial world of Gujarat for three generations."
         crumbs={[{ label: 'About Us' }]} />
 
-      {/* Company profile */}
+      {/* Company profile — the origin story, in the client's own account */}
       <section className="section">
         <div className="container about-grid">
           <div className="about-media reveal">
@@ -37,59 +47,95 @@ export default function About() {
             </div>
           </div>
           <div className="about-body reveal">
-            <span className="eyebrow">Company Profile</span>
-            <h2 className="section-title">Determined with direction since <span className="serif">three generations</span></h2>
-            <p>Virava Chemicals is a closely held partnership firm established and run by {settings.founder || 'Mr. Siddharth S. Shah'}, a science graduate with vast experience in marketing, trading and agency business spanning 50 years.</p>
-            <p>{settings.about_full ||
-              'We are an agency house serving the industrial world with quality products from reputed manufacturers for more than five decades. We are a valued business partner of Godrej Industries Ltd, a leader in oleo chemicals.'}</p>
-            <p>Formed in {settings.established || '1997'}, the main activity of the concern is trading of goods manufactured by Godrej Industries Limited, HPL Additives Limited, Oriental Carbon &amp; Chemicals Limited and The Standard Chemicals Co. Pvt. Ltd.</p>
+            <span className="eyebrow">Our Story</span>
+            <h2 className="section-title">Built single-handedly, since <span className="serif">{founded}</span></h2>
+            <p>
+              In {founded}, when the renowned Rollwalla group of Ahmedabad was split, our founder
+              {' '}{founder} — a second-generation entrepreneur — decided to take the responsibility
+              of running the business of Virava Chemicals on his shoulders single handedly.
+            </p>
+            <p>
+              With persistent hard work, financial discipline and foresight, Virava Chemicals has
+              grown its turnover at 30% CAGR. From a very humble beginning of a handful of customers,
+              today we cater to and serve over {customers}+ customers in the Gujarat state.
+            </p>
+            <p>
+              The main activity of the concern is trading of goods manufactured by Godrej Industries
+              Limited, HPL Additives Limited, Oriental Carbon &amp; Chemicals Limited and
+              The Standard Chemicals Co. Pvt. Ltd.
+            </p>
             <Link to="/contact" className="btn btn-navy">Get in Touch <span>→</span></Link>
           </div>
         </div>
       </section>
 
-      {/* Mission / Why */}
+      {/* Mission — quoted from the client's document */}
       <section className="section section-soft">
-        <div className="container mv-grid">
-          <div className="mv-card reveal">
-            <span className="mv-ic">🎯</span>
-            <h3>Our Mission</h3>
-            <p>To be the most trusted partner for industrial chemicals in India — delivering quality products, technical support and dependable service that help our customers succeed.</p>
+        <div className="container">
+          <div className="center reveal">
+            <span className="eyebrow">Our Mission</span>
           </div>
-          <div className="mv-card reveal">
-            <span className="mv-ic">💡</span>
-            <h3>Why Virava Chemicals</h3>
-            <ul className="tick-list">
-              <li>Exclusive distributor of Godrej oleo chemicals</li>
-              <li>Five decades of industry experience</li>
-              <li>Wide, quality-assured product portfolio</li>
-              <li>Strong logistics & timely supply</li>
-              <li>3000+ satisfied customers</li>
-            </ul>
-          </div>
-          <div className="mv-card reveal">
-            <span className="mv-ic">🏢</span>
-            <h3>Infrastructure</h3>
-            <p>Backed by well-established warehousing, a strong distribution network and experienced staff, Virava ensures efficient handling and prompt delivery of chemicals across industries.</p>
-          </div>
+          <blockquote className="mission-quote reveal">
+            <p>
+              At Virava Chemicals, our mission is to supply the best quality chemicals to the
+              manufacturers at very cost-effective and competitive rates. We truly believe that our
+              customers, no matter how small, are our backbone, and we want to keep them happy and
+              satisfied with the best products and quality services in a very transparent manner.
+              We want to do this by ensuring reasonable growth of Virava Chemicals and its trusted
+              principals.
+            </p>
+          </blockquote>
         </div>
       </section>
 
-      {/* Values */}
+      {/* Guiding principles — the client's five, replacing invented "core values" */}
       <section className="section">
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">What Drives Us</span>
-            <h2 className="section-title">Our core <span className="serif">values</span></h2>
+            <h2 className="section-title">Our philosophy and <span className="serif">guiding principles</span></h2>
+            <p className="section-intro">Simple, and unchanged since the beginning.</p>
           </div>
           <div className="values-grid">
-            {values.map(([t, d], i) => (
-              <div className="value-card reveal" key={t}>
+            {PRINCIPLES.map((text, i) => (
+              <div className="value-card reveal" key={text}>
                 <span className="value-num">0{i + 1}</span>
-                <h4>{t}</h4>
-                <p>{d}</p>
+                <p>{text}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our people — the employee-retention point from the document */}
+      <section className="section section-soft">
+        <div className="container mv-grid">
+          <div className="mv-card reveal">
+            <h3>Our People</h3>
+            <p>
+              We have immense gratitude not only for our principals and customers, but also for all
+              the employees of Virava. We take pride in saying that most of our employees currently
+              at Virava have been here since the inception. Virava Chemicals would not have achieved
+              this growth without their hard work and dedication.
+            </p>
+          </div>
+          <div className="mv-card reveal">
+            <h3>Why Virava Chemicals</h3>
+            <ul className="tick-list">
+              <li>Exclusive distributor of Godrej oleo chemicals</li>
+              <li>Three generations of industry experience</li>
+              <li>Wide, quality-assured product portfolio</li>
+              <li>Strong logistics &amp; timely supply</li>
+              <li>{customers}+ customers across Gujarat</li>
+            </ul>
+          </div>
+          <div className="mv-card reveal">
+            <h3>Infrastructure</h3>
+            <p>
+              Backed by well-established warehousing, a strong distribution network and experienced
+              staff, Virava ensures efficient handling and prompt delivery of chemicals across
+              industries.
+            </p>
           </div>
         </div>
       </section>

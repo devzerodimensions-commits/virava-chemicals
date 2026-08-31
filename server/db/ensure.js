@@ -47,6 +47,48 @@ async function migrate() {
   await addEditableContentTables();
   await fixHeroSlides();
   await applyGodrejSheet();
+  await applyClientFacts();
+}
+
+// The founding year, customer count and founder's name were guesses that turned
+// out to be wrong. The client's own "Virava Chemicals.docx" states 1996, 2500+
+// customers in Gujarat, and Mr. Siddharth Shah. Correct the seeded values.
+//
+// Only rows still holding the wrong value are touched, so anything an admin has
+// since edited is left alone. One-shot.
+async function applyClientFacts() {
+  const KEY = 'migration_client_facts_v2';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const corrections = [
+    ['established', '1997', '1996'],
+    ['stat_customers', '3000', '2500'],
+    ['founder', 'Mr. Siddharth S. Shah', 'Mr. Siddharth Shah'],
+  ];
+  let n = 0;
+  for (const [key, wrong, right] of corrections) {
+    const r = await query(
+      'UPDATE site_settings SET value = $1 WHERE key = $2 AND value = $3',
+      [right, key, wrong]
+    );
+    n += r.rowCount;
+  }
+  const h = await query(
+    "UPDATE highlights SET subtitle = 'Trusted since 1996' WHERE subtitle = 'Trusted since 1997'"
+  );
+  const s = await query(
+    `UPDATE hero_slides
+        SET subtitle = 'Reputed & award-winning brand serving the industrial world of Gujarat since 1996.'
+      WHERE subtitle LIKE '%industrial world of India since 1997%'`
+  );
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: client facts corrected (${n} settings, ${h.rowCount} highlights, ${s.rowCount} slides).`);
 }
 
 // Replaces the Godrej catalogue with the client's own product sheet. The earlier

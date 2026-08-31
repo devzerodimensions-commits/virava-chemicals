@@ -13,12 +13,29 @@
 .tick-list li::before { content: '✓'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
 @media (max-width: 820px) { .mv-grid { grid-template-columns: 1fr; } }
 
-/* ---- Values ---- */
-.values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px; }
-.value-card { background: var(--bg-soft); border-radius: var(--radius); padding: 30px 26px; position: relative; overflow: hidden; transition: .3s; border: 1px solid var(--line); }
+/* ---- Mission quote ---- */
+.mission-quote {
+  max-width: 880px; margin: 26px auto 0; padding: 4px 0 4px 26px;
+  border-left: 3px solid var(--btn); text-align: left;
+}
+.mission-quote p {
+  margin: 0; color: var(--navy); font-size: 1.1rem; line-height: 1.85;
+  font-family: var(--head); font-weight: 500;
+}
+@media (max-width: 620px) { .mission-quote { padding-left: 18px; } .mission-quote p { font-size: 1rem; } }
+
+/* ---- Values / guiding principles ---- */
+/* auto-fit, not a fixed four: there are five principles, and a four-column grid
+   left the fifth stranded alone on a second row */
+.values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin-top: 48px; }
+/* taller top padding so the copy clears the number — these cards no longer
+   carry a heading between the two */
+.value-card { background: var(--bg-soft); border-radius: var(--radius); padding: 72px 22px 26px; position: relative; overflow: hidden; transition: .3s; border: 1px solid var(--line); }
 .value-card:hover { background: var(--navy); color: #fff; }
 .value-card:hover h4, .value-card:hover p { color: #fff; }
-.value-num { font-family: var(--head); font-weight: 800; font-size: 2.4rem; color: var(--bg-navy-soft); position: absolute; top: 14px; right: 20px; }
+/* line-height:1 keeps the glyph's box tight — at the default it ran below the
+   card's top padding and collided with the first line of copy */
+.value-num { font-family: var(--head); font-weight: 800; font-size: 2.2rem; line-height: 1; color: var(--bg-navy-soft); position: absolute; top: 18px; right: 20px; }
 .value-card:hover .value-num { color: rgba(255,255,255,.15); }
 .value-card h4 { color: var(--navy); font-size: 1.2rem; margin-bottom: 10px; position: relative; }
 .value-card p { color: var(--body); font-size: .9rem; position: relative; }

@@ -13,7 +13,7 @@ const FALLBACK_HIGHLIGHTS = [
   { id: 'a', icon: 'awards', title: '35+ Awards', subtitle: 'Recognised & award-winning brand' },
   { id: 'b', icon: 'partner', title: 'Godrej Partner', subtitle: 'Exclusive distributors of oleo chemicals' },
   { id: 'c', icon: 'industries', title: '20+ Industries', subtitle: 'Served across diverse sectors' },
-  { id: 'd', icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1997' },
+  { id: 'd', icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1996' },
 ];
 
 // The three principals we represent alongside Godrej
@@ -124,7 +124,7 @@ export default function Home() {
       {/* ---------------- INTRO (before the slider) ---------------- */}
       <section className="intro-band">
         <div className="container">
-          <span className="eyebrow">Virava Chemicals · Since {settings.established || '1997'}</span>
+          <span className="eyebrow">Virava Chemicals · Since {settings.established || '1996'}</span>
           <h1 className="intro-title">Your trusted partner in <span className="serif">industrial chemicals</span></h1>
           <p className="intro-text">
             {settings.about_full ||
