@@ -94,8 +94,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Principals — hidden rather than shown as a heading over nothing */}
-      {principals.length > 0 && (
+      {/* Principals */}
       <section className="section principals-sec">
         <div className="container">
           <div className="center reveal">
@@ -113,7 +112,6 @@ export default function About() {
           </div>
         </div>
       </section>
-      )}
     </>
   );
 }
