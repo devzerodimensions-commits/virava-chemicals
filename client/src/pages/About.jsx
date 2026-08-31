@@ -140,8 +140,9 @@ export default function About() {
         </div>
       </section>
 
-      {/* Principals */}
-      <section className="section principals-sec">
+      {/* Principals — own class, not the home page's .principals-sec, so styling
+          this cannot change the home page's version of the same section */}
+      <section className="section principals-dark">
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
