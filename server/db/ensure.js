@@ -421,7 +421,34 @@ async function insertMissingCatalogue(KEY) {
   console.log(`Migration ${KEY}: +${addedCats} categories, +${addedProds} products.`);
 }
 
+// A cold Postgres can refuse the first connections while it accepts traffic, and
+// on Render the database and the web service wake independently. Retry briefly
+// before deciding it is genuinely unreachable.
+async function waitForDatabase(attempts = 6) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await query('SELECT 1');
+      if (i > 1) console.log(`Database reachable after ${i} attempts.`);
+      return true;
+    } catch (e) {
+      const wait = Math.min(2000 * i, 8000);
+      console.warn(`Database not reachable (attempt ${i}/${attempts}): ${e.message}. Retrying in ${wait}ms.`);
+      if (i < attempts) await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+  return false;
+}
+
 async function ensure() {
+  // Booting is `ensure.js && app.js`, so exiting non-zero here used to take the
+  // whole site down — no page at all, not even an error. A database problem
+  // should degrade the site, not black it out, so carry on and let the API
+  // surface the failure per request.
+  if (!(await waitForDatabase())) {
+    console.error('Database unreachable after retries — starting the server anyway. '
+      + 'Pages will load; anything data-backed will error until the database returns.');
+    return;
+  }
   try {
     const { rows } = await query("SELECT to_regclass('public.admins') AS t");
     if (rows[0].t) {
@@ -434,11 +461,13 @@ async function ensure() {
       await seed(false);
     }
     await migrate();
-    await pool.end();
     console.log('Database ready.');
   } catch (e) {
-    console.error('ensure.js failed:', e);
-    process.exit(1);
+    // A failed migration is worth shouting about, but it is not worth taking the
+    // site offline for — the previous schema is usually still serviceable.
+    console.error('ensure.js failed — starting the server regardless:', e);
+  } finally {
+    try { await pool.end(); } catch { /* already closed */ }
   }
 }
 
