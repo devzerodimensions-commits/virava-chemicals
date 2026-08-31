@@ -19,10 +19,13 @@ services:
     startCommand: "cd server && npm run start:prod"
     healthCheckPath: /api/health
     envVars:
+      # Set in the Render dashboard, not derived from the blueprint database.
+      # It was `fromDatabase: virava-db`, which pins the service to Render's own
+      # Postgres — that instance expired on the free plan and took the site down
+      # with it. sync:false lets the value point anywhere (Neon, Supabase, a paid
+      # Render database) and stops the blueprint overwriting it on each deploy.
       - key: DATABASE_URL
-        fromDatabase:
-          name: virava-db
-          property: connectionString
+        sync: false
       - key: NODE_VERSION
         value: "22"
       - key: JWT_SECRET
