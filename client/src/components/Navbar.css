@@ -13,14 +13,18 @@
   transition: box-shadow .25s ease;
 }
 .nav-scrolled { box-shadow: var(--shadow-sm); }
-.nav-inner { display: flex; align-items: center; height: 78px; gap: 24px; }
-.brand { display: flex; align-items: center; gap: 11px; }
-.brand-mark { height: 42px; width: auto; }
+/* header grown with the logo so the mark still has clearance above and below */
+.nav-inner { display: flex; align-items: center; height: 92px; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 13px; }
+.brand-mark { height: 58px; width: auto; }
 .brand-lockup { display: flex; flex-direction: column; line-height: 1.02; }
-.brand-name { font-family: var(--head); font-weight: 800; font-size: 1.55rem; color: #161616; letter-spacing: -.01em; }
-/* CHEMICALS keeps its original weight and tracking — only the colour is brand red */
-.brand-tag { font-family: var(--head); font-weight: 600; font-size: .66rem; letter-spacing: .38em; color: #d81f26; }
-@media (max-width: 420px) { .brand-name { font-size: 1.25rem; } .brand-mark { height: 36px; } .brand-tag { letter-spacing: .3em; font-size: .6rem; } }
+/* Scaled up only. Weight and tracking are unchanged, and .38em is relative so it
+   grows with the type rather than altering the lettering. */
+.brand-name { font-family: var(--head); font-weight: 800; font-size: 1.9rem; color: #161616; letter-spacing: -.01em; }
+.brand-tag { font-family: var(--head); font-weight: 600; font-size: .78rem; letter-spacing: .38em; color: #d81f26; }
+/* matches the 992px breakpoint the mobile menu uses, so its offset stays exact */
+@media (max-width: 992px) { .nav-inner { height: 84px; } .brand-mark { height: 50px; } .brand-name { font-size: 1.65rem; } .brand-tag { font-size: .7rem; } }
+@media (max-width: 420px) { .nav-inner { height: 76px; } .brand-mark { height: 42px; } .brand-name { font-size: 1.35rem; } .brand-tag { letter-spacing: .3em; font-size: .62rem; } }
 
 .menu { margin-left: auto; display: flex; align-items: center; gap: 30px; }
 .menu > a, .has-drop > a {
@@ -85,7 +89,8 @@
 @media (max-width: 992px) {
   .burger { display: block; }
   .menu {
-    position: fixed; top: 118px; right: 0; width: min(320px, 84vw); height: calc(100vh - 118px);
+    /* 40px topbar + 84px header — was 118px, from before the logo was enlarged */
+    position: fixed; top: 124px; right: 0; width: min(320px, 84vw); height: calc(100vh - 124px);
     background: #fff; flex-direction: column; align-items: flex-start; gap: 4px;
     padding: 24px; box-shadow: var(--shadow-lg); transform: translateX(105%);
     transition: transform .3s ease; overflow-y: auto;
