@@ -34,26 +34,34 @@
    while the statements ran from 40 to 95 characters, so the long one wrapped to
    seven lines and the short one left most of a 210px-tall card empty. Full-width
    rows give every statement the same treatment regardless of length. */
-.values-grid { display: grid; gap: 12px; margin: 44px auto 0; max-width: 920px; }
+/* Flex rather than grid so the five wrap 3 + 2 with the short row centred —
+   a grid leaves the last two hanging at the left edge. Cards are ~330px, wide
+   enough that the 95-character principle sits on three lines instead of seven. */
+.values-grid {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 18px;
+  margin: 44px auto 0; max-width: 1120px;
+}
 .value-card {
+  flex: 1 1 280px; max-width: 340px;
   background: var(--bg-soft); border-radius: var(--radius); border: 1px solid var(--line);
-  padding: 20px 26px; display: flex; align-items: center; gap: 22px; text-align: left;
+  padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 12px; text-align: left;
   transition: background .25s ease, border-color .25s ease, transform .25s ease;
 }
-.value-card:hover { transform: translateX(4px); background: var(--navy); border-color: var(--navy); }
+.value-card:hover { transform: translateY(-5px); background: var(--navy); border-color: var(--navy); }
 .value-card:hover p { color: #fff; }
 /* sits in the row now rather than floating in the corner, so it can no longer
    collide with the copy */
 .value-num {
-  font-family: var(--head); font-weight: 800; font-size: 1.7rem; line-height: 1;
-  color: #c9c9c9; flex-shrink: 0; min-width: 42px;
+  font-family: var(--head); font-weight: 800; font-size: 1.6rem; line-height: 1;
+  color: #c2c2c2; letter-spacing: -.02em;
 }
 .value-card:hover .value-num { color: rgba(255,255,255,.45); }
 .value-card p { color: var(--body); font-size: .96rem; line-height: 1.6; margin: 0; }
 @media (max-width: 620px) {
-  .value-card { padding: 18px 20px; gap: 16px; align-items: flex-start; }
-  .value-num { font-size: 1.4rem; min-width: 34px; }
-  .value-card p { font-size: .9rem; }
+  .values-grid { gap: 14px; }
+  .value-card { flex: 1 1 100%; max-width: none; padding: 20px 20px 22px; }
+  .value-num { font-size: 1.4rem; }
+  .value-card p { font-size: .92rem; }
 }
 
 /* ---- Products grid ---- */
