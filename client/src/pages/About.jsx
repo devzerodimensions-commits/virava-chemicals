@@ -140,21 +140,26 @@ export default function About() {
         </div>
       </section>
 
-      {/* Principals — own class, not the home page's .principals-sec, so styling
-          this cannot change the home page's version of the same section */}
-      <section className="section principals-dark">
+      {/* Principals — deliberately the same markup and classes as the home page's
+          version, so the two sections look identical rather than diverging */}
+      <section className="section section-soft principals-sec">
         <div className="container">
           <div className="center reveal">
-            <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
-            <h2 className="section-title" style={{ color: '#fff' }}>Manufacturers we <span className="serif">represent</span></h2>
+            <span className="eyebrow">Our Principals</span>
+            <h2 className="section-title">Manufacturers we <span className="serif">represent</span></h2>
+            <p className="section-intro">The country's most reputed manufacturers whom we proudly represent.</p>
           </div>
-          <div className="principals-grid">
-            {principals.map((p) => (
-              <div className="principal-card reveal" key={p.id}>
-                <div className="principal-logo"><img src={p.logo_url} alt={p.name} /></div>
-                <h3>{p.name}</h3>
-                <p>{p.description}</p>
-              </div>
+          <div className="principals-list">
+            {principals.map((p, i) => (
+              <Link to={`/principals/${p.slug}`} className="principal-row reveal" key={p.id}>
+                <div className="pr-logo"><img src={p.logo_url} alt={p.name} /></div>
+                <div className="pr-info">
+                  <span className="pr-num">Principal 0{i + 1}</span>
+                  <h3>{p.name}</h3>
+                  <p>{p.description}</p>
+                  <span className="cat-link">View details →</span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
