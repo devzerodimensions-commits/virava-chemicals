@@ -12,11 +12,13 @@ import './pages.css';
    from a few plain typos (manufactures → manufacturers, not matter → no matter,
    Principles → Principals, which they use to mean the companies they represent). */
 
+/* Quoted verbatim from the client's document — wording, punctuation and all.
+   Earlier these were lightly reworded, which is not ours to do. */
 const PRINCIPLES = [
-  'Reach as many customers as possible to make them aware of our products.',
-  'Suggest customers the best chemicals that cater to their need.',
-  'Provide the best service, pre and post-sale.',
-  'Conduct the business in the most transparent manner with both our customers and our principals.',
+  'Reach as many customers as possible to make them aware of our products',
+  'Suggest customers with the best chemicals that caters to their need.',
+  'Provide best service (pre and post-sale)',
+  'Conduct the business in the most transparent manner with both our customers and our principles.',
   'Do all of the above in the most cost-effective manner.',
 ];
 
@@ -50,14 +52,12 @@ export default function About() {
             <span className="eyebrow">Our Story</span>
             <h2 className="section-title">Built single-handedly, since <span className="serif">{founded}</span></h2>
             <p>
-              In {founded}, when the renowned Rollwalla group of Ahmedabad was split, our founder
-              {' '}{founder} — a second-generation entrepreneur — decided to take the responsibility
-              of running the business of Virava Chemicals on his shoulders single handedly.
-            </p>
-            <p>
-              With persistent hard work, financial discipline and foresight, Virava Chemicals has
-              grown its turnover at 30% CAGR. From a very humble beginning of a handful of customers,
-              today we cater to and serve over {customers}+ customers in the Gujarat state.
+              In 1996, when the renowned Rollwalla group of Ahmedabad was split, our founder
+              Mr. Siddharth Shah (2nd generation entrepreneur) decided to take the responsibility of
+              running the business of Virava Chemicals on his shoulders single handedly. With this
+              persistent hard work, financial discipline and foresight Virava chemicals has grown its
+              turnover at 30% CAGR. From a very humble beginning of handful of customers today we
+              cater and serve over 2500+ customers in the Gujarat state.
             </p>
             <p>
               The main activity of the concern is trading of goods manufactured by Godrej Industries
@@ -77,12 +77,12 @@ export default function About() {
           </div>
           <blockquote className="mission-quote reveal">
             <p>
-              At Virava Chemicals, our mission is to supply the best quality chemicals to the
-              manufacturers at very cost-effective and competitive rates. We truly believe that our
-              customers, no matter how small, are our backbone, and we want to keep them happy and
-              satisfied with the best products and quality services in a very transparent manner.
+              “At Virava Chemicals, our mission is to supply best quality chemicals to the
+              manufactures at the very cost effective and competitive rates. We truly believe that
+              our customers, not matter how small, are our backbone and we want to keep them happy
+              and satisfied with the best products and quality services in a very transparent manner.
               We want to do this by ensuring reasonable growth of Virava Chemicals and its trusted
-              principals.
+              Principles.”
             </p>
           </blockquote>
         </div>
@@ -94,7 +94,7 @@ export default function About() {
           <div className="center reveal">
             <span className="eyebrow">What Drives Us</span>
             <h2 className="section-title">Our philosophy and <span className="serif">guiding principles</span></h2>
-            <p className="section-intro">Simple, and unchanged since the beginning.</p>
+            <p className="section-intro">Our philosophy and guiding principles are simple —</p>
           </div>
           <div className="values-grid">
             {PRINCIPLES.map((text, i) => (
@@ -113,10 +113,10 @@ export default function About() {
           <div className="mv-card reveal">
             <h3>Our People</h3>
             <p>
-              We have immense gratitude not only for our principals and customers, but also for all
+              We have immense gratitude not only for our Principles and Customers but also for all
               the employees of Virava. We take pride in saying that most of our employees currently
-              at Virava have been here since the inception. Virava Chemicals would not have achieved
-              this growth without their hard work and dedication.
+              at Virava are there since the inception. Virava Chemicals would not have achieved this
+              growth without the hard work and dedication of its employees.
             </p>
           </div>
           <div className="mv-card reveal">
