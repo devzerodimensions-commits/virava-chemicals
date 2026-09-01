@@ -29,23 +29,32 @@
 }
 @media (max-width: 620px) { .mission-quote { padding-left: 18px; } .mission-quote p { font-size: 1rem; } }
 
-/* ---- Values / guiding principles ---- */
-/* auto-fit, not a fixed four: there are five principles, and a four-column grid
-   left the fifth stranded alone on a second row */
-.values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin-top: 48px; }
-/* taller top padding so the copy clears the number — these cards no longer
-   carry a heading between the two */
-.value-card { background: var(--bg-soft); border-radius: var(--radius); padding: 72px 22px 26px; position: relative; overflow: hidden; transition: .3s; border: 1px solid var(--line); }
-.value-card:hover { background: var(--navy); color: #fff; }
-.value-card:hover h4, .value-card:hover p { color: #fff; }
-/* line-height:1 keeps the glyph's box tight — at the default it ran below the
-   card's top padding and collided with the first line of copy */
-.value-num { font-family: var(--head); font-weight: 800; font-size: 2.2rem; line-height: 1; color: var(--bg-navy-soft); position: absolute; top: 18px; right: 20px; }
-.value-card:hover .value-num { color: rgba(255,255,255,.15); }
-.value-card h4 { color: var(--navy); font-size: 1.2rem; margin-bottom: 10px; position: relative; }
-.value-card p { color: var(--body); font-size: .9rem; position: relative; }
-@media (max-width: 900px) { .values-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 520px) { .values-grid { grid-template-columns: 1fr; } }
+/* ---- Values / guiding principles ----
+   Stacked rows, not columns. As a five-across grid each card was 216px wide
+   while the statements ran from 40 to 95 characters, so the long one wrapped to
+   seven lines and the short one left most of a 210px-tall card empty. Full-width
+   rows give every statement the same treatment regardless of length. */
+.values-grid { display: grid; gap: 12px; margin: 44px auto 0; max-width: 920px; }
+.value-card {
+  background: var(--bg-soft); border-radius: var(--radius); border: 1px solid var(--line);
+  padding: 20px 26px; display: flex; align-items: center; gap: 22px; text-align: left;
+  transition: background .25s ease, border-color .25s ease, transform .25s ease;
+}
+.value-card:hover { transform: translateX(4px); background: var(--navy); border-color: var(--navy); }
+.value-card:hover p { color: #fff; }
+/* sits in the row now rather than floating in the corner, so it can no longer
+   collide with the copy */
+.value-num {
+  font-family: var(--head); font-weight: 800; font-size: 1.7rem; line-height: 1;
+  color: #c9c9c9; flex-shrink: 0; min-width: 42px;
+}
+.value-card:hover .value-num { color: rgba(255,255,255,.45); }
+.value-card p { color: var(--body); font-size: .96rem; line-height: 1.6; margin: 0; }
+@media (max-width: 620px) {
+  .value-card { padding: 18px 20px; gap: 16px; align-items: flex-start; }
+  .value-num { font-size: 1.4rem; min-width: 34px; }
+  .value-card p { font-size: .9rem; }
+}
 
 /* ---- Products grid ---- */
 .prod-cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 48px; }
