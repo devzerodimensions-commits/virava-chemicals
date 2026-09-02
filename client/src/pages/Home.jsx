@@ -124,6 +124,11 @@ export default function Home() {
     <>
       {/* ---------------- INTRO (before the slider) ---------------- */}
       <section className="intro-band">
+        {/* Decorative only — soft brand-tinted washes so the band reads as a
+            designed opening rather than a paragraph floating on flat white. */}
+        <span className="intro-glow intro-glow-a" aria-hidden="true" />
+        <span className="intro-glow intro-glow-b" aria-hidden="true" />
+        <span className="intro-grid" aria-hidden="true" />
         <div className="container">
           <span className="eyebrow">Virava Chemicals · Since {settings.established || '1996'}</span>
           <h1 className="intro-title">Your trusted partner in <span className="serif">industrial chemicals</span></h1>
@@ -135,6 +140,14 @@ export default function Home() {
             <Link to="/about" className="btn btn-navy">Learn More <span>→</span></Link>
             <Link to="/contact" className="btn btn-outline">Enquire Now</Link>
           </div>
+          {/* Gives the band something to land on instead of ending in empty
+              space. Every figure here is already stated elsewhere on the site. */}
+          <ul className="intro-facts">
+            <li><strong>{settings.established || '1996'}</strong><span>Established</span></li>
+            <li><strong>3</strong><span>Generations</span></li>
+            <li><strong>{settings.stat_customers || 2500}+</strong><span>Customers in Gujarat</span></li>
+            <li><strong>Godrej</strong><span>Exclusive oleochemicals</span></li>
+          </ul>
         </div>
       </section>
 
