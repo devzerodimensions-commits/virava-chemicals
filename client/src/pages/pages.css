@@ -177,16 +177,16 @@
    with a hole beside it; centring makes the short row read as deliberate. */
 /* A horizontal rail instead of a grid. Seven photos stacked two- or three-across
    made this section run longer than anything else on the page; as one scrolling
-   row it costs a single card's height. Cards alternate a small vertical offset so
-   the row reads as a composition rather than a flat filmstrip.
+   row it costs a single card's height. Cards sit on a level line — a staggered
+   version was tried and looked worse.
    Native overflow scrolling does the work, so swipe and trackpad gestures come
    free — the arrows are an enhancement on top, not the only way through. */
 .legacy-rail-wrap { position: relative; margin-top: 34px; }
 .legacy-rail {
   display: flex; gap: 22px; overflow-x: auto; overflow-y: hidden;
   scroll-snap-type: x mandatory; scroll-behavior: smooth;
-  /* vertical padding leaves room for the zigzag offset and the hover lift */
-  padding: 30px 6px 34px;
+  /* just enough vertical padding for the hover lift and its shadow */
+  padding: 8px 6px 16px;
   scrollbar-width: none; -ms-overflow-style: none;
 }
 .legacy-rail::-webkit-scrollbar { display: none; }
@@ -197,11 +197,7 @@
   display: flex; flex-direction: column;
   transition: transform .25s ease, box-shadow .25s ease;
 }
-/* the zigzag. hover has to restate the offset, or the card would jump to 0 */
-.legacy-card:nth-child(odd)  { transform: translateY(-20px); }
-.legacy-card:nth-child(even) { transform: translateY(20px); }
-.legacy-card:nth-child(odd):hover  { transform: translateY(-27px); box-shadow: var(--shadow); }
-.legacy-card:nth-child(even):hover { transform: translateY(13px); box-shadow: var(--shadow); }
+.legacy-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 
 .rail-btn {
   position: absolute; top: 50%; margin-top: -22px; z-index: 2;
@@ -223,12 +219,10 @@
 .legacy-card figcaption { padding: 13px 16px 15px; color: var(--body); font-size: .82rem; line-height: 1.5; }
 /* No arrows on touch — swiping the rail is the natural gesture there. */
 @media (max-width: 900px) { .rail-btn { display: none; } .legacy-card { flex-basis: 290px; } }
-/* One card at a time on phones, and flat: a zigzag needs neighbours to read as one. */
+/* One card at a time on phones, swiped through. */
 @media (max-width: 560px) {
-  .legacy-rail { padding: 8px 4px 12px; gap: 16px; }
+  .legacy-rail { padding: 6px 4px 12px; gap: 16px; }
   .legacy-card { flex-basis: 80vw; }
-  .legacy-card:nth-child(odd), .legacy-card:nth-child(even) { transform: none; }
-  .legacy-card:nth-child(odd):hover, .legacy-card:nth-child(even):hover { transform: translateY(-4px); }
 }
 
 /* ---- Blog detail ---- */
