@@ -20,8 +20,11 @@
 .brand-lockup { display: flex; flex-direction: column; line-height: 1.02; }
 /* Scaled up only. Weight and tracking are unchanged, and .38em is relative so it
    grows with the type rather than altering the lettering. */
-.brand-name { font-family: var(--head); font-weight: 800; font-size: 1.9rem; color: #161616; letter-spacing: -.01em; }
-.brand-tag { font-family: var(--head); font-weight: 600; font-size: .78rem; letter-spacing: .38em; color: #d81f26; }
+/* var(--brand), NOT var(--head). The site typeface changed to Plus Jakarta Sans,
+   but the logo lettering must stay exactly as it was — weight, size and tracking
+   are untouched for the same reason. */
+.brand-name { font-family: var(--brand); font-weight: 800; font-size: 1.9rem; color: #161616; letter-spacing: -.01em; }
+.brand-tag { font-family: var(--brand); font-weight: 600; font-size: .78rem; letter-spacing: .38em; color: #d81f26; }
 /* matches the 992px breakpoint the mobile menu uses, so its offset stays exact */
 @media (max-width: 992px) { .nav-inner { height: 84px; } .brand-mark { height: 50px; } .brand-name { font-size: 1.65rem; } .brand-tag { font-size: .7rem; } }
 @media (max-width: 420px) { .nav-inner { height: 76px; } .brand-mark { height: 42px; } .brand-name { font-size: 1.35rem; } .brand-tag { letter-spacing: .3em; font-size: .62rem; } }
