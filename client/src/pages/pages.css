@@ -188,7 +188,14 @@
   /* just enough vertical padding for the hover lift and its shadow */
   padding: 8px 6px 16px;
   scrollbar-width: none; -ms-overflow-style: none;
+  /* grab cursor advertises that the row can be dragged */
+  cursor: grab;
 }
+.legacy-rail.is-dragging { cursor: grabbing; }
+/* stops the drag from turning into a text/caption selection halfway across */
+.legacy-rail.is-dragging, .legacy-rail.is-dragging * { user-select: none; }
+/* a card mid-drag shouldn't also animate its hover lift */
+.legacy-rail.is-dragging .legacy-card:hover { transform: none; box-shadow: var(--shadow-sm); }
 .legacy-rail::-webkit-scrollbar { display: none; }
 .legacy-card {
   flex: 0 0 320px; scroll-snap-align: start;

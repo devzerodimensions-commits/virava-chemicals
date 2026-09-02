@@ -59,6 +59,45 @@ export default function About() {
     rail.scrollBy({ left: dir * step, behavior: 'smooth' });
   };
 
+  /* Click-and-drag to pan the rail. Native overflow-x gives us wheel, trackpad and
+     touch for free, but a mouse drag does nothing without this. Mouse only —
+     touch already scrolls natively, and hijacking it here would fight the browser. */
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: 0 });
+
+  const onPointerDown = (e) => {
+    const rail = railRef.current;
+    if (!rail || e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag.current = { down: true, startX: e.clientX, startLeft: rail.scrollLeft, moved: 0 };
+    // snapping and smooth scrolling both fight a scrollLeft driven by the cursor
+    rail.style.scrollSnapType = 'none';
+    rail.style.scrollBehavior = 'auto';
+    rail.classList.add('is-dragging');
+  };
+
+  const onPointerMove = (e) => {
+    const rail = railRef.current;
+    if (!rail || !drag.current.down) return;
+    const dx = e.clientX - drag.current.startX;
+    drag.current.moved = Math.max(drag.current.moved, Math.abs(dx));
+    rail.scrollLeft = drag.current.startLeft - dx;
+  };
+
+  const endDrag = () => {
+    const rail = railRef.current;
+    if (!rail || !drag.current.down) return;
+    drag.current.down = false;
+    rail.classList.remove('is-dragging');
+    // clearing the inline values restores the stylesheet's snap, so the rail
+    // settles onto a card instead of stopping mid-photo
+    rail.style.scrollBehavior = '';
+    rail.style.scrollSnapType = '';
+  };
+
+  // a drag that ends on a card shouldn't also register as a click on it
+  const onClickCapture = (e) => {
+    if (drag.current.moved > 5) { e.preventDefault(); e.stopPropagation(); }
+  };
+
   useEffect(() => { api.get('/principals').then((r) => setPrincipals(r.data)).catch(() => {}); }, []);
   useReveal([principals]);
 
@@ -115,10 +154,21 @@ export default function About() {
               which would otherwise stamp on each card's zigzag offset */}
           <div className="legacy-rail-wrap reveal">
             <button type="button" className="rail-btn rail-prev" onClick={() => scrollRail(-1)} aria-label="Previous photos">‹</button>
-            <div className="legacy-rail" ref={railRef}>
+            <div
+              className="legacy-rail"
+              ref={railRef}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={endDrag}
+              onPointerLeave={endDrag}
+              onPointerCancel={endDrag}
+              onClickCapture={onClickCapture}
+            >
               {LEGACY_PHOTOS.map((p) => (
                 <figure className="legacy-card" key={p.src}>
-                  <div className={p.portrait ? 'legacy-img is-portrait' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                  {/* draggable={false}: otherwise the browser starts its own image
+                      drag and the ghost preview follows the cursor instead */}
+                  <div className={p.portrait ? 'legacy-img is-portrait' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" draggable={false} /></div>
                   <figcaption>{p.caption}</figcaption>
                 </figure>
               ))}
