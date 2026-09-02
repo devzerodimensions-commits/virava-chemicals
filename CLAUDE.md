@@ -3,6 +3,13 @@
 React (Vite) + Express + PostgreSQL. Public site plus an admin panel at `/admin`.
 Live: https://virava-chemicals.onrender.com
 
+**The client's own domain, viravachemicals.com, still serves the OLD pre-rebuild
+jQuery site.** It has never pointed at this project. This is deliberate, not an
+oversight — the client wants the old site to stay up and will cut over later. So
+when checking whether a change went live, always use the onrender.com URL;
+viravachemicals.com will not reflect this codebase until DNS is repointed. Don't
+raise it as a bug, and don't change it without being asked.
+
 ## Layout
 
 ```
