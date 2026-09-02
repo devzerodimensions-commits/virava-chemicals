@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
@@ -46,6 +46,19 @@ const LEGACY_PHOTOS = [
 export default function About() {
   const settings = useSettings();
   const [principals, setPrincipals] = useState([]);
+  const railRef = useRef(null);
+
+  /* Scroll the photo rail by exactly one card, measured live so it stays correct
+     when the card width changes at a breakpoint. */
+  const scrollRail = (dir) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector('.legacy-card');
+    const gap = parseFloat(getComputedStyle(rail).columnGap) || 22;
+    const step = card ? card.getBoundingClientRect().width + gap : 340;
+    rail.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+
   useEffect(() => { api.get('/principals').then((r) => setPrincipals(r.data)).catch(() => {}); }, []);
   useReveal([principals]);
 
@@ -98,13 +111,19 @@ export default function About() {
             <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
             <p className="section-intro">From the Fatty Alcohol Meet of 1985 to the present day — reflecting Virava's long-standing association with Godrej Industries.</p>
           </div>
-          <div className="legacy-grid">
-            {LEGACY_PHOTOS.map((p) => (
-              <figure className="legacy-card reveal" key={p.src}>
-                <div className={p.portrait ? 'legacy-img is-portrait' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
-                <figcaption>{p.caption}</figcaption>
-              </figure>
-            ))}
+          {/* reveal sits on the wrapper, not the cards: .reveal animates transform,
+              which would otherwise stamp on each card's zigzag offset */}
+          <div className="legacy-rail-wrap reveal">
+            <button type="button" className="rail-btn rail-prev" onClick={() => scrollRail(-1)} aria-label="Previous photos">‹</button>
+            <div className="legacy-rail" ref={railRef}>
+              {LEGACY_PHOTOS.map((p) => (
+                <figure className="legacy-card" key={p.src}>
+                  <div className={p.portrait ? 'legacy-img is-portrait' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                  <figcaption>{p.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
+            <button type="button" className="rail-btn rail-next" onClick={() => scrollRail(1)} aria-label="Next photos">›</button>
           </div>
         </div>
       </section>

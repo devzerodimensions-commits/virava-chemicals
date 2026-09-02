@@ -175,20 +175,45 @@
 /* Flex rather than grid so the last row centres itself. There are seven photos,
    so a fixed 2- or 3-column grid always strands the final card against one edge
    with a hole beside it; centring makes the short row read as deliberate. */
-.legacy-grid {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 22px;
-  margin: 36px auto 0; max-width: 1120px;
+/* A horizontal rail instead of a grid. Seven photos stacked two- or three-across
+   made this section run longer than anything else on the page; as one scrolling
+   row it costs a single card's height. Cards alternate a small vertical offset so
+   the row reads as a composition rather than a flat filmstrip.
+   Native overflow scrolling does the work, so swipe and trackpad gestures come
+   free — the arrows are an enhancement on top, not the only way through. */
+.legacy-rail-wrap { position: relative; margin-top: 34px; }
+.legacy-rail {
+  display: flex; gap: 22px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  /* vertical padding leaves room for the zigzag offset and the hover lift */
+  padding: 30px 6px 34px;
+  scrollbar-width: none; -ms-overflow-style: none;
 }
-/* Three across. Two across ran to four rows with seven photos, which made the
-   section far too tall; height matters more here than photo size. */
+.legacy-rail::-webkit-scrollbar { display: none; }
 .legacy-card {
-  flex: 1 1 300px; max-width: 358px;
+  flex: 0 0 320px; scroll-snap-align: start;
   margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; box-shadow: var(--shadow-sm);
   display: flex; flex-direction: column;
   transition: transform .25s ease, box-shadow .25s ease;
 }
-.legacy-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+/* the zigzag. hover has to restate the offset, or the card would jump to 0 */
+.legacy-card:nth-child(odd)  { transform: translateY(-20px); }
+.legacy-card:nth-child(even) { transform: translateY(20px); }
+.legacy-card:nth-child(odd):hover  { transform: translateY(-27px); box-shadow: var(--shadow); }
+.legacy-card:nth-child(even):hover { transform: translateY(13px); box-shadow: var(--shadow); }
+
+.rail-btn {
+  position: absolute; top: 50%; margin-top: -22px; z-index: 2;
+  width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow);
+  font-family: var(--head); font-size: 1.6rem; line-height: 1; color: var(--navy);
+  display: grid; place-items: center; padding: 0 0 4px;
+  transition: background .2s ease, color .2s ease;
+}
+.rail-btn:hover { background: var(--navy); color: #fff; }
+.rail-prev { left: -14px; }
+.rail-next { right: -14px; }
 .legacy-img { aspect-ratio: 16 / 10; overflow: hidden; background: #f0f0f0; }
 .legacy-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* Portrait source in a landscape frame. A centred cover-crop cut the subjects'
@@ -196,7 +221,15 @@
    so the card fills like every other one instead of sitting in grey matting. */
 .legacy-img.is-portrait img { object-position: center 15%; }
 .legacy-card figcaption { padding: 13px 16px 15px; color: var(--body); font-size: .82rem; line-height: 1.5; }
-@media (max-width: 700px) { .legacy-grid { gap: 18px; } .legacy-card { flex: 1 1 100%; max-width: 420px; } }
+/* No arrows on touch — swiping the rail is the natural gesture there. */
+@media (max-width: 900px) { .rail-btn { display: none; } .legacy-card { flex-basis: 290px; } }
+/* One card at a time on phones, and flat: a zigzag needs neighbours to read as one. */
+@media (max-width: 560px) {
+  .legacy-rail { padding: 8px 4px 12px; gap: 16px; }
+  .legacy-card { flex-basis: 80vw; }
+  .legacy-card:nth-child(odd), .legacy-card:nth-child(even) { transform: none; }
+  .legacy-card:nth-child(odd):hover, .legacy-card:nth-child(even):hover { transform: translateY(-4px); }
+}
 
 /* ---- Blog detail ---- */
 .blog-detail { max-width: 820px; margin: 0 auto; }
