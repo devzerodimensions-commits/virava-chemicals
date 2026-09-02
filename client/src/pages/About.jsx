@@ -22,6 +22,19 @@ const PRINCIPLES = [
   'Do all of the above in the most cost-effective manner.',
 ];
 
+/* Client-provided historical photographs (Fatty Alcohol Meet, 1985) with their
+   captions, quoted as supplied by the client. */
+const LEGACY_PHOTOS = [
+  { src: '/img/about/founder-1.webp',
+    caption: 'Mr. Siddharth Shah giving a presentation at the Fatty Alcohol Meet in the year 1985. Mr. Adi Godrej (centre), Mr. Eipe (left) and Mr. Pinto (second from right) graced the occasion with their presence.' },
+  { src: '/img/about/founder-2.webp',
+    caption: 'Mr. Siddharth Shah (right) and Mr. Ashok Shah (left) receiving Mr. Adi Godrej for the Fatty Alcohols Meet in the year 1985.' },
+  { src: '/img/about/founder-3.webp',
+    caption: 'Mr. Siddharth Shah giving his respects to Mr. S. P. Godrej (Indian industrialist and a member of the Godrej family).' },
+  { src: '/img/about/founder-4.webp',
+    caption: 'Mr. Adi Godrej speaking at the occasion of the Fatty Alcohol Meet in Ahmedabad, 1985.' },
+];
+
 export default function About() {
   const settings = useSettings();
   const [principals, setPrincipals] = useState([]);
@@ -65,6 +78,25 @@ export default function About() {
               The Standard Chemicals Co. Pvt. Ltd.
             </p>
             <Link to="/contact" className="btn btn-navy">Get in Touch <span>→</span></Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Legacy — client-provided historical photos (Fatty Alcohol Meet, 1985) */}
+      <section className="section">
+        <div className="container">
+          <div className="center reveal">
+            <span className="eyebrow">Our Legacy</span>
+            <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
+            <p className="section-intro">Glimpses from the Fatty Alcohol Meet, 1985 — reflecting Virava's long-standing association with Godrej Industries.</p>
+          </div>
+          <div className="legacy-grid">
+            {LEGACY_PHOTOS.map((p) => (
+              <figure className="legacy-card reveal" key={p.src}>
+                <div className="legacy-img"><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                <figcaption>{p.caption}</figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       </section>

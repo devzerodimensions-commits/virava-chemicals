@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
+import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -14,18 +15,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const safe = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-    cb(null, `${Date.now()}-${safe}`);
-  },
-});
-const upload = multer({ storage, limits: { fileSize: 8 * 1024 * 1024 } });
+// Files are held in memory, then converted to .webp before saving — so every
+// image on the site (and any future upload) is served as webp.
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 12 * 1024 * 1024 } });
 
-router.post('/upload', upload.single('image'), (req, res) => {
+async function saveAsWebp(file, i = 0) {
+  const base = (file.originalname.replace(/\.[^.]+$/, '') || 'image')
+    .replace(/[^a-zA-Z0-9\-_]/g, '_').slice(0, 60) || 'image';
+  const name = `${Date.now()}-${i}-${base}.webp`;
+  await sharp(file.buffer).rotate().webp({ quality: 82 }).toFile(path.join(uploadDir, name));
+  return `/uploads/${name}`;
+}
+
+router.post('/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  res.json({ url: `/uploads/${req.file.filename}` });
+  const url = await saveAsWebp(req.file);
+  res.json({ url });
 });
 
 // ---- Media library ----------------------------------------------------------
@@ -63,9 +68,14 @@ router.get('/media', (_req, res) => {
   res.json({ uploads: uploads.sort(bySize), bundled: bundled.sort((a, b) => a.path.localeCompare(b.path)) });
 });
 
-router.post('/media', upload.array('images', 20), (req, res) => {
+router.post('/media', upload.array('images', 20), async (req, res) => {
   if (!req.files?.length) return res.status(400).json({ error: 'No files uploaded' });
-  res.status(201).json({ files: req.files.map((f) => ({ name: f.filename, url: `/uploads/${f.filename}`, size: f.size })) });
+  const files = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const url = await saveAsWebp(req.files[i], i);
+    files.push({ name: url.split('/').pop(), url });
+  }
+  res.status(201).json({ files });
 });
 
 router.delete('/media', (req, res) => {
