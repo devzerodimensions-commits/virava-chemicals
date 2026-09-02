@@ -177,22 +177,12 @@
 .legacy-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .legacy-img { aspect-ratio: 16 / 10; overflow: hidden; background: #f0f0f0; }
 .legacy-img img { width: 100%; height: 100%; object-fit: cover; }
+/* Portrait photos in this landscape frame: cover centre-crops them and cuts the
+   subjects' heads off, so they are matted instead. Opt-in per photo. */
+.legacy-img.is-contain { background: var(--bg-soft); }
+.legacy-img.is-contain img { object-fit: contain; }
 .legacy-card figcaption { padding: 16px 20px 18px; color: var(--body); font-size: .88rem; line-height: 1.55; }
 @media (max-width: 700px) { .legacy-grid { grid-template-columns: 1fr; } }
-
-/* ---- Recent milestone photos (About page) ----
-   Kept separate from .legacy-* because this set mixes orientations: the office photo
-   is portrait, the other two landscape. A cover-crop in a wide frame cut the heads off
-   the portrait one, so this frame is taller and uses contain — nothing is cropped, and
-   the soft backdrop makes the letterboxing read as deliberate matting. */
-.recent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 44px; }
-.recent-card { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
-.recent-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-.recent-img { aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg-soft); }
-.recent-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.recent-card figcaption { padding: 16px 20px 18px; color: var(--body); font-size: .88rem; line-height: 1.55; }
-@media (max-width: 900px) { .recent-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
-@media (max-width: 620px) { .recent-grid { grid-template-columns: 1fr; } }
 
 /* ---- Blog detail ---- */
 .blog-detail { max-width: 820px; margin: 0 auto; }

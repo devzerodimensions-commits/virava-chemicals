@@ -22,8 +22,8 @@ const PRINCIPLES = [
   'Do all of the above in the most cost-effective manner.',
 ];
 
-/* Client-provided historical photographs (Fatty Alcohol Meet, 1985) with their
-   captions, quoted as supplied by the client. */
+/* Client-provided photographs with their captions, quoted as supplied. The 1985
+   Fatty Alcohol Meet archive set first, then the recent ones, in date order. */
 const LEGACY_PHOTOS = [
   { src: '/img/about/founder-1.webp',
     caption: 'Mr. Siddharth Shah giving a presentation at the Fatty Alcohol Meet in the year 1985. Mr. Adi Godrej (centre), Mr. Eipe (left) and Mr. Pinto (second from right) graced the occasion with their presence.' },
@@ -33,13 +33,9 @@ const LEGACY_PHOTOS = [
     caption: 'Mr. Siddharth Shah giving his respects to Mr. S. P. Godrej (Indian industrialist and a member of the Godrej family).' },
   { src: '/img/about/founder-4.webp',
     caption: 'Mr. Adi Godrej speaking at the occasion of the Fatty Alcohol Meet in Ahmedabad, 1985.' },
-];
-
-/* Recent photographs supplied by the client, with their captions quoted as sent.
-   Kept separate from LEGACY_PHOTOS above because those are the 1985 archive set —
-   filing a 2025-26 award under that heading would read as a mistake. */
-const RECENT_PHOTOS = [
-  { src: '/img/about/godrej-visit-1.webp',
+  /* contain: the office photo is portrait, and a cover-crop in this 16/10 frame
+     cut both subjects' heads off, so it is matted instead. */
+  { src: '/img/about/godrej-visit-1.webp', contain: true,
     caption: 'Mr Vishal Sharma (Current CEO of Godrej Chemicals) at Virava Chemicals office in Ahmedabad.' },
   { src: '/img/about/godrej-visit-2.webp',
     caption: 'Mr Vishal Sharma (CEO of Godrej Chemicals) along with the Virava Chemicals Family' },
@@ -94,38 +90,18 @@ export default function About() {
         </div>
       </section>
 
-      {/* Legacy — client-provided historical photos (Fatty Alcohol Meet, 1985) */}
+      {/* Legacy — client-provided photos: the 1985 archive set plus recent ones */}
       <section className="section">
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Legacy</span>
             <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
-            <p className="section-intro">Glimpses from the Fatty Alcohol Meet, 1985 — reflecting Virava's long-standing association with Godrej Industries.</p>
+            <p className="section-intro">From the Fatty Alcohol Meet of 1985 to the present day — reflecting Virava's long-standing association with Godrej Industries.</p>
           </div>
           <div className="legacy-grid">
             {LEGACY_PHOTOS.map((p) => (
               <figure className="legacy-card reveal" key={p.src}>
-                <div className="legacy-img"><img src={p.src} alt={p.caption} loading="lazy" /></div>
-                <figcaption>{p.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recent milestones — client-supplied photographs of the Godrej CEO's visit
-          and the 2025-26 performance award */}
-      <section className="section">
-        <div className="container">
-          <div className="center reveal">
-            <span className="eyebrow">Recent Milestones</span>
-            <h2 className="section-title">Our continuing partnership with <span className="serif">Godrej</span></h2>
-            <p className="section-intro">Four decades on, the association that began in the 1980s continues today.</p>
-          </div>
-          <div className="recent-grid">
-            {RECENT_PHOTOS.map((p) => (
-              <figure className="recent-card reveal" key={p.src}>
-                <div className="recent-img"><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                <div className={p.contain ? 'legacy-img is-contain' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
                 <figcaption>{p.caption}</figcaption>
               </figure>
             ))}
