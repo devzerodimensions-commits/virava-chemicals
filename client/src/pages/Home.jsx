@@ -5,6 +5,7 @@ import { useReveal } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
+import LegacyGallery from '../components/LegacyGallery.jsx';
 import { FALLBACK_SOLUTIONS } from './GodrejSolution.jsx';
 import './Home.css';
 
@@ -210,6 +211,21 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ---------------- LEGACY PHOTOS ----------------
+          Same carousel as the About page, from components/LegacyGallery.jsx.
+          Sits straight after the principals because the photographs are of the
+          Godrej relationship the section above it describes. */}
+      <section className="section">
+        <div className="container">
+          <div className="center reveal">
+            <span className="eyebrow">Our Legacy</span>
+            <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
+            <p className="section-intro">From the Fatty Alcohol Meet of 1985 to the present day — reflecting Virava's long-standing association with Godrej Industries.</p>
+          </div>
+          <LegacyGallery />
         </div>
       </section>
 
