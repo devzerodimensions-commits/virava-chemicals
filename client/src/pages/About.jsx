@@ -33,9 +33,9 @@ const LEGACY_PHOTOS = [
     caption: 'Mr. Siddharth Shah giving his respects to Mr. S. P. Godrej (Indian industrialist and a member of the Godrej family).' },
   { src: '/img/about/founder-4.webp',
     caption: 'Mr. Adi Godrej speaking at the occasion of the Fatty Alcohol Meet in Ahmedabad, 1985.' },
-  /* contain: the office photo is portrait, and a cover-crop in this 16/10 frame
-     cut both subjects' heads off, so it is matted instead. */
-  { src: '/img/about/godrej-visit-1.webp', contain: true,
+  /* portrait: this one is 960x1280, so its crop window is nudged upward to keep
+     both faces and the award in frame — see .legacy-img.is-portrait. */
+  { src: '/img/about/godrej-visit-1.webp', portrait: true,
     caption: 'Mr Vishal Sharma (Current CEO of Godrej Chemicals) at Virava Chemicals office in Ahmedabad.' },
   { src: '/img/about/godrej-visit-2.webp',
     caption: 'Mr Vishal Sharma (CEO of Godrej Chemicals) along with the Virava Chemicals Family' },
@@ -101,7 +101,7 @@ export default function About() {
           <div className="legacy-grid">
             {LEGACY_PHOTOS.map((p) => (
               <figure className="legacy-card reveal" key={p.src}>
-                <div className={p.contain ? 'legacy-img is-contain' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                <div className={p.portrait ? 'legacy-img is-portrait' : 'legacy-img'}><img src={p.src} alt={p.caption} loading="lazy" /></div>
                 <figcaption>{p.caption}</figcaption>
               </figure>
             ))}
