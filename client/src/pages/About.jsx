@@ -35,6 +35,18 @@ const LEGACY_PHOTOS = [
     caption: 'Mr. Adi Godrej speaking at the occasion of the Fatty Alcohol Meet in Ahmedabad, 1985.' },
 ];
 
+/* Recent photographs supplied by the client, with their captions quoted as sent.
+   Kept separate from LEGACY_PHOTOS above because those are the 1985 archive set —
+   filing a 2025-26 award under that heading would read as a mistake. */
+const RECENT_PHOTOS = [
+  { src: '/img/about/godrej-visit-1.webp',
+    caption: 'Mr Vishal Sharma (Current CEO of Godrej Chemicals) at Virava Chemicals office in Ahmedabad.' },
+  { src: '/img/about/godrej-visit-2.webp',
+    caption: 'Mr Vishal Sharma (CEO of Godrej Chemicals) along with the Virava Chemicals Family' },
+  { src: '/img/about/godrej-visit-3.webp',
+    caption: 'Virava Chemicals receiving best performance award (Silver) from Godrej Industries for the year 2025-26.' },
+];
+
 export default function About() {
   const settings = useSettings();
   const [principals, setPrincipals] = useState([]);
@@ -94,6 +106,26 @@ export default function About() {
             {LEGACY_PHOTOS.map((p) => (
               <figure className="legacy-card reveal" key={p.src}>
                 <div className="legacy-img"><img src={p.src} alt={p.caption} loading="lazy" /></div>
+                <figcaption>{p.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent milestones — client-supplied photographs of the Godrej CEO's visit
+          and the 2025-26 performance award */}
+      <section className="section">
+        <div className="container">
+          <div className="center reveal">
+            <span className="eyebrow">Recent Milestones</span>
+            <h2 className="section-title">Our continuing partnership with <span className="serif">Godrej</span></h2>
+            <p className="section-intro">Four decades on, the association that began in the 1980s continues today.</p>
+          </div>
+          <div className="recent-grid">
+            {RECENT_PHOTOS.map((p) => (
+              <figure className="recent-card reveal" key={p.src}>
+                <div className="recent-img"><img src={p.src} alt={p.caption} loading="lazy" /></div>
                 <figcaption>{p.caption}</figcaption>
               </figure>
             ))}
