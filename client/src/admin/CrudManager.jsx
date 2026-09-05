@@ -3,21 +3,50 @@ import api from '../api.js';
 import './admin.css';
 
 /**
- * Pick an existing image instead of re-uploading one. Reads the same media list
- * as the Media page, so anything visible there can be reused here.
+ * The single way to set an image anywhere in the admin forms. Reads the same
+ * media list as the Media page, so anything visible there can be reused here.
+ *
+ * Uploading lives inside this dialog rather than on the form. The form used to
+ * carry its own file input, so choosing a photo opened the OS file manager
+ * straight away and the image went to the field without ever appearing in the
+ * media library — it could not then be found or reused anywhere else. Now the
+ * library opens first, and a new photo is uploaded from within it, so it is
+ * always added to Media on its way to the field.
  */
 function MediaPicker({ onPick, onClose }) {
   const [media, setMedia] = useState({ uploads: [], bundled: [] });
   const [tab, setTab] = useState('all');
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const fileInput = useRef(null);
 
-  useEffect(() => {
-    api.get('/admin/media')
-      .then((r) => setMedia(r.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const load = () => api.get('/admin/media').then((r) => setMedia(r.data)).catch(() => {});
+
+  useEffect(() => { load().finally(() => setLoading(false)); }, []);
+
+  const upload = async (file) => {
+    if (!file) return;
+    setBusy(true);
+    setErr('');
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const { data } = await api.post('/admin/upload', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      // refresh the library first, so the new file is really in Media before the
+      // dialog closes — not just handed to the field
+      await load();
+      onPick(data.url);
+      onClose();
+    } catch {
+      setErr('That upload failed. Please try a different image.');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const list = (tab === 'uploads' ? media.uploads
     : tab === 'bundled' ? media.bundled
@@ -42,11 +71,22 @@ function MediaPicker({ onPick, onClose }) {
               Site images <em>{media.bundled?.length || 0}</em>
             </button>
           </div>
-          <input className="media-search" type="search" placeholder="Search…" value={q}
-            onChange={(e) => setQ(e.target.value)} />
+          <div className="media-bar-right">
+            <input className="media-search" type="search" placeholder="Search…" value={q}
+              onChange={(e) => setQ(e.target.value)} />
+            <button type="button" className="btn btn-navy btn-sm" disabled={busy}
+              onClick={() => fileInput.current?.click()}>
+              {busy ? 'Uploading…' : '+ Upload new'}
+            </button>
+            <input ref={fileInput} type="file" accept="image/*" hidden
+              onChange={(e) => { upload(e.target.files[0]); e.target.value = ''; }} />
+          </div>
         </div>
+        {err && <p className="media-err">{err}</p>}
         {loading ? <p className="empty">Loading…</p> : files.length === 0 ? (
-          <p className="empty">Nothing here yet.</p>
+          <p className="empty">
+            {q ? 'Nothing matches that search.' : 'No images yet — use “Upload new” to add one.'}
+          </p>
         ) : (
           <div className="media-grid picker">
             {files.map((f) => (
@@ -171,12 +211,8 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
     load();
   };
 
-  const uploadImage = async (fieldKey, file) => {
-    const fd = new FormData();
-    fd.append('image', file);
-    const { data } = await api.post('/admin/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-    setEditing((cur) => ({ ...cur, [fieldKey]: data.url }));
-  };
+  // (the form's own uploader was removed — MediaPicker owns uploading now, so
+  // every new image passes through the media library)
 
   const setField = (k, v) => setEditing((cur) => ({ ...cur, [k]: v }));
 
@@ -247,14 +283,13 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
                     <div className="af-image">
                       {editing[f.key] && <img src={editing[f.key]} alt="" className="af-preview" />}
                       <div className="af-image-inputs">
-                        <input type="text" placeholder="/img/... or upload"
+                        <input type="text" placeholder="/img/… or choose from Media"
                           value={editing[f.key] ?? ''} onChange={(e) => setField(f.key, e.target.value)} />
+                        {/* One route only. The direct file input that used to sit
+                            here jumped straight to the OS file manager and put the
+                            image on the field without it ever reaching the media
+                            library. Uploading now happens inside the picker. */}
                         <div className="af-image-btns">
-                          <label className="af-upload">
-                            Upload
-                            <input type="file" accept="image/*" hidden
-                              onChange={(e) => e.target.files[0] && uploadImage(f.key, e.target.files[0])} />
-                          </label>
                           <button type="button" className="af-upload" onClick={() => setPicking(f.key)}>
                             Choose from Media
                           </button>
