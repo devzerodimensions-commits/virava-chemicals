@@ -241,10 +241,46 @@
    .modal-backdrop at z-index 100. It must therefore stack above 100, or it
    renders behind the form that opened it. */
 .media-picker-layer { z-index: 120; }
-/* search + upload sit together on the right of the picker's toolbar */
-.media-bar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.media-bar-right .media-search { min-width: 160px; }
 .media-err { margin: -4px 0 14px; font-size: .86rem; color: var(--red); }
+
+/* ---- Image picker: upload / library modes ---- */
+.mp-modes { display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin: 0 0 18px; }
+.mp-modes button {
+  background: none; border: 0; cursor: pointer; padding: 0 0 12px;
+  font-family: var(--head); font-weight: 600; font-size: .95rem; color: var(--muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .18s, border-color .18s;
+}
+.mp-modes button:hover { color: var(--navy); }
+.mp-modes button.on { color: var(--navy); border-bottom-color: var(--red); }
+
+.mp-drop {
+  border: 2px dashed var(--line); border-radius: 14px; padding: 48px 24px;
+  display: grid; justify-items: center; gap: 12px; text-align: center;
+  background: var(--bg-soft); transition: border-color .2s, background .2s;
+}
+.mp-drop.on { border-color: var(--navy); background: var(--bg-navy-soft); }
+.mp-drop strong { font-family: var(--head); font-size: 1.05rem; color: var(--navy); }
+.mp-drop span { font-size: .86rem; color: var(--muted); }
+.mp-drop small { font-size: .8rem; color: var(--muted); max-width: 42ch; }
+
+/* selected card — the tick sits over the thumbnail so it reads at a glance */
+.media-card.pick.selected { border-color: var(--navy); box-shadow: 0 0 0 2px var(--navy); }
+.media-card.pick.selected .media-thumb::after {
+  content: '✓'; position: absolute; top: 8px; right: 8px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--navy); color: #fff; font-size: .8rem;
+  display: grid; place-items: center;
+}
+.media-card.pick .media-thumb { position: relative; }
+
+.mp-foot {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+}
+.mp-chosen {
+  margin-right: auto; font-size: .84rem; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 46%;
+}
 .media-note { font-size: .84rem; color: var(--muted); margin: -4px 0 16px; }
 
 .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }

@@ -15,32 +15,43 @@ import './admin.css';
  */
 function MediaPicker({ onPick, onClose }) {
   const [media, setMedia] = useState({ uploads: [], bundled: [] });
+  const [mode, setMode] = useState('library'); // 'upload' | 'library'
   const [tab, setTab] = useState('all');
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
+  const [selected, setSelected] = useState('');
+  const [dragging, setDragging] = useState(false);
   const fileInput = useRef(null);
 
   const load = () => api.get('/admin/media').then((r) => setMedia(r.data)).catch(() => {});
 
   useEffect(() => { load().finally(() => setLoading(false)); }, []);
 
-  const upload = async (file) => {
-    if (!file) return;
+  /* Upload, then land in the library with the new file selected — rather than
+     inserting it and closing. Uploading and choosing stay separate steps, so a
+     new image is added to Media and then picked from it like any other. */
+  const upload = async (fileList) => {
+    const files = [...(fileList || [])].filter((f) => f.type.startsWith('image/'));
+    if (!files.length) { setErr('Please choose an image file.'); return; }
     setBusy(true);
     setErr('');
+    let lastUrl = '';
     try {
-      const fd = new FormData();
-      fd.append('image', file);
-      const { data } = await api.post('/admin/upload', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      // refresh the library first, so the new file is really in Media before the
-      // dialog closes — not just handed to the field
-      await load();
-      onPick(data.url);
-      onClose();
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append('image', file);
+        const { data } = await api.post('/admin/upload', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        lastUrl = data.url;
+      }
+      await load();            // the file must really be in Media before we show it
+      setSelected(lastUrl);
+      setTab('uploads');
+      setQ('');
+      setMode('library');
     } catch {
       setErr('That upload failed. Please try a different image.');
     } finally {
@@ -54,6 +65,12 @@ function MediaPicker({ onPick, onClose }) {
   const needle = q.trim().toLowerCase();
   const files = needle ? list.filter((f) => f.path.toLowerCase().includes(needle)) : list;
 
+  const insert = () => {
+    if (!selected) return;
+    onPick(selected);
+    onClose();
+  };
+
   return (
     /* .modal-backdrop is z-index 100. This dialog opens on top of the record
        form, which is itself a .modal-backdrop, so it has to sit above 100 —
@@ -62,45 +79,82 @@ function MediaPicker({ onPick, onClose }) {
     <div className="modal-backdrop media-picker-layer" onClick={onClose}>
       <div className="admin-modal media-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
-        <h2>Choose an image</h2>
-        <div className="media-bar">
-          <div className="media-tabs">
-            <button type="button" className={tab === 'all' ? 'on' : ''} onClick={() => setTab('all')}>
-              All <em>{(media.uploads?.length || 0) + (media.bundled?.length || 0)}</em>
-            </button>
-            <button type="button" className={tab === 'uploads' ? 'on' : ''} onClick={() => setTab('uploads')}>
-              Uploaded <em>{media.uploads?.length || 0}</em>
-            </button>
-            <button type="button" className={tab === 'bundled' ? 'on' : ''} onClick={() => setTab('bundled')}>
-              Site images <em>{media.bundled?.length || 0}</em>
-            </button>
-          </div>
-          <div className="media-bar-right">
-            <input className="media-search" type="search" placeholder="Search…" value={q}
-              onChange={(e) => setQ(e.target.value)} />
-            <button type="button" className="btn btn-navy btn-sm" disabled={busy}
-              onClick={() => fileInput.current?.click()}>
-              {busy ? 'Uploading…' : '+ Upload new'}
-            </button>
-            <input ref={fileInput} type="file" accept="image/*" hidden
-              onChange={(e) => { upload(e.target.files[0]); e.target.value = ''; }} />
-          </div>
+        <h2>Add image</h2>
+
+        {/* Top-level mode switch: upload a new file, or pick one already held. */}
+        <div className="mp-modes">
+          <button type="button" className={mode === 'upload' ? 'on' : ''} onClick={() => setMode('upload')}>
+            Upload files
+          </button>
+          <button type="button" className={mode === 'library' ? 'on' : ''} onClick={() => setMode('library')}>
+            Media library
+          </button>
         </div>
+
         {err && <p className="media-err">{err}</p>}
-        {loading ? <p className="empty">Loading…</p> : files.length === 0 ? (
-          <p className="empty">
-            {q ? 'Nothing matches that search.' : 'No images yet — use “Upload new” to add one.'}
-          </p>
-        ) : (
-          <div className="media-grid picker">
-            {files.map((f) => (
-              <button type="button" className="media-card pick" key={f.url}
-                onClick={() => { onPick(f.url); onClose(); }}>
-                <span className="media-thumb"><img src={f.url} alt={f.name} loading="lazy" /></span>
-                <span className="media-name" title={f.path}>{f.path}</span>
-              </button>
-            ))}
+
+        {mode === 'upload' ? (
+          <div
+            className={`mp-drop${dragging ? ' on' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); upload(e.dataTransfer.files); }}
+          >
+            <strong>Drop images here</strong>
+            <span>or</span>
+            <button type="button" className="btn btn-navy" disabled={busy}
+              onClick={() => fileInput.current?.click()}>
+              {busy ? 'Uploading…' : 'Select files'}
+            </button>
+            <small>Uploads are added to the media library, then chosen from there.</small>
+            <input ref={fileInput} type="file" accept="image/*" multiple hidden
+              onChange={(e) => { upload(e.target.files); e.target.value = ''; }} />
           </div>
+        ) : (
+          <>
+            <div className="media-bar">
+              <div className="media-tabs">
+                <button type="button" className={tab === 'all' ? 'on' : ''} onClick={() => setTab('all')}>
+                  All <em>{(media.uploads?.length || 0) + (media.bundled?.length || 0)}</em>
+                </button>
+                <button type="button" className={tab === 'uploads' ? 'on' : ''} onClick={() => setTab('uploads')}>
+                  Uploaded <em>{media.uploads?.length || 0}</em>
+                </button>
+                <button type="button" className={tab === 'bundled' ? 'on' : ''} onClick={() => setTab('bundled')}>
+                  Site images <em>{media.bundled?.length || 0}</em>
+                </button>
+              </div>
+              <input className="media-search" type="search" placeholder="Search…" value={q}
+                onChange={(e) => setQ(e.target.value)} />
+            </div>
+            {loading ? <p className="empty">Loading…</p> : files.length === 0 ? (
+              <p className="empty">
+                {q ? 'Nothing matches that search.' : 'No images here yet — add one under “Upload files”.'}
+              </p>
+            ) : (
+              <div className="media-grid picker">
+                {files.map((f) => (
+                  <button type="button" key={f.url}
+                    className={`media-card pick${selected === f.url ? ' selected' : ''}`}
+                    aria-pressed={selected === f.url}
+                    onClick={() => setSelected(f.url)}
+                    onDoubleClick={() => { onPick(f.url); onClose(); }}>
+                    <span className="media-thumb"><img src={f.url} alt={f.name} loading="lazy" /></span>
+                    <span className="media-name" title={f.path}>{f.path}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {/* Selecting and inserting are separate, so a mis-click doesn't
+                immediately commit an image and close the dialog. */}
+            <div className="mp-foot">
+              <span className="mp-chosen">{selected ? selected.split('/').pop() : 'No image selected'}</span>
+              <button type="button" className="btn btn-outline btn-sm" onClick={onClose}>Cancel</button>
+              <button type="button" className="btn btn-navy btn-sm" disabled={!selected} onClick={insert}>
+                Use this image
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
