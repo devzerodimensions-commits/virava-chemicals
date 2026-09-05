@@ -48,6 +48,9 @@ async function migrate() {
   await fixHeroSlides();
   await applyGodrejSheet();
   await applyClientFacts();
+  // Needs its own key — migration_hero_slides only repointed the images, and a
+  // spent marker would swallow this silently.
+  await alignHeroSlidesToPrincipals();
 }
 
 // The founding year, customer count and founder's name were guesses that turned
@@ -230,6 +233,78 @@ async function fixHeroSlides() {
     [KEY, new Date().toISOString()]
   );
   console.log(`Migration: hero slides repointed (${moved} updated, ${added} added).`);
+}
+
+// fixHeroSlides put the four slides onto the four principals' banner photos but
+// left the seeded wording untouched, so image and text disagreed: the "Exclusive
+// Distributors of Godrej Oleo Chemicals" copy sat on the HPL photo, two slides
+// were generic brand statements, and the last named three principals at once.
+//
+// The client wants one slide per distributor. Each slide is rewritten to match
+// the photo it already carries, using that principal's own description from the
+// principals table, and given a CTA through to its page.
+//
+// Matched on image_url AND the exact seeded title, so a slide an admin has
+// already edited is skipped rather than overwritten. One-shot, own marker.
+async function alignHeroSlidesToPrincipals() {
+  const KEY = 'migration_hero_slides_principals';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const SLIDES = [
+    {
+      image: '/img/slides/godrej.jpg',
+      was: 'The Most Trusted Name in Industrial Chemicals',
+      title: 'Exclusive Distributors of Godrej Oleo Chemicals',
+      subtitle: 'Fatty alcohols, fatty acids, surfactants and glycerine of international quality from Godrej Industries Ltd.',
+      cta_text: 'View the Godrej range',
+      cta_link: '/principals/godrej-industries-limited',
+    },
+    {
+      image: '/img/slides/hpl.jpg',
+      was: 'Exclusive Distributors of Godrej Oleo Chemicals',
+      title: 'HPL Additives — Rubber & Polymer Additives',
+      subtitle: 'Antioxidants, accelerators and antidegradants for the rubber and polymer industries.',
+      cta_text: 'View HPL products',
+      cta_link: '/principals/hpl-additives-limited',
+    },
+    {
+      image: '/img/slides/occl.jpg',
+      was: 'Quality, Service & Transparency for Three Generations',
+      title: 'Oriental Carbon & Chemicals — Insoluble Sulphur',
+      subtitle: "One of the world's leading manufacturers of insoluble sulphur for the tyre and rubber industry.",
+      cta_text: 'View OCCL products',
+      cta_link: '/principals/oriental-carbon-and-chemicals-limited',
+    },
+    {
+      image: '/img/slides/standard.jpg',
+      was: 'Insoluble Sulphur, Additives & Specialty Chemicals',
+      title: 'The Standard Chemicals Co. — Specialty Chemicals',
+      subtitle: 'A trusted manufacturer of specialty chemicals serving a broad spectrum of industries.',
+      cta_text: 'View Standard products',
+      cta_link: '/principals/the-standard-chemicals-co-pvt-ltd',
+    },
+  ];
+
+  let n = 0, skipped = 0;
+  for (let i = 0; i < SLIDES.length; i++) {
+    const s = SLIDES[i];
+    const r = await query(
+      `UPDATE hero_slides
+          SET title = $1, subtitle = $2, cta_text = $3, cta_link = $4, sort_order = $5
+        WHERE image_url = $6 AND title = $7
+        RETURNING id`,
+      [s.title, s.subtitle, s.cta_text, s.cta_link, i, s.image, s.was]
+    );
+    if (r.rowCount) n += r.rowCount; else skipped++;
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: hero slides aligned to principals (${n} rewritten, ${skipped} left alone).`);
 }
 
 // Solution copy, the home highlight strip and the "Why Virava" answers were all
