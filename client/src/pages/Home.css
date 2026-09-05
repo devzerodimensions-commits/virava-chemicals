@@ -166,11 +166,18 @@
 .range-img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--bg-soft); }
 .range-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
 .range-card:hover .range-img img { transform: scale(1.07); }
+/* These are all pale studio shots on white, so the row read washed out and the
+   badge needed a heavy black pill to stay legible. A scrim at the foot of the
+   image gives the photography some weight and lets the badge lose the pill. */
+.range-img::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,.62) 100%);
+}
 .range-kicker {
-  position: absolute; left: 12px; bottom: 12px; background: rgba(0,0,0,.72); color: #fff;
-  font-family: var(--head); font-weight: 600; font-size: .68rem;
-  letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px;
-  backdrop-filter: blur(2px);
+  position: absolute; left: 16px; bottom: 13px; z-index: 1; color: #fff;
+  font-family: var(--head); font-weight: 700; font-size: .66rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0,0,0,.5);
 }
 .range-body { display: flex; flex-direction: column; flex: 1; padding: 20px 20px 22px; }
 .range-body h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: 7px; line-height: 1.25; }
@@ -181,17 +188,36 @@
   font-family: var(--head); font-weight: 600; font-size: .85rem; color: var(--navy);
   padding-top: 14px; border-top: 1px solid var(--line);
 }
-.range-meta em { font-style: normal; color: var(--muted); font-weight: 500; }
-.range-arrow { color: var(--btn); font-size: 1rem; transition: transform .2s ease; }
-.range-card:hover .range-arrow { transform: translateX(4px); }
+/* the count is the useful bit of this row — it was the faintest thing on the card */
+.range-meta em { font-style: normal; color: var(--navy); font-weight: 600; }
+.range-arrow {
+  color: #fff; background: var(--btn); width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; font-size: .82rem; flex-shrink: 0;
+  transition: transform .2s ease, background .2s ease;
+}
+.range-card:hover .range-arrow { transform: translateX(3px); background: var(--btn-dark); }
 
-/* trailing tile — keeps the grid a clean 4x2 and offers the finder */
-.range-cta { background: var(--navy); border-color: var(--navy); }
-.range-cta-in { display: flex; flex-direction: column; flex: 1; padding: 26px 22px 22px; }
-.range-cta-in h3 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
-.range-cta-in p { color: #b8b8b8; font-size: .875rem; line-height: 1.55; margin: 0 0 16px; }
-.range-cta .range-meta { color: #fff; border-top-color: rgba(255,255,255,.2); }
-.range-cta .range-meta em { color: #b8b8b8; }
+/* trailing tile — keeps the grid a clean 4x2 and offers the finder.
+   Its copy used to sit pinned to the top with the meta row pushed to the
+   bottom, leaving a tall black void between the two on a card with no image
+   to fill it. Content is centred now, and a soft brand wash stops the tile
+   reading as a dead rectangle beside seven photographs. */
+.range-cta { background: var(--navy); border-color: var(--navy); position: relative; overflow: hidden; }
+.range-cta::before {
+  content: ''; position: absolute; width: 280px; height: 280px; right: -110px; top: -110px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(216,31,38,.38), transparent 70%);
+}
+.range-cta-in {
+  display: flex; flex-direction: column; justify-content: center; flex: 1;
+  padding: 30px 24px; position: relative; z-index: 1;
+}
+.range-cta-in h3 { color: #fff; font-size: 1.18rem; margin-bottom: 10px; }
+.range-cta-in p { color: #c2c2c2; font-size: .875rem; line-height: 1.6; margin: 0 0 18px; }
+/* margin-top:auto on the base .range-meta exists to bottom-align the row across
+   cards of unequal copy. Here it would defeat the centring above, so it goes. */
+.range-cta .range-meta { color: #fff; border-top-color: rgba(255,255,255,.22); margin-top: 0; }
+.range-cta .range-meta em { color: #fff; }
 
 @media (max-width: 1100px) { .range-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 860px)  { .range-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
