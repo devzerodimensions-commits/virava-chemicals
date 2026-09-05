@@ -15,11 +15,13 @@ const cards = [
   ['blogs', 'blogs', 'Blog Posts', '/admin/blogs'],
 ];
 
+/* The fourth field is a one-line description. Without it these were bare labels
+   and the panel sat far shorter than the table beside it. */
 const shortcuts = [
-  ['products', 'products', 'Add a product'],
-  ['hero', 'hero', 'Edit hero slides'],
-  ['media', 'media', 'Upload images'],
-  ['settings', 'settings', 'Company details'],
+  ['products', 'products', 'Add a product', 'Create a new catalogue entry'],
+  ['hero', 'hero', 'Edit hero slides', 'Change the homepage carousel'],
+  ['media', 'media', 'Upload images', 'Manage the media library'],
+  ['settings', 'settings', 'Company details', 'Address, phone and site details'],
 ];
 
 export default function Dashboard() {
@@ -93,10 +95,13 @@ export default function Dashboard() {
         <div className="panel">
           <div className="panel-head"><h2>Quick actions</h2></div>
           <div className="quick-list">
-            {shortcuts.map(([to, icon, label]) => (
+            {shortcuts.map(([to, icon, label, blurb]) => (
               <Link className="quick-item" to={`/admin/${to}`} key={to}>
                 <span className="quick-ic"><Icon name={icon} size={17} /></span>
-                <span>{label}</span>
+                <span className="quick-text">
+                  <strong>{label}</strong>
+                  <small>{blurb}</small>
+                </span>
                 <span className="quick-arrow">›</span>
               </Link>
             ))}
