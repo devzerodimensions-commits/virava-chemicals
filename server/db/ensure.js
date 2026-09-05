@@ -51,6 +51,7 @@ async function migrate() {
   // Needs its own key — migration_hero_slides only repointed the images, and a
   // spent marker would swallow this silently.
   await alignHeroSlidesToPrincipals();
+  await pointHeroCtasAtProducts();
 }
 
 // The founding year, customer count and founder's name were guesses that turned
@@ -305,6 +306,47 @@ async function alignHeroSlidesToPrincipals() {
     [KEY, new Date().toISOString()]
   );
   console.log(`Migration: hero slides aligned to principals (${n} rewritten, ${skipped} left alone).`);
+}
+
+// The slide buttons landed on each principal's profile page, which is a company
+// overview — the client expects a button reading "View Godrej products" to open
+// that principal's actual product list.
+//
+// /products is the Product Finder and already filters on ?principal=<slug>, so
+// pointing the CTAs there gives a pre-filtered list per distributor. Checked
+// before writing this that all four principals have products behind them
+// (Godrej 99, HPL 3, OCCL 2, Standard 2) — a filter that resolved to nothing
+// would be a worse landing than the profile page it replaces.
+//
+// Matched on the exact cta_link set by the previous migration, so a button an
+// admin has since repointed is left alone. One-shot, own marker.
+async function pointHeroCtasAtProducts() {
+  const KEY = 'migration_hero_slide_ctas';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  const CTAS = [
+    ['/principals/godrej-industries-limited', '/products?principal=godrej-industries-limited', 'View Godrej products'],
+    ['/principals/hpl-additives-limited', '/products?principal=hpl-additives-limited', 'View HPL products'],
+    ['/principals/oriental-carbon-and-chemicals-limited', '/products?principal=oriental-carbon-and-chemicals-limited', 'View OCCL products'],
+    ['/principals/the-standard-chemicals-co-pvt-ltd', '/products?principal=the-standard-chemicals-co-pvt-ltd', 'View Standard products'],
+  ];
+
+  let n = 0;
+  for (const [from, to, label] of CTAS) {
+    const r = await query(
+      'UPDATE hero_slides SET cta_link = $1, cta_text = $2 WHERE cta_link = $3',
+      [to, label, from]
+    );
+    n += r.rowCount;
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(`Migration: hero CTAs pointed at filtered product lists (${n} slides).`);
 }
 
 // Solution copy, the home highlight strip and the "Why Virava" answers were all
