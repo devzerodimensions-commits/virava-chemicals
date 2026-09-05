@@ -55,7 +55,11 @@ function MediaPicker({ onPick, onClose }) {
   const files = needle ? list.filter((f) => f.path.toLowerCase().includes(needle)) : list;
 
   return (
-    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 60 }}>
+    /* .modal-backdrop is z-index 100. This dialog opens on top of the record
+       form, which is itself a .modal-backdrop, so it has to sit above 100 —
+       the old inline zIndex:60 put it underneath and the picker appeared to
+       open "behind" the form. */
+    <div className="modal-backdrop media-picker-layer" onClick={onClose}>
       <div className="admin-modal media-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
         <h2>Choose an image</h2>

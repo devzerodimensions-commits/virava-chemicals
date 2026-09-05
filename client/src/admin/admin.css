@@ -237,6 +237,10 @@
 .media-tabs button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
 .media-tabs em { font-style: normal; opacity: .65; font-size: .8rem; }
 .media-search { min-width: 200px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: .88rem; }
+/* The image picker opens from inside the record form, which is itself a
+   .modal-backdrop at z-index 100. It must therefore stack above 100, or it
+   renders behind the form that opened it. */
+.media-picker-layer { z-index: 120; }
 /* search + upload sit together on the right of the picker's toolbar */
 .media-bar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .media-bar-right .media-search { min-width: 160px; }
