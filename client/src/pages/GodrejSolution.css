@@ -110,11 +110,17 @@
 @media (max-width: 1040px) {
   .go-intro-grid { grid-template-columns: 1fr; gap: 34px; }
   .go-grid { grid-template-columns: 1fr; gap: 34px; }
+  /* min-width:0 is doing real work here. A grid item defaults to min-width:auto,
+     so the single column refused to shrink below the rail's intrinsic width —
+     thirteen category pills in a row, about 1500px. The column grew to fit them
+     and the whole page scrolled sideways by ~780px at 768px wide, instead of the
+     pills scrolling within the rail as intended. */
+  .go-rail, .go-sections { min-width: 0; }
   /* the rail becomes a horizontal scroller pinned under the sticky navbar */
   .go-rail { position: sticky; top: 72px; z-index: 6; margin: 0 -24px; padding: 10px 24px;
     background: var(--bg-soft); border-bottom: 1px solid var(--line); }
   .go-rail-nav { flex-direction: row; overflow-x: auto; border-left: 0; gap: 8px;
-    scrollbar-width: none; }
+    scrollbar-width: none; min-width: 0; }
   .go-rail-nav::-webkit-scrollbar { display: none; }
   .go-rail-item { flex: 0 0 auto; padding: 10px 16px; border-radius: 999px;
     border: 1px solid var(--line); background: #fff; font-size: .92rem; }
