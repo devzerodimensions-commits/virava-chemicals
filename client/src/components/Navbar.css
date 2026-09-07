@@ -91,11 +91,11 @@
 
 @media (max-width: 992px) {
   .burger { display: block; }
-  /* The drawer is a child of .nav-inner, so raising .nav-inner lifts the drawer
-     with it and the close button ends up underneath — the menu becomes
-     impossible to shut. The logo and burger have to be raised individually,
-     above the drawer's own stacking level. */
-  .brand, .burger { position: relative; z-index: 3; }
+  /* Only the burger. Lifting .brand as well left the logo floating on top of the
+     open drawer, printed across the menu items. The drawer should cover the logo
+     while it is open — but the close button must stay reachable, and it is a
+     sibling of the drawer inside .nav-inner, so it needs its own level. */
+  .burger { position: relative; z-index: 3; }
   .menu {
     /* Was pinned at top:124px — 40px topbar plus 84px header. That is only true
        before the page scrolls: the topbar is not sticky, so once it has gone the
@@ -120,6 +120,27 @@
   /* no room to fly out on mobile — nest the solutions inline under the parent */
   .subdrop { position: static; left: auto; opacity: 1; visibility: visible; transform: none;
     box-shadow: none; border: 0; padding: 0 0 6px 20px; min-width: 0; max-width: 100%; margin-left: 0; }
+
+  /* THE left-shift bug. On desktop `.has-drop:hover .drop` centres the panel with
+     translateX(-50%). That rule is more specific than the plain `.drop` reset
+     above, so it kept winning here — and a tap on a touchscreen leaves :hover
+     stuck on. The result was the whole submenu jumping half its own width to the
+     left the moment "Principals" was tapped, with every name clipped by the
+     drawer's edge. Both levels have to be neutralised explicitly. */
+  .has-drop:hover .drop,
+  .has-drop:focus-within .drop,
+  .drop-row:hover .subdrop,
+  .drop-row:focus-within .subdrop { transform: none; }
+
+  /* .drop-item is a flex row holding a 34px logo and a long name. Flex children
+     default to min-width:auto and so refuse to shrink, which is a second way for
+     these rows to push past the panel. The logo earns its space on the desktop
+     fly-out, not in a 320px drawer. */
+  .drop-logo { display: none; }
+  .drop-item { display: block; }
+  .drop a, .subdrop a { min-width: 0; box-sizing: border-box; }
+  /* hover nudges the row right; harmless with a mouse, but on touch it sticks */
+  .drop a:hover, .drop-item:hover { padding-left: 14px; }
   /* nowrap is right for the desktop fly-out, but in a 320px drawer it forces
      "Specialty Chemicals" past the edge instead of wrapping */
   .subdrop-item { white-space: normal; }
