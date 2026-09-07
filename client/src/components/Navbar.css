@@ -179,7 +179,12 @@
      disclosure: Principals lists the four companies, and tapping Godrej reveals
      its solutions. */
   .subdrop { display: none; }
-  .drop-row.sub-open .subdrop { display: block; animation: dropIn .22s ease; }
+  /* grid, not block. The children are <a> elements — inline by default — so a
+     block container let them flow along the line and wrap mid-word
+     ("Oleochemicals Surfactants Sp / ecialty Chemicals"). Desktop uses grid for
+     the same reason; a single-column grid stacks them. */
+  .drop-row.sub-open .subdrop { display: grid; animation: dropIn .22s ease; }
+  .subdrop a { display: block; }
   .drop-caret {
     display: inline-block; flex-shrink: 0; margin-left: auto;
     font-size: 1.1rem; line-height: 1; color: var(--muted);
