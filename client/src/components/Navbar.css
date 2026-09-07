@@ -1,10 +1,22 @@
 /* Topbar */
 .topbar { background: var(--navy-dark); color: #d6d6d6; font-size: .82rem; }
-.topbar-inner { display: flex; align-items: center; gap: 12px; height: 40px; }
+/* nowrap on the row and on each item: the bar is a fixed 40px, so anything that
+   wraps overflows it, and a broken phone number ("+91-079- / 29708697") is
+   unreadable */
+.topbar-inner { display: flex; align-items: center; gap: 12px; height: 40px; flex-wrap: nowrap; }
+.topbar-inner > span { white-space: nowrap; }
 .topbar .ic { color: var(--gold); margin-right: 6px; }
 .topbar .sep { opacity: .4; }
 .topbar-tag { margin-left: auto; font-family: var(--head); font-weight: 500; letter-spacing: .03em; color: #fff; }
 @media (max-width: 760px) { .topbar-tag, .topbar .sep { display: none; } }
+@media (max-width: 560px) { .topbar { font-size: .76rem; } .topbar-inner { gap: 16px; } }
+@media (max-width: 440px) {
+  /* Both no longer fit side by side, and side by side is why they were wrapping.
+     The number is the one worth keeping on a handset — the address is on the
+     contact page and in the footer. */
+  .topbar-inner > span:first-child { display: none; }
+  .topbar-inner { justify-content: center; }
+}
 
 /* Header */
 .nav {
