@@ -115,9 +115,21 @@
 @media (max-width: 700px) {
   .highlights-grid {
     display: flex; overflow-x: auto; gap: 14px; padding: 4px 2px 14px;
-    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    /* proximity, not mandatory: with mandatory a short drag is yanked back to
+       the card it started on, which reads as "it doesn't move" */
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    /* keeps a horizontal swipe inside the strip. Without this the gesture is
+       passed up to the browser once the strip reaches an end, and near the
+       screen edge Android and iOS claim it for back/forward navigation — the
+       strip then appears frozen. */
+    overscroll-behavior-x: contain;
+    /* the row must be allowed to shrink below its content, or it stretches the
+       page instead of scrolling — the same trap as the solution-page rail */
+    min-width: 0;
   }
-  .highlight { flex: 0 0 74%; scroll-snap-align: start; }
+  /* 68% rather than 74% so the next card clearly peeks in, which is what tells
+     anyone it can be swiped at all */
+  .highlight { flex: 0 0 68%; scroll-snap-align: start; }
   .highlights-grid::-webkit-scrollbar { height: 6px; }
   .highlights-grid::-webkit-scrollbar-thumb { background: #cfd6ea; border-radius: 3px; }
   .highlights-grid::-webkit-scrollbar-track { background: transparent; }
