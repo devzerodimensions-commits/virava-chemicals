@@ -63,9 +63,13 @@ export default function Navbar({ settings }) {
      the list at all times and buried Industries, Contact and the CTA below the
      fold. It now collapses. */
   const [dropOpen, setDropOpen] = useState(false);
+  /* Second level: which principal has its solutions showing. Only Godrej has
+     any, but this is keyed by label so it holds if another gains them. */
+  const [subOpen, setSubOpen] = useState(null);
 
-  useEffect(() => { setOpen(false); setDropOpen(false); }, [loc.pathname]);
-  useEffect(() => { if (!open) setDropOpen(false); }, [open]);
+  useEffect(() => { setOpen(false); setDropOpen(false); setSubOpen(null); }, [loc.pathname]);
+  useEffect(() => { if (!open) { setDropOpen(false); setSubOpen(null); } }, [open]);
+  useEffect(() => { if (!dropOpen) setSubOpen(null); }, [dropOpen]);
 
   const isMobile = () => window.matchMedia('(max-width: 992px)').matches;
 
@@ -112,8 +116,21 @@ export default function Navbar({ settings }) {
               </Link>
               <div className="drop drop-wide">
                 {principalLinks.map(([label, to, logo, subs]) => (
-                  <div className="drop-row" key={label}>
-                    <Link to={to} className="drop-item">
+                  <div className={`drop-row ${subOpen === label ? 'sub-open' : ''}`} key={label}>
+                    {/* A principal that has solutions is a second disclosure on
+                        mobile: the first tap reveals them rather than leaving the
+                        menu. Principals without any stay ordinary links. */}
+                    <Link
+                      to={to}
+                      className="drop-item"
+                      aria-expanded={subs ? subOpen === label : undefined}
+                      onClick={(e) => {
+                        if (subs && isMobile()) {
+                          e.preventDefault();
+                          setSubOpen((v) => (v === label ? null : label));
+                        }
+                      }}
+                    >
                       <img className="drop-logo" src={logo} alt="" />
                       <span>{label}</span>
                       {subs && <span className="drop-caret">›</span>}

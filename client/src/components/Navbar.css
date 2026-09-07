@@ -167,8 +167,26 @@
      these rows to push past the panel. The logo earns its space on the desktop
      fly-out, not in a 320px drawer. */
   .drop-logo { display: none; }
-  .drop-item { display: block; }
+  /* flex is safe now the 34px logo is hidden — the label can shrink, and the
+     caret needs to sit hard right */
+  .drop-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .drop-item > span:first-of-type { min-width: 0; }
   .drop a, .subdrop a { min-width: 0; box-sizing: border-box; }
+
+  /* ---- second level ----
+     Godrej's four solutions used to appear the moment Principals was opened,
+     which put eight items on screen at once. They are now behind their own
+     disclosure: Principals lists the four companies, and tapping Godrej reveals
+     its solutions. */
+  .subdrop { display: none; }
+  .drop-row.sub-open .subdrop { display: block; animation: dropIn .22s ease; }
+  .drop-caret {
+    display: inline-block; flex-shrink: 0; margin-left: auto;
+    font-size: 1.1rem; line-height: 1; color: var(--muted);
+    transition: transform .25s ease, color .25s ease;
+  }
+  .drop-row.sub-open .drop-caret { transform: rotate(90deg); color: var(--red); }
+  .drop-row.sub-open > .drop-item { color: var(--red); font-weight: 600; }
   /* hover nudges the row right; harmless with a mouse, but on touch it sticks */
   .drop a:hover, .drop-item:hover { padding-left: 14px; }
   .nav-cta {
@@ -178,8 +196,9 @@
   /* nowrap is right for the desktop fly-out, but in a 320px drawer it forces
      "Specialty Chemicals" past the edge instead of wrapping */
   .subdrop-item { white-space: normal; }
-  .drop-item { align-items: flex-start; }
-  .drop-caret { display: none; }
+  /* .drop-caret was hidden here when the solutions were always visible and the
+     chevron meant nothing. It is the disclosure control now, so it must show —
+     this rule came after the one that styles it and was winning. */
   .nav-cta { margin-top: 10px; }
 }
 @media (max-width: 420px) {
