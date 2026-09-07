@@ -39,6 +39,7 @@
 .go-rail-item {
   position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: transparent; border: 0; cursor: pointer; text-align: left;
+  text-decoration: none; /* these are anchors now rather than buttons */
   font-family: var(--head); font-size: 1.02rem; font-weight: 600; color: var(--muted);
   padding: 15px 18px; border-radius: 0 10px 10px 0;
   transition: color .2s ease, background .2s ease, box-shadow .2s ease;

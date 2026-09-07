@@ -93,11 +93,16 @@ export default function GodrejSolution() {
     return () => io.disconnect();
   }, [cats]);
 
-  const jumpTo = (i) => {
-    const el = sectionRefs.current[i];
+  /* Falls back to a lookup by id if the ref is missing — refs are cleared when
+     the solution changes, and a silent `return` there left the rail looking
+     dead. Highlights immediately rather than waiting for the scroll-spy to
+     catch up, and uses scrollIntoView so the offset comes from the section's
+     own scroll-margin-top instead of a duplicated magic number. */
+  const jumpTo = (i, slug) => {
+    const el = sectionRefs.current[i] || document.getElementById(`cat-${slug}`);
     if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY - 110;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    setActive(i);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // unknown slug — fall back to the first solution rather than 404ing, so renaming
@@ -172,16 +177,20 @@ export default function GodrejSolution() {
               {/* sticky category rail */}
               <aside className="go-rail">
                 <nav className="go-rail-nav">
+                  {/* Real anchors, not buttons: if the JS handler ever fails to
+                      run the browser still jumps to the section, and the entries
+                      can be opened in a new tab or reached by keyboard. */}
                   {cats.map((c, i) => (
-                    <button
+                    <a
                       key={c.id}
+                      href={`#cat-${c.slug}`}
                       className={`go-rail-item ${i === active ? 'on' : ''}`}
-                      onClick={() => jumpTo(i)}
+                      onClick={(e) => { e.preventDefault(); jumpTo(i, c.slug); }}
                       aria-current={i === active ? 'true' : undefined}
                     >
                       <span>{c.name}</span>
                       <span className="go-rail-arrow">›</span>
-                    </button>
+                    </a>
                   ))}
                 </nav>
               </aside>
@@ -192,6 +201,7 @@ export default function GodrejSolution() {
                   <article
                     className="go-cat"
                     key={c.id}
+                    id={`cat-${c.slug}`}
                     ref={(el) => { sectionRefs.current[i] = el; }}
                   >
                     <h3 className="go-cat-title">{c.name}</h3>
