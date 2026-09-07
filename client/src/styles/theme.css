@@ -108,7 +108,24 @@ ul { margin: 0; padding: 0; list-style: none; }
    content is ALWAYS visible even if the animation never runs) --- */
 .reveal { animation: revealIn .7s ease; }
 @keyframes revealIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .reveal { animation: none; } }
+
+/* --- headings that assemble word by word ---
+   The hidden state is deliberately scoped to html.js-anim, which useReveal adds
+   at runtime. Without that guard a heading whose animation never runs — no JS,
+   a frozen background tab, a crawler — would render as blank space, which is a
+   far worse failure than a missing entrance. Same reasoning as .reveal above. */
+.split-text { display: inline; }
+.split-text .w { display: inline-block; will-change: transform; }
+.js-anim .split-text .w {
+  opacity: 0; transform: translateY(.42em);
+  transition: opacity .55s cubic-bezier(.22,.61,.36,1), transform .55s cubic-bezier(.22,.61,.36,1);
+}
+.js-anim .split-text.in .w { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+  .js-anim .split-text .w { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
 
 /* --- generic card --- */
 .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }

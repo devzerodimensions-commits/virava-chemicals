@@ -2,6 +2,7 @@ import { useState } from 'react';
 import api from '../api.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import PageHeader from '../components/PageHeader.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
 export default function Contact() {
@@ -30,7 +31,7 @@ export default function Contact() {
         <div className="container contact-grid">
           <div className="contact-info">
             <span className="eyebrow">Get in Touch</span>
-            <h2 className="section-title">Let's talk <span className="serif">business</span></h2>
+            <h2 className="section-title"><SplitText>Let's talk <span className="serif">business</span></SplitText></h2>
             <p className="section-intro" style={{ marginBottom: 30 }}>
               Our team is ready to assist you with the right chemical solutions for your industry.
             </p>

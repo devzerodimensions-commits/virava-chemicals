@@ -7,6 +7,7 @@ import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
 import LegacyGallery from '../components/LegacyGallery.jsx';
 import { FALLBACK_SOLUTIONS } from './GodrejSolution.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './Home.css';
 
 // Shown only until /highlights resolves, or if it fails
@@ -159,7 +160,7 @@ export default function Home() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Product Range</span>
-            <h2 className="section-title">Chemicals we <span className="serif">supply</span></h2>
+            <h2 className="section-title"><SplitText>Chemicals we <span className="serif">supply</span></SplitText></h2>
             <p className="section-intro">A comprehensive portfolio of oleochemicals and specialty products sourced from the country's most reputed manufacturers.</p>
           </div>
           <div className="range-grid">
@@ -195,7 +196,7 @@ export default function Home() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Principals</span>
-            <h2 className="section-title">We are the exclusive <span className="serif">distributors</span> of</h2>
+            <h2 className="section-title"><SplitText>We are the exclusive <span className="serif">distributors</span> of</SplitText></h2>
             <p className="section-intro">The country's most reputed manufacturers whom we proudly represent across India.</p>
           </div>
           <div className="principals-list">
@@ -222,7 +223,7 @@ export default function Home() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Legacy</span>
-            <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
+            <h2 className="section-title"><SplitText>Moments from our <span className="serif">journey</span></SplitText></h2>
             <p className="section-intro">From the Fatty Alcohol Meet of 1985 to the present day — reflecting Virava's long-standing association with Godrej Industries.</p>
           </div>
           <LegacyGallery />
@@ -234,7 +235,7 @@ export default function Home() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Industries We Serve</span>
-            <h2 className="section-title">A broad spectrum of <span className="serif">industries</span></h2>
+            <h2 className="section-title"><SplitText>A broad spectrum of <span className="serif">industries</span></SplitText></h2>
             <p className="section-intro">Our chemicals power manufacturing across more than twenty sectors of the Indian industrial economy.</p>
           </div>
           <div className="ind-grid">
@@ -272,7 +273,7 @@ export default function Home() {
           <div className="container">
             <div className="center reveal">
               <span className="eyebrow">From Our Desk</span>
-              <h2 className="section-title">Latest <span className="serif">insights</span> & news</h2>
+              <h2 className="section-title"><SplitText>Latest <span className="serif">insights</span> & news</SplitText></h2>
               <p className="section-intro">Knowledge and updates from the world of oleochemicals and specialty chemicals.</p>
             </div>
             <div className="blog-grid">

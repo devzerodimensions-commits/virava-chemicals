@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import SplitText from './SplitText.jsx';
 import './PrincipalsSlider.css';
 
 /* Self-created decorative molecule artwork (no external images).
@@ -49,7 +50,7 @@ export default function PrincipalsSlider({ items = [] }) {
       <div className="container psl-head">
         <span className="eyebrow" style={{ color: '#cccccc' }}>Our Principals</span>
         <h2 className="section-title" style={{ color: '#fff' }}>
-          We are the exclusive <span className="serif">distributors</span> of
+          <SplitText>We are the exclusive <span className="serif">distributors</span> of</SplitText>
         </h2>
       </div>
 

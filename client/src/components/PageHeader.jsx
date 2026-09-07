@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import SplitText from './SplitText.jsx';
 import './PageHeader.css';
 
 export default function PageHeader({ title, subtitle, image = '/img/banner3.jpg', crumbs = [] }) {
@@ -15,7 +16,8 @@ export default function PageHeader({ title, subtitle, image = '/img/banner3.jpg'
             </span>
           ))}
         </nav>
-        <h1>{title}</h1>
+        {/* keyed on the title so the words re-run when the route changes */}
+        <h1><SplitText key={title}>{title}</SplitText></h1>
         {subtitle && <p>{subtitle}</p>}
       </div>
     </section>

@@ -6,6 +6,7 @@ import { useSettings } from '../components/PublicLayout.jsx';
 import PageHeader from '../components/PageHeader.jsx';
 import Counter from '../components/Counter.jsx';
 import LegacyGallery from '../components/LegacyGallery.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
 /* Copy on this page comes from the client's own "Virava Chemicals.docx" — their
@@ -55,7 +56,7 @@ export default function About() {
           </div>
           <div className="about-body reveal">
             <span className="eyebrow">Our Story</span>
-            <h2 className="section-title">Built single-handedly, since <span className="serif">{founded}</span></h2>
+            <h2 className="section-title"><SplitText>Built single-handedly, since <span className="serif">{founded}</span></SplitText></h2>
             <p>
               In 1996, when the renowned Rollwalla group of Ahmedabad was split, our founder
               Mr. Siddharth Shah (2nd generation entrepreneur) decided to take the responsibility of
@@ -79,7 +80,7 @@ export default function About() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Legacy</span>
-            <h2 className="section-title">Moments from our <span className="serif">journey</span></h2>
+            <h2 className="section-title"><SplitText>Moments from our <span className="serif">journey</span></SplitText></h2>
             <p className="section-intro">From the Fatty Alcohol Meet of 1985 to the present day — reflecting Virava's long-standing association with Godrej Industries.</p>
           </div>
           <LegacyGallery />
@@ -110,7 +111,7 @@ export default function About() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">What Drives Us</span>
-            <h2 className="section-title">Our philosophy and <span className="serif">guiding principles</span></h2>
+            <h2 className="section-title"><SplitText>Our philosophy and <span className="serif">guiding principles</span></SplitText></h2>
             <p className="section-intro">Our philosophy and guiding principles are simple —</p>
           </div>
           <div className="values-grid">
@@ -163,7 +164,7 @@ export default function About() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Our Principals</span>
-            <h2 className="section-title">Manufacturers we <span className="serif">represent</span></h2>
+            <h2 className="section-title"><SplitText>Manufacturers we <span className="serif">represent</span></SplitText></h2>
             <p className="section-intro">The country's most reputed manufacturers whom we proudly represent.</p>
           </div>
           <div className="principals-list">

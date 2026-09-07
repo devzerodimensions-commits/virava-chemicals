@@ -5,6 +5,7 @@ import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import EnquiryModal from '../components/EnquiryModal.jsx';
 import ProductModal from '../components/ProductModal.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
 const APPLICATIONS = [
@@ -72,7 +73,7 @@ export default function PrincipalDetail() {
           {data.logo_url && <div className="pd-logo"><img src={data.logo_url} alt={data.name} /></div>}
           <div className="pd-intro">
             <span className="eyebrow">Overview</span>
-            <h2 className="section-title">{data.name}</h2>
+            <h2 className="section-title"><SplitText>{data.name}</SplitText></h2>
             <p>{data.description}</p>
             <div className="pd-stats">
               <div><b>{cats.length}</b><span>Product Categories</span></div>
@@ -89,7 +90,7 @@ export default function PrincipalDetail() {
           <div className="container">
             <div className="center reveal">
               <span className="eyebrow">{portfolioLabel(data.name)}</span>
-              <h2 className="section-title">Complete <span className="serif">product</span> portfolio</h2>
+              <h2 className="section-title"><SplitText>Complete <span className="serif">product</span> portfolio</SplitText></h2>
               <p className="section-intro">Select a category to view its products, grades and specifications.</p>
             </div>
 
@@ -134,7 +135,7 @@ export default function PrincipalDetail() {
       <section className="section">
         <div className="container center reveal">
           <span className="eyebrow">Applications</span>
-          <h2 className="section-title">Industries we <span className="serif">serve</span></h2>
+          <h2 className="section-title"><SplitText>Industries we <span className="serif">serve</span></SplitText></h2>
           <p className="section-intro">These products are trusted across a broad spectrum of Indian industries.</p>
           <div className="pd-apps">
             {APPLICATIONS.map((a) => <span key={a} className="pd-app">{a}</span>)}

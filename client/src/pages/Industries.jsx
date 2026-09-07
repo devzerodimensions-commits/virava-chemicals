@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
 export default function Industries() {
@@ -19,7 +20,7 @@ export default function Industries() {
         <div className="container">
           <div className="center reveal">
             <span className="eyebrow">Applications</span>
-            <h2 className="section-title">A broad spectrum of <span className="serif">industries</span></h2>
+            <h2 className="section-title"><SplitText>A broad spectrum of <span className="serif">industries</span></SplitText></h2>
             <p className="section-intro">From plastics and rubber to pharmaceuticals, cosmetics and construction — Virava Chemicals is a trusted supply partner.</p>
           </div>
 

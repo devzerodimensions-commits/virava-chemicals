@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
+import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
 export default function BlogDetail() {
@@ -68,7 +69,7 @@ export default function BlogDetail() {
           <div className="container">
             <div className="center reveal">
               <span className="eyebrow">Keep Reading</span>
-              <h2 className="section-title">More <span className="serif">insights</span></h2>
+              <h2 className="section-title"><SplitText>More <span className="serif">insights</span></SplitText></h2>
             </div>
             <div className="blog-grid">
               {related.map((b) => (
