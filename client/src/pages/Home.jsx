@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api.js';
-import { useReveal } from '../hooks.js';
+import { useReveal, useDragScroll } from '../hooks.js';
 import { useSettings } from '../components/PublicLayout.jsx';
 import Counter from '../components/Counter.jsx';
 import HeroSlider from '../components/HeroSlider.jsx';
@@ -124,6 +124,8 @@ export default function Home() {
   // Steps the highlights strip by one card, measured live so it stays right
   // across breakpoints.
   const highlightsRef = useRef(null);
+  // and drag-to-pan, the same handler the photo carousel uses
+  const hlDrag = useDragScroll(highlightsRef);
   const scrollHighlights = (dir) => {
     const el = highlightsRef.current;
     if (!el) return;
@@ -164,7 +166,7 @@ export default function Home() {
         <div className="container hl-wrap">
           <button type="button" className="hl-nav hl-prev" aria-label="Previous highlights"
             onClick={() => scrollHighlights(-1)}>‹</button>
-          <div className="highlights-grid" ref={highlightsRef}>
+          <div className="highlights-grid" ref={highlightsRef} {...hlDrag}>
             {highlights.map((h) => (
               <div className="highlight" key={h.id ?? h.title}>
                 <span className="hl-ic"><HlIcon name={h.icon} /></span>

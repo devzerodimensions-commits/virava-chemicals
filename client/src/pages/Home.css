@@ -124,11 +124,21 @@
     display: flex; overflow-x: auto; gap: 12px; padding: 4px 2px 12px;
     scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
+    /* Declares that this element handles horizontal panning. Left at the default
+       the browser decides per-gesture, and on some handsets it resolves an
+       ambiguous drag as vertical and hands it to the page — the strip then
+       ignores sideways swipes even though it is scrollable, which is exactly
+       what was reported. The cost is that a vertical drag started on this
+       ~120px band no longer scrolls the page. */
+    touch-action: pan-x;
     /* must be allowed to shrink, or the row stretches the page rather than
        scrolling — the trap behind the solution-page overflow */
     min-width: 0;
     scrollbar-width: none;
+    cursor: grab;
   }
+  .highlights-grid.is-dragging { cursor: grabbing; }
+  .highlights-grid.is-dragging * { user-select: none; }
   .highlights-grid::-webkit-scrollbar { display: none; }
   /* 78% leaves a clear slice of the next card showing, which is the cue that
      there is more to the right */

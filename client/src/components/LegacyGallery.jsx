@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useDragScroll } from '../hooks.js';
 import './LegacyGallery.css';
 
 /* Client-provided photographs with their captions, quoted as supplied. The 1985
@@ -38,58 +39,13 @@ export default function LegacyGallery() {
     rail.scrollBy({ left: dir * step, behavior: 'smooth' });
   };
 
-  /* Click-and-drag to pan the rail. Native overflow-x gives us wheel, trackpad and
-     touch for free, but a mouse drag does nothing without this. Mouse only —
-     touch already scrolls natively, and hijacking it here would fight the browser. */
-  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: 0 });
-
-  const onPointerDown = (e) => {
-    const rail = railRef.current;
-    if (!rail || e.pointerType !== 'mouse' || e.button !== 0) return;
-    drag.current = { down: true, startX: e.clientX, startLeft: rail.scrollLeft, moved: 0 };
-    // snapping and smooth scrolling both fight a scrollLeft driven by the cursor
-    rail.style.scrollSnapType = 'none';
-    rail.style.scrollBehavior = 'auto';
-    rail.classList.add('is-dragging');
-  };
-
-  const onPointerMove = (e) => {
-    const rail = railRef.current;
-    if (!rail || !drag.current.down) return;
-    const dx = e.clientX - drag.current.startX;
-    drag.current.moved = Math.max(drag.current.moved, Math.abs(dx));
-    rail.scrollLeft = drag.current.startLeft - dx;
-  };
-
-  const endDrag = () => {
-    const rail = railRef.current;
-    if (!rail || !drag.current.down) return;
-    drag.current.down = false;
-    rail.classList.remove('is-dragging');
-    // clearing the inline values restores the stylesheet's snap, so the rail
-    // settles onto a card instead of stopping mid-photo
-    rail.style.scrollBehavior = '';
-    rail.style.scrollSnapType = '';
-  };
-
-  // a drag that ends on a card shouldn't also register as a click on it
-  const onClickCapture = (e) => {
-    if (drag.current.moved > 5) { e.preventDefault(); e.stopPropagation(); }
-  };
+  // drag-to-pan now lives in useDragScroll, shared with the home highlights strip
+  const dragProps = useDragScroll(railRef);
 
   return (
     <div className="legacy-rail-wrap reveal">
       <button type="button" className="rail-btn rail-prev" onClick={() => scrollRail(-1)} aria-label="Previous photos">‹</button>
-      <div
-        className="legacy-rail"
-        ref={railRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerLeave={endDrag}
-        onPointerCancel={endDrag}
-        onClickCapture={onClickCapture}
-      >
+      <div className="legacy-rail" ref={railRef} {...dragProps}>
         {LEGACY_PHOTOS.map((p) => (
           <figure className="legacy-card" key={p.src}>
             {/* draggable={false}: otherwise the browser starts its own image

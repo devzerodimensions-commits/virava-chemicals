@@ -94,6 +94,65 @@ export function useReveal(deps = []) {
   }, deps);
 }
 
+/**
+ * Click-and-drag panning for a horizontally scrolling row.
+ *
+ * Native overflow-x already gives wheel, trackpad and touch scrolling, but a
+ * mouse drag does nothing without this — you can only move the row with a wheel
+ * or by grabbing the scrollbar, which on a strip with a hidden scrollbar looks
+ * like it cannot be moved at all.
+ *
+ * Mouse only: touch scrolls natively with proper momentum, and intercepting it
+ * here would fight the browser.
+ *
+ * Returns props to spread onto the scrolling element. Shared by the photo
+ * carousel and the home highlights strip rather than duplicated — the snap
+ * suspension and click suppression below are easy to get subtly wrong twice.
+ */
+export function useDragScroll(ref) {
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: 0 });
+
+  const onPointerDown = (e) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag.current = { down: true, startX: e.clientX, startLeft: el.scrollLeft, moved: 0 };
+    // snapping and smooth scrolling both fight a scrollLeft driven by the cursor
+    el.style.scrollSnapType = 'none';
+    el.style.scrollBehavior = 'auto';
+    el.classList.add('is-dragging');
+  };
+
+  const onPointerMove = (e) => {
+    const el = ref.current;
+    if (!el || !drag.current.down) return;
+    const dx = e.clientX - drag.current.startX;
+    drag.current.moved = Math.max(drag.current.moved, Math.abs(dx));
+    el.scrollLeft = drag.current.startLeft - dx;
+  };
+
+  const endDrag = () => {
+    const el = ref.current;
+    if (!el || !drag.current.down) return;
+    drag.current.down = false;
+    el.classList.remove('is-dragging');
+    // clearing the inline values hands snapping back to the stylesheet, so the
+    // row settles onto a card rather than stopping mid-item
+    el.style.scrollBehavior = '';
+    el.style.scrollSnapType = '';
+  };
+
+  // a drag that ends on a card must not also register as a click on it
+  const onClickCapture = (e) => {
+    if (drag.current.moved > 5) { e.preventDefault(); e.stopPropagation(); }
+  };
+
+  return {
+    onPointerDown, onPointerMove,
+    onPointerUp: endDrag, onPointerLeave: endDrag, onPointerCancel: endDrag,
+    onClickCapture,
+  };
+}
+
 // Scroll to top on route change, or to a #hash section if present
 export function useScrollTop() {
   const { pathname, hash } = useLocation();
