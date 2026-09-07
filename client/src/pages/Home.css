@@ -112,27 +112,43 @@
 .hl-text span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.5; text-wrap: pretty; }
 
 @media (max-width: 1000px) { .highlights-grid { grid-template-columns: 1fr 1fr; } }
-/* These four were a swipeable strip on phones. The client reported twice that it
-   would not move on their handset, and I could not reproduce it — the row is
-   genuinely scrollable when measured, so the failure is in the gesture on that
-   device, which I have no way to test.
+/* Sideways strip on phones, with arrows.
+   Swiping alone did not work on the client's handset and I could not reproduce
+   it, so the strip cannot rely on the gesture: the arrows move it by tap, and a
+   swipe still works wherever it does. */
+.hl-wrap { position: relative; }
+.hl-nav { display: none; }
 
-   There are only four short cards, so the strip was never buying much: it hid
-   three quarters of the content behind a gesture people have to discover. Laying
-   them out means nothing has to move, nothing can fail to move, and all four are
-   visible at once. Two up on larger phones, stacked below 520px where two
-   columns would leave the icon and its text fighting over ~150px. */
 @media (max-width: 700px) {
-  .highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .highlight { padding: 20px 18px; gap: 13px; }
+  .highlights-grid {
+    display: flex; overflow-x: auto; gap: 12px; padding: 4px 2px 12px;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    /* must be allowed to shrink, or the row stretches the page rather than
+       scrolling — the trap behind the solution-page overflow */
+    min-width: 0;
+    scrollbar-width: none;
+  }
+  .highlights-grid::-webkit-scrollbar { display: none; }
+  /* 78% leaves a clear slice of the next card showing, which is the cue that
+     there is more to the right */
+  .highlight { flex: 0 0 78%; scroll-snap-align: start; padding: 20px 18px; gap: 13px; }
   .hl-ic { width: 40px; height: 40px; }
   .hl-ic svg { width: 20px; height: 20px; }
   .hl-text strong { font-size: .98rem; }
   .hl-text span { font-size: .8rem; }
-}
-@media (max-width: 520px) {
-  .highlights-grid { grid-template-columns: 1fr; }
-  .highlight { padding: 18px 18px; }
+
+  .hl-nav {
+    display: grid; place-items: center; position: absolute; top: 50%; z-index: 3;
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    transform: translateY(-50%);
+    background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow);
+    font-family: var(--head); font-size: 1.35rem; line-height: 1; color: var(--navy);
+    padding: 0 0 3px;
+  }
+  .hl-prev { left: 2px; }
+  .hl-next { right: 2px; }
+  .hl-nav:active { background: var(--navy); color: #fff; }
 }
 
 /* ---------------- ABOUT ---------------- */

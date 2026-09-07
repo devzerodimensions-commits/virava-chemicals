@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
@@ -121,6 +121,18 @@ export default function Home() {
 
   const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
+  // Steps the highlights strip by one card, measured live so it stays right
+  // across breakpoints.
+  const highlightsRef = useRef(null);
+  const scrollHighlights = (dir) => {
+    const el = highlightsRef.current;
+    if (!el) return;
+    const card = el.querySelector('.highlight');
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 12;
+    const step = card ? card.getBoundingClientRect().width + gap : 220;
+    el.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+
   return (
     <>
       {/* ---------------- INTRO (before the slider) ---------------- */}
@@ -143,15 +155,25 @@ export default function Home() {
       <HeroSlider items={slides} />
 
       <div className="home-content">
-      {/* ---------------- QUICK HIGHLIGHTS ---------------- */}
+      {/* ---------------- QUICK HIGHLIGHTS ----------------
+          Scrolls sideways on phones. The arrows are the point: swiping this
+          strip did not work on the client's handset and I could not reproduce
+          it, so the strip must not depend on a gesture alone. Tapping an arrow
+          moves it regardless. */}
       <section className="highlights">
-        <div className="container highlights-grid">
-          {highlights.map((h) => (
-            <div className="highlight" key={h.id ?? h.title}>
-              <span className="hl-ic"><HlIcon name={h.icon} /></span>
-              <div className="hl-text"><strong>{h.title}</strong><span>{h.subtitle}</span></div>
-            </div>
-          ))}
+        <div className="container hl-wrap">
+          <button type="button" className="hl-nav hl-prev" aria-label="Previous highlights"
+            onClick={() => scrollHighlights(-1)}>‹</button>
+          <div className="highlights-grid" ref={highlightsRef}>
+            {highlights.map((h) => (
+              <div className="highlight" key={h.id ?? h.title}>
+                <span className="hl-ic"><HlIcon name={h.icon} /></span>
+                <div className="hl-text"><strong>{h.title}</strong><span>{h.subtitle}</span></div>
+              </div>
+            ))}
+          </div>
+          <button type="button" className="hl-nav hl-next" aria-label="Next highlights"
+            onClick={() => scrollHighlights(1)}>›</button>
         </div>
       </section>
 
