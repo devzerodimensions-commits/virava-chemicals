@@ -91,20 +91,43 @@
 
 @media (max-width: 992px) {
   .burger { display: block; }
+  /* The drawer is a child of .nav-inner, so raising .nav-inner lifts the drawer
+     with it and the close button ends up underneath — the menu becomes
+     impossible to shut. The logo and burger have to be raised individually,
+     above the drawer's own stacking level. */
+  .brand, .burger { position: relative; z-index: 3; }
   .menu {
-    /* 40px topbar + 84px header — was 118px, from before the logo was enlarged */
-    position: fixed; top: 124px; right: 0; width: min(320px, 84vw); height: calc(100vh - 124px);
+    /* Was pinned at top:124px — 40px topbar plus 84px header. That is only true
+       before the page scrolls: the topbar is not sticky, so once it has gone the
+       header is ~76-84px tall and a 40px strip of the page showed through above
+       the drawer. The drawer now runs the full height and clears the header with
+       padding instead, which holds in both states. */
+    position: fixed; top: 0; right: 0; z-index: 1; width: min(320px, 84vw);
+    height: 100vh; height: 100dvh;
     background: #fff; flex-direction: column; align-items: flex-start; gap: 4px;
-    padding: 24px; box-shadow: var(--shadow-lg); transform: translateX(105%);
-    transition: transform .3s ease; overflow-y: auto;
+    padding: 104px 22px 30px; box-shadow: var(--shadow-lg); transform: translateX(105%);
+    transition: transform .3s ease;
+    /* overflow-x guards the nested lists: a long principal name must wrap, not
+       push the panel sideways */
+    overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
   }
   .menu-open { transform: translateX(0); }
   .menu > a, .has-drop { width: 100%; }
-  .drop { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none;
-    border: 0; padding: 4px 0 8px 14px; min-width: 0; }
+  /* nothing in the drawer may exceed its width or spill past its edge */
+  .menu a { max-width: 100%; overflow-wrap: anywhere; }
+  .drop { position: static; left: auto; opacity: 1; visibility: visible; transform: none;
+    box-shadow: none; border: 0; padding: 4px 0 8px 12px; min-width: 0; max-width: 100%; }
   /* no room to fly out on mobile — nest the solutions inline under the parent */
-  .subdrop { position: static; opacity: 1; visibility: visible; transform: none;
-    box-shadow: none; border: 0; padding: 0 0 6px 26px; min-width: 0; margin-left: 0; }
+  .subdrop { position: static; left: auto; opacity: 1; visibility: visible; transform: none;
+    box-shadow: none; border: 0; padding: 0 0 6px 20px; min-width: 0; max-width: 100%; margin-left: 0; }
+  /* nowrap is right for the desktop fly-out, but in a 320px drawer it forces
+     "Specialty Chemicals" past the edge instead of wrapping */
+  .subdrop-item { white-space: normal; }
+  .drop-item { align-items: flex-start; }
   .drop-caret { display: none; }
   .nav-cta { margin-top: 10px; }
+}
+@media (max-width: 420px) {
+  /* shorter header here, so the drawer's content can start higher */
+  .menu { padding-top: 92px; }
 }
