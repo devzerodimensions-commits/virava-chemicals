@@ -106,8 +106,25 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* --- entrance animation (pure CSS; NO fill-mode so base opacity stays 1 —
    content is ALWAYS visible even if the animation never runs) --- */
-.reveal { animation: revealIn .7s ease; }
-@keyframes revealIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+/* Was `animation: revealIn .7s ease`, which fired on mount for everything at
+   once regardless of where it sat on the page — so content far below the fold
+   had finished animating before it was ever scrolled to. Now it is genuinely
+   scroll-triggered: the observer adds .in as each element arrives, and useReveal
+   staggers siblings so grids and lists cascade instead of snapping in together.
+
+   Opacity is safe to animate here ONLY because the hidden state is scoped to
+   html.js-anim, which is set at runtime, and useReveal carries a
+   visibilitychange handler plus a hard failsafe. Without those, a frozen tab or
+   a crawler would see an empty page. */
+.js-anim .reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
+}
+.js-anim .reveal.in { opacity: 1; transform: none; }
+/* set by useReveal's failsafes: show it now, don't wait for a transition that
+   may never tick (frozen tab, no compositor, crawler) */
+.js-anim .reveal.snap,
+.js-anim .split-text.snap .w { transition: none !important; }
 
 /* --- headings that assemble word by word ---
    The hidden state is deliberately scoped to html.js-anim, which useReveal adds
@@ -123,7 +140,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .js-anim .split-text.in .w { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { animation: none; }
+  .js-anim .reveal,
   .js-anim .split-text .w { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 

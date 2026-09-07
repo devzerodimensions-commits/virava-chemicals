@@ -10,6 +10,21 @@ import { useLocation } from 'react-router-dom';
 const SEL = '.reveal:not(.in), .split-text:not(.in)';
 const ALL = '.reveal, .split-text';
 
+/* Cards in a grid all cross the threshold on the same frame, so without this
+   a whole row snaps in at once. Offsetting each by its position among its
+   revealing siblings makes the row cascade. Capped so a long list doesn't end
+   up waiting a second before its last item moves.
+   Skipped for .split-text — its words already carry their own delays, and
+   adding another would stall the heading behind the body copy. */
+function stagger(el) {
+  if (el.classList.contains('split-text') || el.style.transitionDelay) return;
+  const parent = el.parentElement;
+  if (!parent) return;
+  const sibs = [...parent.children].filter((c) => c.classList.contains('reveal'));
+  const i = sibs.indexOf(el);
+  if (i > 0) el.style.transitionDelay = `${Math.min(i, 6) * 70}ms`;
+}
+
 export function useReveal(deps = []) {
   const ioRef = useRef(null);
 
@@ -20,13 +35,16 @@ export function useReveal(deps = []) {
     document.documentElement.classList.add('js-anim');
 
     if (typeof IntersectionObserver === 'undefined') {
-      document.querySelectorAll(ALL).forEach((el) => el.classList.add('in'));
+      document.querySelectorAll(ALL).forEach((el) => el.classList.add('in', 'snap'));
       return;
     }
     ioRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) { e.target.classList.add('in'); ioRef.current.unobserve(e.target); }
+          if (!e.isIntersecting) return;
+          stagger(e.target);
+          e.target.classList.add('in');
+          ioRef.current.unobserve(e.target);
         });
       },
       { threshold: 0.1 }
@@ -40,10 +58,16 @@ export function useReveal(deps = []) {
       document.querySelectorAll(SEL).forEach((el) => io.observe(el));
     }
 
+    /* Failsafe reveals add `snap` as well as `in`. Adding `in` alone only sets
+       the transition's target — and a transition does not tick in a frozen or
+       backgrounded tab, so the element would sit at opacity 0 having been
+       "revealed". `snap` turns the transition off so it takes effect at once.
+       In a normal load the observer has already dealt with these, so this path
+       is only reached when the animation was never going to run anyway. */
     const nearViewport = () => {
       document.querySelectorAll(SEL).forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight + 100) el.classList.add('in');
+        if (r.top < window.innerHeight + 100) el.classList.add('in', 'snap');
       });
     };
 
@@ -57,7 +81,7 @@ export function useReveal(deps = []) {
     document.addEventListener('visibilitychange', onShow);
     const hard = setTimeout(() => {
       if (!document.querySelector('.reveal.in, .split-text.in')) {
-        document.querySelectorAll(ALL).forEach((el) => el.classList.add('in'));
+        document.querySelectorAll(ALL).forEach((el) => el.classList.add('in', 'snap'));
       }
     }, 2600);
 
