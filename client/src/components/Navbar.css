@@ -115,6 +115,36 @@
   .menu > a, .has-drop { width: 100%; }
   /* nothing in the drawer may exceed its width or spill past its edge */
   .menu a { max-width: 100%; overflow-wrap: anywhere; }
+
+  /* ---- drawer structure ----
+     Was a flat run of same-sized links with no separation, which is most of why
+     it read as a wall of text. Top-level items are now rows with a hairline
+     between them and a red marker on the current page. */
+  .menu > a, .has-drop > a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 2px; font-size: 1rem; font-weight: 600; color: var(--navy);
+    border-bottom: 1px solid var(--line); position: relative;
+  }
+  .menu > a::after, .has-drop > a::after { display: none; }   /* desktop underline */
+  .menu > a.active { color: var(--red); }
+  .menu > a.active::before {
+    content: ''; display: block; position: absolute; left: -22px; top: 50%;
+    transform: translateY(-50%); width: 3px; height: 20px; background: var(--red);
+  }
+  .has-drop > a .caret { transition: transform .25s ease; font-size: .8rem; color: var(--muted); }
+  .has-drop.drop-open > a { color: var(--red); border-bottom-color: transparent; }
+  .has-drop.drop-open > a .caret { transform: rotate(180deg); color: var(--red); }
+
+  /* collapsed by default; the parent row opens it */
+  .drop { display: none; }
+  .has-drop.drop-open .drop { display: block; animation: dropIn .22s ease; }
+  @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  /* nested items sit against a rule so the hierarchy is visible at a glance */
+  .drop { border-left: 2px solid var(--line); margin: 0 0 10px 4px; }
+  .drop a { padding: 11px 0 11px 14px; font-size: .93rem; font-weight: 500; color: var(--body); border-radius: 0; }
+  .drop a:hover { background: transparent; color: var(--red); }
+  .subdrop a { font-size: .86rem; color: var(--muted); padding: 9px 0 9px 14px; }
   .drop { position: static; left: auto; opacity: 1; visibility: visible; transform: none;
     box-shadow: none; border: 0; padding: 4px 0 8px 12px; min-width: 0; max-width: 100%; }
   /* no room to fly out on mobile — nest the solutions inline under the parent */
@@ -141,6 +171,10 @@
   .drop a, .subdrop a { min-width: 0; box-sizing: border-box; }
   /* hover nudges the row right; harmless with a mouse, but on touch it sticks */
   .drop a:hover, .drop-item:hover { padding-left: 14px; }
+  .nav-cta {
+    margin-top: 18px; justify-content: center; border-bottom: 0 !important;
+    color: #fff !important; padding: 14px 22px !important;
+  }
   /* nowrap is right for the desktop fly-out, but in a 320px drawer it forces
      "Specialty Chemicals" past the edge instead of wrapping */
   .subdrop-item { white-space: normal; }

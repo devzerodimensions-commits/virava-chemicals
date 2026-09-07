@@ -58,7 +58,16 @@ export default function Navbar({ settings }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [loc.pathname]);
+  /* Mobile only. On desktop the dropdown opens on hover; inside the drawer it
+     was permanently expanded, so the eight principal and solution links sat in
+     the list at all times and buried Industries, Contact and the CTA below the
+     fold. It now collapses. */
+  const [dropOpen, setDropOpen] = useState(false);
+
+  useEffect(() => { setOpen(false); setDropOpen(false); }, [loc.pathname]);
+  useEffect(() => { if (!open) setDropOpen(false); }, [open]);
+
+  const isMobile = () => window.matchMedia('(max-width: 992px)').matches;
 
   return (
     <>
@@ -88,8 +97,19 @@ export default function Navbar({ settings }) {
           <nav className={`menu ${open ? 'menu-open' : ''}`}>
             <NavLink to="/" end>Home</NavLink>
             <NavLink to="/about">About Us</NavLink>
-            <div className="has-drop">
-              <Link to="/#principals">Principals <span className="caret">▾</span></Link>
+            <div className={`has-drop ${dropOpen ? 'drop-open' : ''}`}>
+              {/* In the drawer this is a disclosure, not a link — tapping it there
+                  would otherwise navigate away before the list could be read.
+                  Desktop behaviour (hover to open, click to go) is untouched. */}
+              <Link
+                to="/#principals"
+                aria-expanded={dropOpen}
+                onClick={(e) => {
+                  if (isMobile()) { e.preventDefault(); setDropOpen((v) => !v); }
+                }}
+              >
+                Principals <span className="caret">▾</span>
+              </Link>
               <div className="drop drop-wide">
                 {principalLinks.map(([label, to, logo, subs]) => (
                   <div className="drop-row" key={label}>
