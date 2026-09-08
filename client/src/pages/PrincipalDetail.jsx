@@ -4,7 +4,6 @@ import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import EnquiryModal from '../components/EnquiryModal.jsx';
-import ProductModal from '../components/ProductModal.jsx';
 import SplitText from '../components/SplitText.jsx';
 import './pages.css';
 
@@ -13,17 +12,9 @@ const APPLICATIONS = [
   'Paints & Coatings', 'Lubricants', 'Textiles', 'Food Products', 'Agrochemicals',
 ];
 
-// applications shown on each product's detail (by category slug)
-const CATEGORY_APPS = {
-  'fatty-alcohols': ['Personal Care', 'Detergents', 'Cosmetics', 'Emulsifiers', 'Surfactant Intermediates'],
-  'fatty-acids': ['Rubber', 'Plastics', 'Cosmetics', 'Candles', 'Lubricants', 'Textiles'],
-  'surfactants': ['Detergents', 'Personal Care', 'Textiles', 'Industrial Cleaning'],
-  'glycerine': ['Pharmaceuticals', 'Food', 'Cosmetics', 'Paints & Resins', 'Personal Care'],
-  'oleo-derivatives-and-specialty-chemicals': ['Cosmetics', 'Food', 'Plastics', 'Personal Care'],
-  'hpl-products': ['Rubber', 'Tyres', 'Polymers', 'Plastics'],
-  'occl-products': ['Tyres', 'Rubber', 'Industrial'],
-  'std-products': ['Multiple Industries'],
-};
+/* CATEGORY_APPS lived here to feed the product modal's "applications" list. The
+   modal is gone — products open their own page now — and the list was keyed on
+   category slugs that the client's catalogue has since replaced anyway. */
 
 function portfolioLabel(name = '') {
   const n = name.toLowerCase();
@@ -39,7 +30,6 @@ export default function PrincipalDetail() {
   const [data, setData] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
-  const [product, setProduct] = useState(null);
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
@@ -112,8 +102,13 @@ export default function PrincipalDetail() {
                   {cats[tab].tagline && <span className="pf-tag">{cats[tab].tagline}</span>}
                   <p>{cats[tab].description}</p>
                   <div className="pf-products">
+                    {/* Links to the product page, the same as the Godrej solution
+                        pages. These used to open a modal, which meant the product
+                        had no address of its own — nothing to share, bookmark,
+                        link to from an email, or return to with the back button,
+                        and nothing for search engines to index. */}
                     {cats[tab].products?.map((p) => (
-                      <div className="pf-product" key={p.id} onClick={() => setProduct(p)} role="button" tabIndex={0}>
+                      <Link className="pf-product" key={p.id} to={`/product/${p.slug}`}>
                         <div className="pf-product-info">
                           <strong>{p.name}</strong>
                           <span className="pf-meta">
@@ -121,7 +116,7 @@ export default function PrincipalDetail() {
                           </span>
                         </div>
                         <span className="pf-arrow">›</span>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -155,16 +150,6 @@ export default function PrincipalDetail() {
           </div>
         </div>
       </section>
-
-      {product && (
-        <ProductModal
-          product={product}
-          categoryName={cats[tab]?.name}
-          applications={CATEGORY_APPS[cats[tab]?.slug] || []}
-          onClose={() => setProduct(null)}
-          onEnquire={(p) => { setProduct(null); setEnquiry(p); }}
-        />
-      )}
 
       {enquiry && (
         <EnquiryModal product={enquiry.id ? enquiry : null} category={data.name} onClose={() => setEnquiry(null)} />
