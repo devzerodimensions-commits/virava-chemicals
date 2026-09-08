@@ -12,10 +12,15 @@
   place-items: center;
   cursor: pointer;
   color: #fff;
-  background: var(--red);
-  border: 0;
+  background: var(--navy);
+  /* The button floats over whatever happens to be behind it. The footer is
+     #0a0a0a and the accent is #000, so a plain dark button disappeared
+     completely down there. The light ring outlines it against the dark
+     footer, while the dark fill carries it against the white sections —
+     so it stays visible everywhere without having to know what is behind. */
+  border: 2px solid rgba(255, 255, 255, .92);
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(14, 23, 64, .28);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .34);
   /* Under the modals and the mobile menu, above ordinary page content, so it
      can never cover a dialog's close button. */
   z-index: 40;
@@ -30,9 +35,16 @@
 }
 
 .to-top.on { opacity: 1; visibility: visible; transform: none; }
-.to-top:hover { background: var(--navy); }
-.to-top:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
-.to-top:active { transform: translateY(1px); }
+/* Inverts on hover rather than darkening — a darker shade would have read as
+   no feedback at all against the near-black footer. */
+.to-top:hover { background: #fff; color: var(--navy); }
+/* White ring inside a dark halo, so the focus state is visible whether the
+   button happens to be over the footer or over a white section. */
+.to-top:focus-visible {
+  outline: 3px solid #fff; outline-offset: 2px;
+  box-shadow: 0 0 0 6px rgba(0, 0, 0, .5);
+}
+.to-top:active { transform: translateY(1px) scale(.96); }
 
 /* A little in from the edge on phones, and slightly smaller so it does not
    sit on top of the content it is meant to help you leave. */
