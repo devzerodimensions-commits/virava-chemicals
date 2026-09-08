@@ -117,7 +117,12 @@
 @media (max-width: 700px) {
   .pf-grid { grid-template-columns: 1fr; gap: 34px; }
   .pf-filters { flex-direction: column; align-items: stretch; }
-  .pf-search { max-width: none; }
+  /* flex:none is the fix. .pf-search carries `flex: 1 1 320px` for the desktop
+     row, where 320px is a width — but once this becomes a column that basis
+     applies to HEIGHT, so the wrapper grew to 320px tall with the input at the
+     top and the search icon, centred on the wrapper, stranded ~190px below it. */
+  .pf-search { flex: none; max-width: none; }
+  .pf-select { flex: none; }
   .pf-select select { width: 100%; }
   .pf-status { align-items: flex-start; }
 }
