@@ -142,8 +142,11 @@ export default function Navbar({ settings }) {
               {/* In the drawer this is a disclosure, not a link — tapping it there
                   would otherwise navigate away before the list could be read.
                   Desktop behaviour (hover to open, click to go) is untouched. */}
+              {/* Was /#principals, which only jumped to a strip on the home page.
+                  Opens the full product list now — the finder can be narrowed by
+                  principal there, which is what someone clicking this wants. */}
               <Link
-                to="/#principals"
+                to="/products"
                 aria-expanded={dropOpen}
                 onClick={(e) => {
                   if (isMobile()) { e.preventDefault(); setDropOpen((v) => !v); }
