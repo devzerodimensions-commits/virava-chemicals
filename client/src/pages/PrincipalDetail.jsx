@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import api from '../api.js';
 import { useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
@@ -31,11 +31,31 @@ export default function PrincipalDetail() {
   const [notFound, setNotFound] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
   const [tab, setTab] = useState(0);
+  const [params] = useSearchParams();
 
   useEffect(() => {
     setData(null); setNotFound(false); setTab(0);
     api.get(`/principals/${slug}`).then((r) => setData(r.data)).catch(() => setNotFound(true));
   }, [slug]);
+
+  /* ?cat=<slug> opens the page on that category's tab.
+     The tabs held their state internally, so there was no address for "HPL, on
+     the Antioxidants tab" and the menu had to send people to the filtered
+     product finder instead. With this they land on the principal's own page,
+     scrolled to the portfolio rather than the top. */
+  const wantedCat = params.get('cat');
+  useEffect(() => {
+    const list = data?.categories || [];
+    if (!list.length || !wantedCat) return;
+    const i = list.findIndex((c) => c.slug === wantedCat);
+    if (i < 0) return;
+    setTab(i);
+    // after the reveal pass has settled, or the target moves under us
+    const t = setTimeout(() => {
+      document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 250);
+    return () => clearTimeout(t);
+  }, [data, wantedCat]);
 
   useReveal([data]);
 
@@ -74,9 +94,9 @@ export default function PrincipalDetail() {
         </div>
       </section>
 
-      {/* Portfolio (categories + products) */}
+      {/* Portfolio (categories + products) — id is the scroll target for ?cat= */}
       {cats.length > 0 && (
-        <section className="section section-soft">
+        <section className="section section-soft" id="portfolio">
           <div className="container">
             <div className="center reveal">
               <span className="eyebrow">{portfolioLabel(data.name)}</span>

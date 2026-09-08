@@ -58,7 +58,10 @@ export default function Navbar({ settings }) {
         (ct.data || []).forEach((c) => {
           const s = slugOf.get(c.principal_id);
           if (!s) return;
-          (map[s] ||= []).push([c.name, `/products?category=${c.slug}`]);
+          // the principal's own page, opened on that category's tab — these
+          // pointed at the filtered product finder, which took people away from
+          // the principal instead of into it
+          (map[s] ||= []).push([c.name, `/principals/${s}?cat=${c.slug}`]);
         });
         setPrincipalCats(map);
       })
