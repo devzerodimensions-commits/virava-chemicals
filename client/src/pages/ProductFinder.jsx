@@ -54,6 +54,17 @@ export default function ProductFinder() {
     return new Map(cats.map((c) => [c.slug, byId.get(c.principal_id) || null]));
   }, [cats, principals]);
 
+  /* Trims the legal suffix for the filter menus only — the database and every
+     other page keep the full registered name. A browser draws a <select>'s
+     popup itself, sized to the longest option and not styleable, so on a phone
+     "The Standard Chemicals Co. Pvt. Ltd." pushed the list past the edge of the
+     screen and the names were cut off mid-word. */
+  const shortName = (n = '') => n
+    .replace(/^The\s+/i, '')
+    .replace(/\s+(Pvt\.?\s*)?Ltd\.?$/i, '')
+    .replace(/\s+Limited$/i, '')
+    .trim();
+
   /* Categories grouped under their principal, in the principals' own order, so
      the list reads as a structure rather than a jumble. When a principal is
      chosen only its categories are offered — the rest could not match anything. */
@@ -61,7 +72,7 @@ export default function ProductFinder() {
     return principals
       .filter((p) => !principal || p.slug === principal)
       .map((p) => ({
-        principal: p.name,
+        principal: shortName(p.name),
         items: cats
           .filter((c) => c.principal_id === p.id)
           .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name)),
@@ -119,7 +130,7 @@ export default function ProductFinder() {
               <span className="pf-select-label">Principal</span>
               <select value={principal} onChange={(e) => setParam('principal', e.target.value)}>
                 <option value="">All principals</option>
-                {principals.map((p) => <option key={p.id} value={p.slug}>{p.name}</option>)}
+                {principals.map((p) => <option key={p.id} value={p.slug}>{shortName(p.name)}</option>)}
               </select>
             </label>
 

@@ -122,7 +122,13 @@
      applies to HEIGHT, so the wrapper grew to 320px tall with the input at the
      top and the search icon, centred on the wrapper, stranded ~190px below it. */
   .pf-search { flex: none; max-width: none; }
-  .pf-select { flex: none; }
-  .pf-select select { width: 100%; }
+  /* Label sits inside the pill on desktop, reserving 96px of left padding. On a
+     375px screen that leaves too little for a name like "Oriental Carbon &
+     Chemicals", so stack the label above the control and give the value the
+     full width. */
+  .pf-select { flex: none; flex-direction: column; align-items: stretch; }
+  .pf-select-label { position: static; transform: none; padding-left: 20px; margin-bottom: 6px; }
+  .pf-select select { width: 100%; padding-left: 20px; }
+  .pf-select::after { top: auto; bottom: 15px; transform: none; }
   .pf-status { align-items: flex-start; }
 }
