@@ -1,0 +1,47 @@
+/* ===========================================================
+   Back-to-top button — bottom right, appears once scrolled
+   =========================================================== */
+
+.to-top {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #fff;
+  background: var(--red);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(14, 23, 64, .28);
+  /* Under the modals and the mobile menu, above ordinary page content, so it
+     can never cover a dialog's close button. */
+  z-index: 40;
+
+  /* Hidden state. Kept clickable-proof with visibility rather than display so
+     it can fade rather than blink in and out. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s,
+              background-color .2s ease;
+}
+
+.to-top.on { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: var(--navy); }
+.to-top:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+.to-top:active { transform: translateY(1px); }
+
+/* A little in from the edge on phones, and slightly smaller so it does not
+   sit on top of the content it is meant to help you leave. */
+@media (max-width: 700px) {
+  .to-top { right: 16px; bottom: 16px; width: 42px; height: 42px; border-radius: 11px; }
+}
+
+/* Some visitors ask their system not to animate things. Respect it: the button
+   still appears and works, it just does not slide or fade. */
+@media (prefers-reduced-motion: reduce) {
+  .to-top { transition: none; transform: none; }
+}

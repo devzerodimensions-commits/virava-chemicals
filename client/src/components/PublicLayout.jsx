@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
+import BackToTop from './BackToTop.jsx';
 import { useReveal } from '../hooks.js';
 import api from '../api.js';
 
@@ -30,6 +31,8 @@ export default function PublicLayout() {
       <Navbar settings={settings} />
       <main><Outlet /></main>
       <Footer settings={settings} />
+      {/* sits outside main so it is never clipped by a page's own overflow */}
+      <BackToTop />
     </SettingsContext.Provider>
   );
 }
