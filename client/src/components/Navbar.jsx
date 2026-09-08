@@ -24,11 +24,18 @@ const FALLBACK_SOLUTION_LINKS = [
   ['Biotech', 'biotech'],
 ];
 
+/* Carries the slug rather than a path, because the slug is needed twice: to
+   build the menu link and to look up that principal's categories. */
 const otherPrincipals = [
-  ['HPL Additives Limited', '/principals/hpl-additives-limited', '/img/partners/logo2.png'],
-  ['Oriental Carbon & Chemicals', '/principals/oriental-carbon-and-chemicals-limited', '/img/partners/logo3.png'],
-  ['The Standard Chemicals Co.', '/principals/the-standard-chemicals-co-pvt-ltd', '/img/partners/logo4.png'],
+  ['HPL Additives Limited', 'hpl-additives-limited', '/img/partners/logo2.png'],
+  ['Oriental Carbon & Chemicals', 'oriental-carbon-and-chemicals-limited', '/img/partners/logo3.png'],
+  ['The Standard Chemicals Co.', 'the-standard-chemicals-co-pvt-ltd', '/img/partners/logo4.png'],
 ];
+
+// From the nav bar, a principal's name opens its products. Only here — the
+// principal cards on Home and About, and the rows under "Our Principals", still
+// go to the principal's own page.
+const productsFor = (slug) => `/products?principal=${slug}`;
 
 export default function Navbar({ settings }) {
   const [scrolled, setScrolled] = useState(false);
@@ -69,14 +76,15 @@ export default function Navbar({ settings }) {
   }, []);
 
   const principalLinks = [
-    ['Godrej Industries Limited', `${GODREJ}/${solutionLinks[0]?.[1] || 'oleochemicals'}`,
+    // the name goes to Godrej's products; the sub-entries keep their solution pages
+    ['Godrej Industries Limited', productsFor('godrej-industries-limited'),
       '/img/partners/logo1.png',
       solutionLinks.map(([label, slug]) => [label, `${GODREJ}/${slug}`])],
     // a sub-menu only earns its place when there is more than one thing in it —
     // OCCL and Standard have a single category each and stay plain links
-    ...otherPrincipals.map(([label, to, logo]) => {
-      const subs = principalCats[to.split('/').pop()];
-      return [label, to, logo, subs && subs.length > 1 ? subs : undefined];
+    ...otherPrincipals.map(([label, slug, logo]) => {
+      const subs = principalCats[slug];
+      return [label, productsFor(slug), logo, subs && subs.length > 1 ? subs : undefined];
     }),
   ];
 
