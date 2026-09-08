@@ -18,14 +18,25 @@ const FALLBACK_HIGHLIGHTS = [
   { id: 'd', icon: 'generations', title: '3 Generations', subtitle: 'Trusted since 1996' },
 ];
 
-// The three principals we represent alongside Godrej
+/* The three principals we represent alongside Godrej.
+   Keyed on the principal, not on one category slug. These used to point at a
+   single placeholder category each ('hpl-products' and so on); once the client's
+   real HPL catalogue arrived those placeholders were superseded by three proper
+   categories, and a card tied to a retired slug simply disappears from this
+   grid. Counting by principal also means the figure stays right however the
+   categories are reorganised in the admin panel. */
 const OTHER_RANGES = [
-  { slug: 'hpl-products', kicker: 'HPL Additives', to: '/principals/hpl-additives-limited',
-    blurb: 'Antioxidants, accelerators and antidegradants for rubber and polymers.' },
-  { slug: 'occl-products', kicker: 'Oriental Carbon', to: '/principals/oriental-carbon-and-chemicals-limited',
+  { principal: 'hpl-additives-limited', name: 'HPL Additives', kicker: 'HPL Additives',
+    to: '/principals/hpl-additives-limited', image: '/img/categories/hpl-products.webp',
+    blurb: 'Antioxidants, blowing agents and polymerisation catalysts for rubber and polymers.' },
+  { principal: 'oriental-carbon-and-chemicals-limited', name: 'Oriental Carbon & Chemicals',
+    kicker: 'Oriental Carbon', to: '/principals/oriental-carbon-and-chemicals-limited',
+    image: '/img/categories/occl-products.webp',
     blurb: 'Insoluble sulphur for tyre and rubber vulcanisation.' },
-  { slug: 'std-products', kicker: 'Standard Chemicals', to: '/principals/the-standard-chemicals-co-pvt-ltd',
-    blurb: 'Specialty chemicals and intermediates across diverse industries.' },
+  { principal: 'the-standard-chemicals-co-pvt-ltd', name: 'The Standard Chemicals Co.',
+    kicker: 'Standard Chemicals', to: '/principals/the-standard-chemicals-co-pvt-ltd',
+    image: '/img/categories/std-products.webp',
+    blurb: 'Rubber maker’s sulphur powder for the manufacture of rubber products.' },
 ];
 
 /* Highlight-strip icons. Emoji were used here before, but they render as full
@@ -96,7 +107,6 @@ export default function Home() {
       const c = bySlug.get(p.category_slug);
       return c ? pred(c) : false;
     }).length;
-    const imageOf = (slug, fallback) => bySlug.get(slug)?.image_url || fallback;
 
     const solutionCards = solutions.map((s) => ({
       name: s.name,
@@ -107,15 +117,15 @@ export default function Home() {
       count: countIn((c) => c.solution === s.slug),
     }));
 
-    const others = OTHER_RANGES
-      .filter(({ slug }) => bySlug.has(slug))
-      .map(({ slug, kicker, to, blurb }) => ({
-        name: bySlug.get(slug).name, kicker, to, blurb,
-        image: imageOf(slug), count: countIn((c) => c.slug === slug),
-      }));
+    // count everything belonging to the principal, across all its categories
+    const principalById = new Map(principals.map((p) => [p.id, p.slug]));
+    const others = OTHER_RANGES.map((r) => ({
+      name: r.name, kicker: r.kicker, to: r.to, blurb: r.blurb, image: r.image,
+      count: countIn((c) => principalById.get(c.principal_id) === r.principal),
+    }));
 
     return [...solutionCards, ...others];
-  }, [cats, products, solutions]);
+  }, [cats, products, solutions, principals]);
 
   useReveal([ranges, principals, industries, blogs, highlights]);
 

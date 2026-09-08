@@ -10,6 +10,7 @@ import {
   heroSlides as seedHeroSlides,
 } from './seed.js';
 import { GODREJ_CATALOGUE } from './godrej-catalogue.js';
+import { PRINCIPAL_SHEETS } from './principal-catalogues.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -52,6 +53,7 @@ async function migrate() {
   // spent marker would swallow this silently.
   await alignHeroSlidesToPrincipals();
   await pointHeroCtasAtProducts();
+  await applyPrincipalSheets();
 }
 
 // The founding year, customer count and founder's name were guesses that turned
@@ -347,6 +349,107 @@ async function pointHeroCtasAtProducts() {
     [KEY, new Date().toISOString()]
   );
   console.log(`Migration: hero CTAs pointed at filtered product lists (${n} slides).`);
+}
+
+// HPL, OCCL and Standard Chemicals had two or three placeholder products each,
+// invented before the client supplied anything — against Godrej's 99. Their real
+// catalogues arrived in "Godrej Products-2.xlsx" (sheets 3-5).
+//
+// Godrej is explicitly out of scope: every statement below is filtered to the
+// three principals named in the sheet data, so the Godrej catalogue built by
+// applyGodrejSheet cannot be touched.
+//
+// Superseded placeholders are set is_active=false rather than deleted, the same
+// as the Godrej import — they vanish from the site but remain in the admin panel
+// and can be switched back on. One-shot, own marker.
+async function applyPrincipalSheets() {
+  const KEY = 'migration_principal_sheets';
+  const done = await query('SELECT 1 FROM site_settings WHERE key = $1', [KEY]);
+  if (done.rowCount) return;
+
+  let cats = 0, added = 0, retired = 0, missing = [];
+
+  for (const sheet of PRINCIPAL_SHEETS) {
+    const pr = await query('SELECT id FROM principals WHERE slug = $1', [sheet.principal]);
+    if (!pr.rowCount) { missing.push(sheet.principal); continue; }
+    const principalId = pr.rows[0].id;
+
+    const keepCats = new Set();
+    const keepPairs = new Set();
+    let sort = 0;
+
+    for (const c of sheet.categories) {
+      keepCats.add(c.slug);
+      const found = await query('SELECT id FROM categories WHERE slug = $1', [c.slug]);
+      let catId;
+      if (found.rowCount) {
+        catId = found.rows[0].id;
+        await query(
+          `UPDATE categories SET name=$1, principal_id=$2, tagline=$3, description=$4,
+                  image_url=$5, sort_order=$6, is_active=true WHERE id=$7`,
+          [c.name, principalId, c.tagline, c.description, sheet.image, sort++, catId]
+        );
+      } else {
+        const ins = await query(
+          `INSERT INTO categories (slug, name, principal_id, tagline, description, image_url, sort_order)
+           VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+          [c.slug, c.name, principalId, c.tagline, c.description, sheet.image, sort++]
+        );
+        catId = ins.rows[0].id;
+        cats++;
+      }
+
+      let pSort = 0;
+      for (const p of c.products) {
+        keepPairs.add(`${catId}::${p.n}`);
+        const hit = await query('SELECT id FROM products WHERE category_id=$1 AND name=$2', [catId, p.n]);
+        if (hit.rowCount) {
+          await query('UPDATE products SET is_active=true, description=$1, sort_order=$2 WHERE id=$3',
+            [p.d, pSort++, hit.rows[0].id]);
+          continue;
+        }
+        // slugs are unique table-wide, so disambiguate on collision
+        let s = slug(p.n), i = 1;
+        while ((await query('SELECT 1 FROM products WHERE slug=$1', [s])).rowCount) s = `${slug(p.n)}-${++i}`;
+        await query(
+          `INSERT INTO products (category_id, slug, name, description, image_url, specs, sort_order)
+           VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+          [catId, s, p.n, p.d, sheet.image,
+           JSON.stringify({ 'Application Details': c.description }), pSort++]
+        );
+        added++;
+      }
+    }
+
+    // retire this principal's leftovers — scoped by principal_id, so Godrej is
+    // never in range
+    const rc = await query(
+      `UPDATE categories SET is_active=false
+        WHERE principal_id=$1 AND slug <> ALL($2) AND is_active=true RETURNING id`,
+      [principalId, [...keepCats]]
+    );
+    const live = await query(
+      `SELECT p.id, p.category_id, p.name FROM products p
+         JOIN categories c ON c.id = p.category_id
+        WHERE c.principal_id = $1 AND p.is_active = true`,
+      [principalId]
+    );
+    const stale = live.rows.filter((r) => !keepPairs.has(`${r.category_id}::${r.name}`)).map((r) => r.id);
+    const rp = stale.length
+      ? await query('UPDATE products SET is_active=false WHERE id = ANY($1) RETURNING id', [stale])
+      : { rowCount: 0 };
+    retired += rc.rowCount + rp.rowCount;
+  }
+
+  await query(
+    `INSERT INTO site_settings (key, value) VALUES ($1,$2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [KEY, new Date().toISOString()]
+  );
+  console.log(
+    `Migration: principal sheets applied (${cats} categories, ${added} products, ${retired} retired)`
+    + (missing.length ? ` — principals not found: ${missing.join(', ')}` : '')
+  );
 }
 
 // Solution copy, the home highlight strip and the "Why Virava" answers were all
