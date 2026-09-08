@@ -92,8 +92,11 @@
   gap: 10px; padding: 20px 18px; color: #fff;
   background: linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 55%, transparent 100%);
 }
-.go-market-cap h4 { color: #fff; margin: 0; font-size: 1.05rem; }
-.go-market-arrow { font-size: 1.4rem; line-height: 1; transition: transform .2s ease; }
+/* min-width:0 so a long market name can wrap instead of shoving the arrow out
+   of the card — at 320px these cards are ~129px wide and "Pharmaceuticals" was
+   pushing the chevron past the edge, where overflow:hidden clipped it. */
+.go-market-cap h4 { color: #fff; margin: 0; font-size: 1.05rem; min-width: 0; overflow-wrap: anywhere; }
+.go-market-arrow { font-size: 1.4rem; line-height: 1; flex-shrink: 0; transition: transform .2s ease; }
 .go-market:hover .go-market-arrow { transform: translateX(4px); }
 
 /* ---------------- other solutions ---------------- */
@@ -135,6 +138,11 @@
   .go-cat-img img { height: 210px; }
   .go-products { grid-template-columns: 1fr; gap: 0; }
   .go-markets { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  /* two cards across a narrow phone leaves ~93px inside the caption — tighten it
+     so the name and its chevron both fit */
+  .go-market-cap { padding: 14px 12px; gap: 7px; }
+  .go-market-cap h4 { font-size: .9rem; }
+  .go-market-arrow { font-size: 1.1rem; }
   .go-figures { gap: 26px; }
   .go-figures b { font-size: 1.6rem; }
 }
