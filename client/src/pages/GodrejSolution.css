@@ -149,6 +149,12 @@
   .go-market-cap { padding: 14px 12px; gap: 7px; }
   .go-market-cap h4 { font-size: .9rem; }
   .go-market-arrow { font-size: 1.1rem; }
-  .go-figures { gap: 26px; }
+  /* Wrapping flex sized each figure to its own label, so the widest one
+     ("Product Categories") pushed the third onto a second line and the three
+     read as 2 + 1. Equal columns keep them on one row and line the numbers up. */
+  .go-figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .go-figures b { font-size: 1.6rem; }
+  /* the labels have ~100px each at this width, so let them wrap to two lines
+     rather than force a horizontal overflow */
+  .go-figures span { font-size: .76rem; line-height: 1.35; display: block; hyphens: auto; }
 }
