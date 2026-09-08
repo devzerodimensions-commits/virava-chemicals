@@ -134,6 +134,11 @@ export function useDragScroll(ref) {
   const onPointerDown = (e) => {
     const el = ref.current;
     if (!el || e.pointerType !== 'mouse' || e.button !== 0) return;
+    /* Nothing to drag when the content already fits. Without this the rail on
+       the solution pages — a horizontal strip on phones but a plain vertical
+       list on desktop — would still count the pointer movement, and a click
+       where the hand drifted a few pixels would be swallowed as a drag. */
+    if (el.scrollWidth <= el.clientWidth + 4) return;
     drag.current = { down: true, startX: e.clientX, startLeft: el.scrollLeft, moved: 0 };
     // snapping and smooth scrolling both fight a scrollLeft driven by the cursor
     el.style.scrollSnapType = 'none';

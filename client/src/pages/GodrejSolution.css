@@ -123,8 +123,14 @@
   .go-rail { position: sticky; top: 72px; z-index: 6; margin: 0 -24px; padding: 10px 24px;
     background: var(--bg-soft); border-bottom: 1px solid var(--line); }
   .go-rail-nav { flex-direction: row; overflow-x: auto; border-left: 0; gap: 8px;
-    scrollbar-width: none; min-width: 0; }
+    scrollbar-width: none; min-width: 0;
+    /* keeps the browser's own touch scrolling for swipes while the pointer
+       handlers cover the mouse */
+    touch-action: pan-x; cursor: grab; }
   .go-rail-nav::-webkit-scrollbar { display: none; }
+  /* suppress the text-selection smear a drag would otherwise leave behind */
+  .go-rail-nav.is-dragging { cursor: grabbing; }
+  .go-rail-nav.is-dragging, .go-rail-nav.is-dragging * { user-select: none; }
   .go-rail-item { flex: 0 0 auto; padding: 10px 16px; border-radius: 999px;
     border: 1px solid var(--line); background: #fff; font-size: .92rem; }
   .go-rail-item::before { display: none; }

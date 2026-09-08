@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import api from '../api.js';
-import { useReveal } from '../hooks.js';
+import { useDragScroll, useReveal } from '../hooks.js';
 import PageHeader from '../components/PageHeader.jsx';
 import EnquiryModal from '../components/EnquiryModal.jsx';
 import './GodrejSolution.css';
@@ -98,6 +98,13 @@ export default function GodrejSolution() {
      dead. Highlights immediately rather than waiting for the scroll-spy to
      catch up, and uses scrollIntoView so the offset comes from the section's
      own scroll-margin-top instead of a duplicated magic number. */
+  /* The rail becomes a horizontal strip on phones. It swipes by touch for free,
+     but a mouse cannot drag a scroll container, so on a narrow desktop window
+     the categories past the edge were unreachable — no scrollbar, no wheel
+     (a vertical wheel scrolls the page), nothing. */
+  const railRef = useRef(null);
+  const railDrag = useDragScroll(railRef);
+
   const jumpTo = (i, slug) => {
     const el = sectionRefs.current[i] || document.getElementById(`cat-${slug}`);
     if (!el) return;
@@ -176,7 +183,7 @@ export default function GodrejSolution() {
             <div className="go-grid">
               {/* sticky category rail */}
               <aside className="go-rail">
-                <nav className="go-rail-nav">
+                <nav className="go-rail-nav" ref={railRef} {...railDrag}>
                   {/* Real anchors, not buttons: if the JS handler ever fails to
                       run the browser still jumps to the section, and the entries
                       can be opened in a new tab or reached by keyboard. */}
