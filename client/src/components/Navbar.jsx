@@ -34,6 +34,7 @@ export default function Navbar({ settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [solutionLinks, setSolutionLinks] = useState(FALLBACK_SOLUTION_LINKS);
+  const [principalCats, setPrincipalCats] = useState({});
   const loc = useLocation();
 
   useEffect(() => {
@@ -44,11 +45,36 @@ export default function Navbar({ settings }) {
       .catch(() => {});
   }, []);
 
+  /* Godrej's sub-menu comes from its solutions. The other three had none at all,
+     which was fine while they held two or three placeholder products — but HPL
+     now has three real categories from the client's sheet and nothing in the
+     menu showed them. Built from the API rather than hardcoded, so renaming a
+     category in the admin panel updates the menu too. */
+  useEffect(() => {
+    Promise.all([api.get('/principals'), api.get('/categories')])
+      .then(([pr, ct]) => {
+        const slugOf = new Map((pr.data || []).map((p) => [p.id, p.slug]));
+        const map = {};
+        (ct.data || []).forEach((c) => {
+          const s = slugOf.get(c.principal_id);
+          if (!s) return;
+          (map[s] ||= []).push([c.name, `/products?category=${c.slug}`]);
+        });
+        setPrincipalCats(map);
+      })
+      .catch(() => {});
+  }, []);
+
   const principalLinks = [
     ['Godrej Industries Limited', `${GODREJ}/${solutionLinks[0]?.[1] || 'oleochemicals'}`,
       '/img/partners/logo1.png',
       solutionLinks.map(([label, slug]) => [label, `${GODREJ}/${slug}`])],
-    ...otherPrincipals,
+    // a sub-menu only earns its place when there is more than one thing in it —
+    // OCCL and Standard have a single category each and stay plain links
+    ...otherPrincipals.map(([label, to, logo]) => {
+      const subs = principalCats[to.split('/').pop()];
+      return [label, to, logo, subs && subs.length > 1 ? subs : undefined];
+    }),
   ];
 
   useEffect(() => {
