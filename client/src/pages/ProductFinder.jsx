@@ -54,6 +54,21 @@ export default function ProductFinder() {
     return new Map(cats.map((c) => [c.slug, byId.get(c.principal_id) || null]));
   }, [cats, principals]);
 
+  /* Categories grouped under their principal, in the principals' own order, so
+     the list reads as a structure rather than a jumble. When a principal is
+     chosen only its categories are offered — the rest could not match anything. */
+  const catGroups = useMemo(() => {
+    return principals
+      .filter((p) => !principal || p.slug === principal)
+      .map((p) => ({
+        principal: p.name,
+        items: cats
+          .filter((c) => c.principal_id === p.id)
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name)),
+      }))
+      .filter((g) => g.items.length);
+  }, [cats, principals, principal]);
+
   const shown = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return products.filter((p) => {
@@ -110,9 +125,19 @@ export default function ProductFinder() {
 
             <label className="pf-select">
               <span className="pf-select-label">Category</span>
+              {/* Grouped under their principal. The flat list came out in
+                  sort_order, which each catalogue import numbers from zero
+                  within its own principal — so HPL's and OCCL's categories were
+                  interleaved with Godrej's and the list read as unordered.
+                  Narrowed to the chosen principal when one is selected, since
+                  the other principals' categories cannot match anything then. */}
               <select value={category} onChange={(e) => setParam('category', e.target.value)}>
                 <option value="">All categories</option>
-                {cats.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}
+                {catGroups.map(({ principal, items }) => (
+                  <optgroup key={principal} label={principal}>
+                    {items.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}
+                  </optgroup>
+                ))}
               </select>
             </label>
           </div>
