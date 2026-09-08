@@ -49,7 +49,26 @@ export function useReveal(deps = []) {
       },
       { threshold: 0.1 }
     );
-    return () => ioRef.current?.disconnect();
+
+    /* Catch .reveal elements that appear between renders.
+       The scan below only runs when a page's deps change, so anything React
+       recreates in between is born hidden and never revealed. That is not
+       hypothetical: the principal page keys its category panel on the category
+       id, so switching tabs destroys and rebuilds the panel — and the products
+       inside it stayed at opacity 0, looking like the tab was broken. Any list
+       that remounts on a filter or tab has the same shape. */
+    const mo = new MutationObserver((muts) => {
+      for (const m of muts) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType !== 1) continue;
+          if (node.matches?.(SEL)) ioRef.current?.observe(node);
+          node.querySelectorAll?.(SEL).forEach((el) => ioRef.current?.observe(el));
+        }
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => { mo.disconnect(); ioRef.current?.disconnect(); };
   }, []);
 
   useEffect(() => {
