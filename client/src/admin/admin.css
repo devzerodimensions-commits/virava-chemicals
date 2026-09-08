@@ -166,6 +166,30 @@
 /* Empty states were 40px tall, so a panel with no rows collapsed to a thin strip
    and left the dashboard looking hollow beside the quick-actions column. */
 .empty { padding: 64px 40px; text-align: center; color: var(--muted); }
+/* ---------------- table pager ----------------
+   Sits inside the panel, below the table, so it reads as part of the list. */
+.pager {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; padding: 14px 20px; border-top: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+.pager-count { font-size: .84rem; color: var(--muted); }
+.pager-btns { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.pager-btn {
+  min-width: 34px; padding: 7px 11px; cursor: pointer;
+  font-family: var(--head); font-weight: 600; font-size: .84rem; color: var(--body);
+  background: #fff; border: 1px solid var(--line); border-radius: 8px;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.pager-btn:hover:not(:disabled) { border-color: var(--navy); color: var(--navy); }
+.pager-btn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.pager-btn:disabled { opacity: .45; cursor: default; }
+.pager-gap { color: var(--muted); padding: 0 2px; }
+@media (max-width: 640px) {
+  .pager { justify-content: center; }
+  .pager-count { width: 100%; text-align: center; }
+}
+
 .cell-thumb { width: 54px; height: 40px; object-fit: cover; border-radius: 6px; }
 .cell-thumb.contain { object-fit: contain; background: #fff; border: 1px solid var(--line); }
 .cell-thumb.wide { width: 90px; }

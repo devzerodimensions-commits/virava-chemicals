@@ -224,8 +224,28 @@ function KeyValueEditor({ value, onChange, hint, suggestions = [] }) {
  *  - defaults: object of default new-item values
  *  - loadOptions: optional async () => merges dynamic options into fields by key
  */
+/* Products alone runs to 208 rows. The whole table was rendered at once, so
+   finding anything meant scrolling a page several screens deep and the Add New
+   button scrolled away with it. */
+const PER_PAGE = 20;
+
+/* First, last, and a window around the current page — so 11 pages of products
+   don't print 11 buttons. Nulls become the "…" gaps. */
+function pageList(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const out = [1];
+  const from = Math.max(2, current - 1);
+  const to = Math.min(total - 1, current + 1);
+  if (from > 2) out.push(null);
+  for (let i = from; i <= to; i++) out.push(i);
+  if (to < total - 1) out.push(null);
+  out.push(total);
+  return out;
+}
+
 export default function CrudManager({ title, subtitle, resource, columns, fields, defaults = {}, loadOptions }) {
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState(null); // object being edited/created
   const [dynFields, setDynFields] = useState(fields);
   const [saving, setSaving] = useState(false);
@@ -236,7 +256,14 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
     setLoading(true);
     api.get(`/admin/${resource}`).then((r) => setItems(r.data)).finally(() => setLoading(false));
   };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [resource]);
+  useEffect(() => { load(); setPage(1); /* eslint-disable-next-line */ }, [resource]);
+
+  const pageCount = Math.max(1, Math.ceil(items.length / PER_PAGE));
+  /* Deleting the last row on the last page would otherwise leave the table
+     empty on a page that no longer exists. */
+  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
+  const start = (page - 1) * PER_PAGE;
+  const pageItems = items.slice(start, start + PER_PAGE);
 
   useEffect(() => {
     if (!loadOptions) return;
@@ -291,7 +318,7 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
                 <tr>{columns.map((c) => <th key={c.key}>{c.label}</th>)}<th className="ta-right">Actions</th></tr>
               </thead>
               <tbody>
-                {items.map((item) => (
+                {pageItems.map((item) => (
                   <tr key={item.id}>
                     {columns.map((c) => (
                       <td key={c.key}>{c.render ? c.render(item) : (item[c.key] ?? '—')}</td>
@@ -304,6 +331,28 @@ export default function CrudManager({ title, subtitle, resource, columns, fields
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {items.length > PER_PAGE && (
+          <div className="pager">
+            <span className="pager-count">
+              Showing {start + 1}–{Math.min(start + PER_PAGE, items.length)} of {items.length}
+            </span>
+            <div className="pager-btns">
+              <button className="pager-btn" onClick={() => setPage(page - 1)} disabled={page === 1}>
+                ‹ Prev
+              </button>
+              {pageList(page, pageCount).map((p, i) => (
+                p === null
+                  ? <span className="pager-gap" key={`gap${i}`}>…</span>
+                  : <button key={p} className={`pager-btn ${p === page ? 'on' : ''}`}
+                      onClick={() => setPage(p)} aria-current={p === page ? 'page' : undefined}>{p}</button>
+              ))}
+              <button className="pager-btn" onClick={() => setPage(page + 1)} disabled={page === pageCount}>
+                Next ›
+              </button>
+            </div>
           </div>
         )}
       </div>
