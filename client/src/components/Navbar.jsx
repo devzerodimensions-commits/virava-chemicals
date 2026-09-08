@@ -32,10 +32,11 @@ const otherPrincipals = [
   ['The Standard Chemicals Co.', 'the-standard-chemicals-co-pvt-ltd', '/img/partners/logo4.png'],
 ];
 
-// From the nav bar, a principal's name opens its products. Only here — the
-// principal cards on Home and About, and the rows under "Our Principals", still
-// go to the principal's own page.
-const productsFor = (slug) => `/products?principal=${slug}`;
+/* Only the parent "Principals" tab opens the product finder. Each principal
+   named inside the menu goes to its own page, the same as everywhere else on
+   the site — routing those to a filtered product list too skipped past the
+   profile, logo and category detail people were looking for. */
+const pageFor = (slug) => `/principals/${slug}`;
 
 export default function Navbar({ settings }) {
   const [scrolled, setScrolled] = useState(false);
@@ -76,15 +77,15 @@ export default function Navbar({ settings }) {
   }, []);
 
   const principalLinks = [
-    // the name goes to Godrej's products; the sub-entries keep their solution pages
-    ['Godrej Industries Limited', productsFor('godrej-industries-limited'),
+    // the name goes to Godrej's own page; the sub-entries keep their solution pages
+    ['Godrej Industries Limited', pageFor('godrej-industries-limited'),
       '/img/partners/logo1.png',
       solutionLinks.map(([label, slug]) => [label, `${GODREJ}/${slug}`])],
     // a sub-menu only earns its place when there is more than one thing in it —
     // OCCL and Standard have a single category each and stay plain links
     ...otherPrincipals.map(([label, slug, logo]) => {
       const subs = principalCats[slug];
-      return [label, productsFor(slug), logo, subs && subs.length > 1 ? subs : undefined];
+      return [label, pageFor(slug), logo, subs && subs.length > 1 ? subs : undefined];
     }),
   ];
 
